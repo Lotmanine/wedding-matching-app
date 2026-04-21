@@ -24,11 +24,27 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perHour(3)->by($request->ip());
         });
 
+        RateLimiter::for('api', function (Request $request) {
+            $key = $request->user()?->currentAccessToken()?->id
+                ?? ('ip:' . $request->ip());
+
+            return Limit::perMinute(120)->by((string) $key);
+        });
+
+        RateLimiter::for('api-mutations', function (Request $request) {
+            $key = $request->user()?->currentAccessToken()?->id
+                ?? ('ip:' . $request->ip());
+
+            return Limit::perMinute(30)->by((string) $key);
+        });
+
         ResetPassword::createUrlUsing(function ($user, string $token) {
             return URL::to(route('provider.password.reset', [
                 'token' => $token,
                 'email' => $user->getEmailForPasswordReset(),
             ], false));
         });
+
+        \Illuminate\Support\Facades\Event::subscribe(\App\Listeners\WebhookEventListener::class);
     }
 }

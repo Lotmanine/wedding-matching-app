@@ -49,6 +49,7 @@
                         ['route' => 'admin.purchases.index',    'label' => __('admin.nav.purchases'),        'icon' => '💰'],
                         ['route' => 'admin.users.index',        'label' => __('admin.nav.users'),            'icon' => '👥'],
                         ['route' => 'admin.logs.audit',         'label' => __('admin.nav.logs'),             'icon' => '📜'],
+                        ['route' => 'admin.webhooks.index',     'label' => 'Webhooks',                       'icon' => '🔔'],
                         ['route' => 'admin.settings.index',     'label' => __('admin.nav.settings'),         'icon' => '⚙️'],
                     ];
                 @endphp

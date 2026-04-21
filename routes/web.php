@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminRequestsController;
 use App\Http\Controllers\Admin\AdminServiceRequestsController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\Admin\AdminWebhooksController;
 use App\Http\Controllers\Couple\CoupleRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\CreditsController;
@@ -121,6 +122,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/users/{id}', [AdminUsersController::class, 'show'])->name('users.show');
 
         Route::get('/logs/audit', [AdminLogsController::class, 'audit'])->name('logs.audit');
+
+        Route::prefix('webhooks')->name('webhooks.')->group(function () {
+            Route::get('/', [AdminWebhooksController::class, 'index'])->name('index');
+            Route::get('/create', [AdminWebhooksController::class, 'create'])->name('create');
+            Route::post('/', [AdminWebhooksController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [AdminWebhooksController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [AdminWebhooksController::class, 'update'])->name('update');
+            Route::post('/{id}/toggle', [AdminWebhooksController::class, 'toggle'])->name('toggle');
+            Route::delete('/{id}', [AdminWebhooksController::class, 'destroy'])->name('destroy');
+            Route::get('/{id}/deliveries', [AdminWebhooksController::class, 'deliveries'])->name('deliveries');
+            Route::post('/deliveries/{id}/replay', [AdminWebhooksController::class, 'replay'])->name('deliveries.replay');
+        });
 
         Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
         Route::put('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
