@@ -108,6 +108,62 @@ class ServiceRequest extends Model
         ])->where('expires_at', '>', now());
     }
 
+    public function scopeEligibleForProvider(Builder $query, User $provider): Builder
+    {
+        $serviceTypes = $provider->providerServices->pluck('service_type')
+            ->map(fn ($v) => $v instanceof \App\Enums\ServiceType ? $v->value : (string) $v)
+            ->values()
+            ->all();
+
+        $coverage = $provider->providerCoverage->pluck('wilaya_code')
+            ->map(fn ($v) => is_object($v) && property_exists($v, 'value') ? $v->value : (string) $v)
+            ->values()
+            ->all();
+
+        if (empty($serviceTypes) || empty($coverage)) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        $providerId = $provider->id;
+
+        return $query
+            ->whereIn('status', [
+                RequestStatus::Round1->value,
+                RequestStatus::Round2->value,
+                RequestStatus::Round3->value,
+                RequestStatus::OpenMarketplace->value,
+            ])
+            ->where('expires_at', '>', now())
+            ->whereNull('unlocked_by_user_id')
+            ->whereIn('service_type', $serviceTypes)
+            ->where(function (Builder $q) use ($providerId) {
+                $q->whereNull('refused_by_provider_ids')
+                  ->orWhereJsonDoesntContain('refused_by_provider_ids', $providerId);
+            })
+            ->whereHas('wedRequest', function (Builder $q) use ($coverage) {
+                $q->whereIn('couple_wilaya_code', $coverage);
+            })
+            ->where(function (Builder $q) use ($providerId) {
+                $q->where(function (Builder $q2) use ($providerId) {
+                    $q2->where('status', RequestStatus::Round1->value)
+                        ->whereJsonContains('round_1_provider_ids', $providerId);
+                })->orWhere(function (Builder $q2) use ($providerId) {
+                    $q2->where('status', RequestStatus::Round2->value)
+                        ->where(function (Builder $q3) use ($providerId) {
+                            $q3->whereJsonContains('round_1_provider_ids', $providerId)
+                               ->orWhereJsonContains('round_2_provider_ids', $providerId);
+                        });
+                })->orWhere(function (Builder $q2) use ($providerId) {
+                    $q2->where('status', RequestStatus::Round3->value)
+                        ->where(function (Builder $q3) use ($providerId) {
+                            $q3->whereJsonContains('round_1_provider_ids', $providerId)
+                               ->orWhereJsonContains('round_2_provider_ids', $providerId)
+                               ->orWhereJsonContains('round_3_provider_ids', $providerId);
+                        });
+                })->orWhere('status', RequestStatus::OpenMarketplace->value);
+            });
+    }
+
     public function scopeRoundTimedOut(Builder $query): Builder
     {
         return $query->whereIn('status', [

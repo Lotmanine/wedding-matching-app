@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Couple\CoupleRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ProviderDashboardController;
+use App\Http\Controllers\Provider\ProviderLeadsController;
 use App\Http\Controllers\Provider\ProviderLoginController;
 use App\Http\Controllers\Provider\ProviderPasswordResetController;
 use App\Http\Controllers\Provider\ProviderProfileController;
@@ -38,6 +39,8 @@ Route::prefix('provider')->name('provider.')->group(function () {
         Route::post('/logout', [ProviderLoginController::class, 'destroy'])->name('logout');
         Route::get('/dashboard', [ProviderDashboardController::class, 'index'])->name('dashboard');
         Route::get('/profile', [ProviderProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/leads', [ProviderLeadsController::class, 'index'])->name('leads.index');
+        Route::get('/leads/{serviceUid}', [ProviderLeadsController::class, 'show'])->name('leads.show');
     });
 });
 

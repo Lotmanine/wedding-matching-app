@@ -9,10 +9,55 @@ return [
 
     'nav' => [
         'dashboard' => 'Tableau de bord',
+        'leads'     => 'Demandes',
         'profile'   => 'Profil',
         'credits'   => 'Crédits',
         'history'   => 'Historique',
         'logout'    => 'Déconnexion',
+    ],
+
+    'leads' => [
+        'title'              => 'Demandes disponibles',
+        'count'              => ':count demande(s) trouvée(s)',
+        'filter_service'     => 'Service',
+        'filter_wilaya'      => 'Wilaya',
+        'filter_budget'      => 'Budget',
+        'filter_all'         => 'Toutes',
+        'filter_reset'       => 'Réinitialiser les filtres',
+        'sort_newest'        => 'Plus récentes',
+        'sort_oldest'        => 'Plus anciennes',
+        'sort_wedding_date'  => 'Date du mariage',
+        'sort_budget_high'   => 'Budget le plus élevé',
+
+        'empty_no_leads'     => 'Aucune demande pour le moment',
+        'empty_sub_default'  => 'Les nouvelles demandes apparaîtront ici automatiquement.',
+        'empty_filters'      => 'Aucune demande ne correspond à vos filtres.',
+        'empty_unverified'   => 'Votre profil est en cours de vérification. Vous verrez les demandes une fois approuvé.',
+
+        'status_round_1'          => 'Nouvelle demande',
+        'status_round_2'          => 'Tour 2',
+        'status_round_3'          => 'Tour 3',
+        'status_open_marketplace' => 'Ouverte à tous',
+
+        'card_see_details'    => 'Voir les détails',
+        'card_guests'         => ':count invités',
+        'card_couple_initial' => 'Couple :initial — :wilaya',
+        'card_time_ago'       => 'Créée :when',
+
+        'breadcrumb'      => 'Demandes',
+        'couple_card'     => 'Informations du couple',
+        'couple_first'    => 'Prénom',
+        'couple_wilaya'   => 'Wilaya',
+        'couple_whatsapp' => 'WhatsApp',
+        'reveal_notice'   => 'Les coordonnées complètes seront révélées après acceptation (fonctionnalité à venir).',
+        'all_services'    => 'Services demandés',
+        'duration_left'   => 'Durée restante',
+        'description'     => 'Description',
+        'created_on'      => 'Créée le :date',
+        'expires_on'      => 'Expire le :date',
+        'btn_accept'      => 'Accepter',
+        'btn_refuse'      => 'Refuser',
+        'btn_tooltip'     => 'Fonctionnalité disponible prochainement',
     ],
 
     'auth' => [

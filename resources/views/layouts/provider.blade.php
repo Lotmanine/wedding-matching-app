@@ -36,17 +36,19 @@
             <nav class="flex-1 py-4 flex sm:flex-col gap-1 px-2 sm:px-4 overflow-x-auto sm:overflow-x-visible">
                 @php
                     $links = [
-                        ['route' => 'provider.dashboard', 'label' => __('provider.nav.dashboard'), 'icon' => '🏠'],
-                        ['route' => 'provider.profile.edit', 'label' => __('provider.nav.profile'), 'icon' => '👤'],
+                        ['route' => 'provider.dashboard',    'pattern' => 'provider.dashboard',    'label' => __('provider.nav.dashboard'), 'icon' => '🏠'],
+                        ['route' => 'provider.leads.index',  'pattern' => 'provider.leads.*',      'label' => __('provider.nav.leads'),     'icon' => '📥'],
+                        ['route' => 'provider.profile.edit', 'pattern' => 'provider.profile.*',    'label' => __('provider.nav.profile'),   'icon' => '👤'],
                     ];
                 @endphp
                 @foreach ($links as $link)
+                    @php $active = request()->routeIs($link['pattern']); @endphp
                     <a
                         href="{{ route($link['route']) }}"
                         @class([
                             'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap',
-                            'bg-emerald-50 text-brand' => request()->routeIs($link['route']),
-                            'text-gray-600 hover:bg-emerald-50/60 hover:text-brand' => ! request()->routeIs($link['route']),
+                            'bg-emerald-50 text-brand' => $active,
+                            'text-gray-600 hover:bg-emerald-50/60 hover:text-brand' => ! $active,
                         ])
                     >
                         <span>{{ $link['icon'] }}</span>

@@ -139,13 +139,77 @@ class DevDataSeeder extends Seeder
             }
 
             foreach ($services as $svc) {
-                ServiceRequest::create([
-                    'wed_request_id' => $wr->id,
-                    'service_type'   => $svc,
-                    'status'         => RequestStatus::New->value,
-                    'current_round'  => 0,
-                ]);
+                $this->createDistributedServiceRequest($wr->id, $svc);
             }
         }
+    }
+
+    private function createDistributedServiceRequest(int $wedRequestId, string $serviceType): void
+    {
+        $providerIds = User::role('provider')->inRandomOrder()->limit(6)->pluck('id')->all();
+        $pick = fn (int $n) => array_slice($providerIds, 0, min($n, count($providerIds)));
+
+        $roll = random_int(1, 100);
+
+        $attrs = [
+            'wed_request_id' => $wedRequestId,
+            'service_type'   => $serviceType,
+            'current_round'  => 0,
+            'status'         => RequestStatus::New->value,
+        ];
+
+        if ($roll <= 30) {
+            $ids = $pick(random_int(2, 3));
+            $attrs = array_merge($attrs, [
+                'status'                    => RequestStatus::Round1->value,
+                'current_round'             => 1,
+                'round_started_at'          => now()->subMinutes(random_int(1, 60)),
+                'round_1_provider_ids'      => $ids,
+                'all_notified_provider_ids' => $ids,
+            ]);
+        } elseif ($roll <= 50) {
+            $r1 = $pick(random_int(2, 3));
+            $r2 = array_slice($providerIds, count($r1), random_int(2, 3));
+            $attrs = array_merge($attrs, [
+                'status'                    => RequestStatus::Round2->value,
+                'current_round'             => 2,
+                'round_started_at'          => now()->subMinutes(random_int(1, 90)),
+                'round_1_provider_ids'      => $r1,
+                'round_2_provider_ids'      => $r2,
+                'all_notified_provider_ids' => array_values(array_unique(array_merge($r1, $r2))),
+            ]);
+        } elseif ($roll <= 60) {
+            $r1 = $pick(2);
+            $r2 = array_slice($providerIds, 2, 2);
+            $r3 = array_slice($providerIds, 4, 2);
+            $attrs = array_merge($attrs, [
+                'status'                    => RequestStatus::Round3->value,
+                'current_round'             => 3,
+                'round_started_at'          => now()->subMinutes(random_int(1, 120)),
+                'round_1_provider_ids'      => $r1,
+                'round_2_provider_ids'      => $r2,
+                'round_3_provider_ids'      => $r3,
+                'all_notified_provider_ids' => array_values(array_unique(array_merge($r1, $r2, $r3))),
+            ]);
+        } elseif ($roll <= 75) {
+            $attrs = array_merge($attrs, [
+                'status'                    => RequestStatus::OpenMarketplace->value,
+                'current_round'             => 4,
+                'round_started_at'          => now()->subMinutes(random_int(10, 240)),
+                'all_notified_provider_ids' => $providerIds,
+            ]);
+        } else {
+            // status=new, the remaining 25%
+        }
+
+        // Rare: 1 in 20 marked as already unlocked (won't appear in feeds)
+        if (random_int(1, 20) === 1 && ! empty($providerIds)) {
+            $attrs['unlocked_by_user_id'] = $providerIds[0];
+            $attrs['unlocked_at']         = now()->subMinutes(random_int(1, 300));
+            $attrs['unlocked_via']        = 'dashboard';
+            $attrs['credits_charged']     = 1;
+        }
+
+        ServiceRequest::create($attrs);
     }
 }
