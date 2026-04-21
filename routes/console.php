@@ -14,3 +14,8 @@ Schedule::command('zawaj:cleanup-expired')
     ->dailyAt('03:00')
     ->timezone('Africa/Algiers')
     ->onOneServer();
+
+Schedule::command('zawaj:advance-rounds')
+    ->everyFiveMinutes()
+    ->timezone('Africa/Algiers')
+    ->onOneServer();

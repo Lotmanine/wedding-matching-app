@@ -117,18 +117,57 @@
                     </p>
                 </div>
 
-                <div class="space-y-2">
-                    <button type="button" disabled
-                            title="{{ __('provider.leads.btn_tooltip') }}"
-                            class="w-full py-3 rounded-xl bg-brand text-white font-semibold text-sm opacity-50 cursor-not-allowed">
-                        ✓ {{ __('provider.leads.btn_accept') }}
+                <div x-data="{ showAccept: false, showRefuse: false }" class="space-y-2">
+                    @if (session('error'))
+                        <div class="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-xs">{{ session('error') }}</div>
+                    @endif
+
+                    @php $cost = (int) config('zawaj.credits.unlock_cost', 1); @endphp
+
+                    <button type="button" @click="showAccept = true"
+                            class="w-full py-3 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold text-sm shadow-md shadow-emerald-900/10 transition">
+                        ✓ {{ __('provider.leads.btn_accept') }} ({{ $cost }} crédit{{ $cost > 1 ? 's' : '' }})
                     </button>
-                    <button type="button" disabled
-                            title="{{ __('provider.leads.btn_tooltip') }}"
-                            class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-semibold text-sm opacity-50 cursor-not-allowed">
+                    <button type="button" @click="showRefuse = true"
+                            class="w-full py-3 rounded-xl border-2 border-gray-200 hover:border-red-300 hover:text-red-600 text-gray-600 font-semibold text-sm transition">
                         ✕ {{ __('provider.leads.btn_refuse') }}
                     </button>
-                    <p class="text-xs text-gray-400 text-center">{{ __('provider.leads.btn_tooltip') }}</p>
+
+                    <div x-show="showAccept" x-cloak
+                         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                         @keydown.escape.window="showAccept = false">
+                        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4" @click.outside="showAccept = false">
+                            <h3 class="font-display text-lg font-semibold text-gray-900">{{ __('provider.acceptance.confirm_title') }}</h3>
+                            <p class="text-sm text-gray-600">{{ __('provider.acceptance.confirm_body', ['cost' => $cost]) }}</p>
+                            <form method="POST" action="{{ route('provider.leads.accept', $lead->service_uid) }}" class="flex gap-2">
+                                @csrf
+                                <button type="button" @click="showAccept = false" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
+                                    {{ __('provider.acceptance.cancel_btn') }}
+                                </button>
+                                <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand hover:bg-brand-dark text-white text-sm font-semibold transition">
+                                    {{ __('provider.acceptance.confirm_btn') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div x-show="showRefuse" x-cloak
+                         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                         @keydown.escape.window="showRefuse = false">
+                        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4" @click.outside="showRefuse = false">
+                            <h3 class="font-display text-lg font-semibold text-gray-900">{{ __('provider.refusal.confirm_title') }}</h3>
+                            <p class="text-sm text-gray-600">{{ __('provider.refusal.confirm_body') }}</p>
+                            <form method="POST" action="{{ route('provider.leads.refuse', $lead->service_uid) }}" class="flex gap-2">
+                                @csrf
+                                <button type="button" @click="showRefuse = false" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
+                                    {{ __('provider.acceptance.cancel_btn') }}
+                                </button>
+                                <button type="submit" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition">
+                                    {{ __('provider.refusal.confirm_btn') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </aside>
 

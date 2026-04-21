@@ -5,19 +5,25 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Provider;
 
 use App\Enums\BudgetRange;
-use App\Enums\RequestStatus;
 use App\Enums\ServiceType;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceRequest;
 use App\Models\Wilaya;
+use App\Services\Matching\LeadAcceptanceService;
 use App\Services\Matching\LeadEligibilityService;
+use App\Services\Matching\Results\AcceptResult;
+use App\Services\Matching\Results\RefuseResult;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProviderLeadsController extends Controller
 {
-    public function __construct(private readonly LeadEligibilityService $eligibility)
-    {
+    public function __construct(
+        private readonly LeadEligibilityService $eligibility,
+        private readonly LeadAcceptanceService $acceptance,
+    ) {
     }
 
     public function index(Request $request)
@@ -96,11 +102,67 @@ class ProviderLeadsController extends Controller
 
         $user = $request->user()->load(['providerProfile', 'providerServices', 'providerCoverage']);
 
+        if ($sr->unlocked_by_user_id === $user->id) {
+            return view('provider.leads.accepted', [
+                'lead'       => $sr,
+                'wedRequest' => $sr->wedRequest,
+            ]);
+        }
+
         abort_unless($this->eligibility->canViewLead($user, $sr), 403);
 
         return view('provider.leads.show', [
             'lead'       => $sr,
             'wedRequest' => $sr->wedRequest,
         ]);
+    }
+
+    public function accept(Request $request, string $serviceUid): JsonResponse|RedirectResponse
+    {
+        $sr = ServiceRequest::where('service_uid', $serviceUid)->first();
+        if (! $sr) {
+            throw new NotFoundHttpException();
+        }
+
+        $user = $request->user()->load(['providerProfile', 'providerServices', 'providerCoverage']);
+        $result = $this->acceptance->accept($user, $sr, 'dashboard');
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json($result->toArray(), $result->isSuccess() ? 200 : 409);
+        }
+
+        return match ($result->status) {
+            AcceptResult::STATUS_SUCCESS
+                => redirect()
+                    ->route('provider.leads.show', $sr->service_uid)
+                    ->with('status', $result->getMessage()),
+            AcceptResult::STATUS_INSUFFICIENT_CREDITS
+                => redirect()
+                    ->route('provider.dashboard')
+                    ->with('error', $result->getMessage()),
+            default
+                => redirect()
+                    ->route('provider.leads.index')
+                    ->with('error', $result->getMessage()),
+        };
+    }
+
+    public function refuse(Request $request, string $serviceUid): JsonResponse|RedirectResponse
+    {
+        $sr = ServiceRequest::where('service_uid', $serviceUid)->first();
+        if (! $sr) {
+            throw new NotFoundHttpException();
+        }
+
+        $user = $request->user();
+        $result = $this->acceptance->refuse($user, $sr);
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json($result->toArray(), $result->isSuccess() ? 200 : 409);
+        }
+
+        $flashKey = $result->isSuccess() ? 'status' : 'error';
+
+        return redirect()->route('provider.leads.index')->with($flashKey, $result->getMessage());
     }
 }

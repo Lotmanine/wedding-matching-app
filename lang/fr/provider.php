@@ -60,6 +60,44 @@ return [
         'btn_tooltip'     => 'Fonctionnalité disponible prochainement',
     ],
 
+    'acceptance' => [
+        'success'              => 'Félicitations ! Les coordonnées du couple vous sont maintenant disponibles.',
+        'already_taken'        => 'Désolé, cette demande a été prise par un autre prestataire.',
+        'expired'              => 'Cette demande a expiré et ne peut plus être acceptée.',
+        'not_eligible'         => 'Vous n\'êtes plus éligible à cette demande.',
+        'insufficient_credits' => 'Solde insuffisant : il vous faut :cost crédit(s), vous en avez :available. Rechargez votre compte pour continuer.',
+        'confirm_title'        => 'Accepter cette demande ?',
+        'confirm_body'         => 'Cela débitera :cost crédit(s) de votre solde et vous donnera accès aux coordonnées complètes du couple.',
+        'confirm_btn'          => 'Oui, accepter et débiter',
+        'cancel_btn'           => 'Annuler',
+    ],
+
+    'refusal' => [
+        'success'         => 'Demande refusée. Elle ne vous sera plus proposée.',
+        'already_refused' => 'Vous avez déjà refusé cette demande.',
+        'not_eligible'    => 'Cette demande n\'est plus disponible.',
+        'confirm_title'   => 'Refuser cette demande ?',
+        'confirm_body'    => 'Elle ne vous sera plus proposée. Cette action ne coûte aucun crédit.',
+        'confirm_btn'     => 'Oui, refuser',
+    ],
+
+    'unlocked' => [
+        'header'            => 'Demande débitée · Coordonnées révélées',
+        'accepted_on'       => 'Vous avez accepté cette demande :when.',
+        'contact_title'     => 'Coordonnées du couple',
+        'couple_name'       => 'Prénom',
+        'couple_wilaya'     => 'Wilaya',
+        'couple_commune'    => 'Commune',
+        'couple_phone'      => 'Téléphone',
+        'couple_whatsapp'   => 'WhatsApp',
+        'open_whatsapp'     => 'Ouvrir WhatsApp',
+        'call'              => 'Appeler',
+        'tip_title'         => 'Astuce pour maximiser vos chances',
+        'tip_body'          => 'Contactez le couple dans les 24 heures. Les réponses rapides convertissent mieux.',
+        'credits_charged'   => ':count crédit(s) débité(s)',
+        'back_to_leads'     => '← Retour aux demandes',
+    ],
+
     'auth' => [
         'register_title'   => 'Créer un compte prestataire',
         'register_sub'     => 'Rejoignez les meilleurs prestataires de mariage en Algérie.',

@@ -158,12 +158,15 @@ class DevDataSeeder extends Seeder
             'status'         => RequestStatus::New->value,
         ];
 
+        $timedOutChance = random_int(1, 10) === 1;
+        $r1Minutes = $timedOutChance ? random_int(130, 360) : random_int(1, 60);
+
         if ($roll <= 30) {
             $ids = $pick(random_int(2, 3));
             $attrs = array_merge($attrs, [
                 'status'                    => RequestStatus::Round1->value,
                 'current_round'             => 1,
-                'round_started_at'          => now()->subMinutes(random_int(1, 60)),
+                'round_started_at'          => now()->subMinutes($r1Minutes),
                 'round_1_provider_ids'      => $ids,
                 'all_notified_provider_ids' => $ids,
             ]);

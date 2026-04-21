@@ -41,6 +41,11 @@ Route::prefix('provider')->name('provider.')->group(function () {
         Route::get('/profile', [ProviderProfileController::class, 'edit'])->name('profile.edit');
         Route::get('/leads', [ProviderLeadsController::class, 'index'])->name('leads.index');
         Route::get('/leads/{serviceUid}', [ProviderLeadsController::class, 'show'])->name('leads.show');
+
+        Route::middleware('throttle:10,1')->group(function () {
+            Route::post('/leads/{serviceUid}/accept', [ProviderLeadsController::class, 'accept'])->name('leads.accept');
+            Route::post('/leads/{serviceUid}/refuse', [ProviderLeadsController::class, 'refuse'])->name('leads.refuse');
+        });
     });
 });
 

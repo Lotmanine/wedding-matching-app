@@ -40,8 +40,13 @@ class LeadEligibilityService
 
     public function countEligibleLeads(User $provider): int
     {
+        $version = Cache::rememberForever(
+            'leads:open_marketplace:version',
+            fn () => (string) now()->timestamp,
+        );
+
         return (int) Cache::remember(
-            "leads:count:{$provider->id}",
+            "leads:count:{$provider->id}:v{$version}",
             now()->addSeconds(60),
             fn () => $this->eligibleLeadsQuery($provider)->count(),
         );
