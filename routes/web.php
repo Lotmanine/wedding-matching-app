@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminLogsController;
+use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Admin\AdminPacksController;
+use App\Http\Controllers\Admin\AdminProvidersController;
+use App\Http\Controllers\Admin\AdminPurchasesController;
+use App\Http\Controllers\Admin\AdminRequestsController;
+use App\Http\Controllers\Admin\AdminServiceRequestsController;
+use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Couple\CoupleRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\CreditsController;
@@ -64,6 +74,58 @@ Route::prefix('provider')->name('provider.')->group(function () {
 Route::post('/webhooks/chargily', ChargilyWebhookController::class)
     ->middleware('throttle:60,1')
     ->name('webhooks.chargily');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
+        Route::post('/login', [AdminLoginController::class, 'store'])->name('login.store');
+    });
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/providers', [AdminProvidersController::class, 'index'])->name('providers.index');
+        Route::get('/providers/{id}', [AdminProvidersController::class, 'show'])->name('providers.show');
+        Route::post('/providers/{id}/verify', [AdminProvidersController::class, 'verify'])->name('providers.verify');
+        Route::post('/providers/{id}/unverify', [AdminProvidersController::class, 'unverify'])->name('providers.unverify');
+        Route::post('/providers/{id}/suspend', [AdminProvidersController::class, 'suspend'])->name('providers.suspend');
+        Route::post('/providers/{id}/reactivate', [AdminProvidersController::class, 'reactivate'])->name('providers.reactivate');
+        Route::post('/providers/{id}/credits/adjust', [AdminProvidersController::class, 'adjustCredits'])
+            ->middleware('throttle:20,60')
+            ->name('providers.credits.adjust');
+
+        Route::get('/requests', [AdminRequestsController::class, 'index'])->name('requests.index');
+        Route::get('/requests/{uid}', [AdminRequestsController::class, 'show'])->name('requests.show');
+        Route::post('/requests/{uid}/expire', [AdminRequestsController::class, 'expire'])->name('requests.expire');
+        Route::post('/requests/{uid}/delete', [AdminRequestsController::class, 'delete'])
+            ->middleware('throttle:5,60')
+            ->name('requests.delete');
+
+        Route::get('/service-requests', [AdminServiceRequestsController::class, 'index'])->name('service_requests.index');
+        Route::get('/service-requests/{uid}', [AdminServiceRequestsController::class, 'show'])->name('service_requests.show');
+        Route::post('/service-requests/{uid}/force-open', [AdminServiceRequestsController::class, 'forceOpen'])->name('service_requests.force_open');
+
+        Route::get('/packs', [AdminPacksController::class, 'index'])->name('packs.index');
+        Route::get('/packs/create', [AdminPacksController::class, 'create'])->name('packs.create');
+        Route::post('/packs', [AdminPacksController::class, 'store'])->name('packs.store');
+        Route::get('/packs/{id}/edit', [AdminPacksController::class, 'edit'])->name('packs.edit');
+        Route::put('/packs/{id}', [AdminPacksController::class, 'update'])->name('packs.update');
+        Route::post('/packs/{id}/toggle', [AdminPacksController::class, 'toggle'])->name('packs.toggle');
+
+        Route::get('/purchases', [AdminPurchasesController::class, 'index'])->name('purchases.index');
+        Route::get('/purchases/{uid}', [AdminPurchasesController::class, 'show'])->name('purchases.show');
+        Route::post('/purchases/{uid}/mark-paid', [AdminPurchasesController::class, 'markPaid'])->name('purchases.mark_paid');
+
+        Route::get('/users', [AdminUsersController::class, 'index'])->name('users.index');
+        Route::get('/users/{id}', [AdminUsersController::class, 'show'])->name('users.show');
+
+        Route::get('/logs/audit', [AdminLogsController::class, 'audit'])->name('logs.audit');
+
+        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
+    });
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

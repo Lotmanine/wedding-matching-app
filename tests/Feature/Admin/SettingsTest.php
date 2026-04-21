@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Admin;
+
+use App\Models\Setting;
+use App\Models\User;
+use Database\Seeders\RolesSeeder;
+use Database\Seeders\SettingsSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
+
+class SettingsTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RolesSeeder::class);
+        $this->seed(SettingsSeeder::class);
+    }
+
+    public function test_update_persists_settings_and_clears_cache(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $admin->assignRole('admin');
+
+        Cache::put('settings:all', 'stale', 3600);
+
+        $this->actingAs($admin)->put(route('admin.settings.update'), [
+            'credits_unlock_cost'            => 2,
+            'matching_round_timeout_minutes' => 180,
+            'matching_providers_per_round'   => 4,
+            'anpdp_retention_days'           => 21,
+        ])->assertRedirect();
+
+        $this->assertSame('2',   Setting::where('key', 'credits.unlock_cost')->value('value'));
+        $this->assertSame('180', Setting::where('key', 'matching.round_timeout_minutes')->value('value'));
+
+        $this->assertSame(2, Setting::get('credits.unlock_cost'));
+    }
+
+    public function test_settings_get_falls_back_to_default(): void
+    {
+        $this->assertSame('def', Setting::get('does.not.exist', 'def'));
+    }
+}

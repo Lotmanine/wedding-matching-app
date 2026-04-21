@@ -40,6 +40,9 @@ class ProviderProfile extends Model
         'acceptance_rate',
         'credit_balance',
         'onboarding_completed',
+        'admin_notes',
+        'suspended_at',
+        'suspended_reason',
     ];
 
     protected function casts(): array
@@ -50,6 +53,7 @@ class ProviderProfile extends Model
             'verified'             => 'boolean',
             'onboarding_completed' => 'boolean',
             'verified_at'          => 'datetime',
+            'suspended_at'         => 'datetime',
             'rating_avg'           => 'decimal:2',
             'acceptance_rate'      => 'decimal:2',
         ];
