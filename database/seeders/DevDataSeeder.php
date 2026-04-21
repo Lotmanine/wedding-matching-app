@@ -56,10 +56,20 @@ class DevDataSeeder extends Seeder
                 'status'            => 'active',
                 'email_verified_at' => now(),
             ]);
+            $user->syncRoles(['provider']);
 
+            $verified = random_int(1, 100) <= 60;
             ProviderProfile::factory()->create([
                 'user_id'             => $user->id,
                 'primary_wilaya_code' => $wilaya->code,
+                'verified'            => $verified,
+                'verified_at'         => $verified ? now()->subDays(random_int(1, 90)) : null,
+                'portfolio_images'    => [
+                    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
+                    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800',
+                    'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800',
+                ],
+                'portfolio_url'       => 'https://instagram.com/' . strtolower("provider_dev_{$i}"),
             ]);
 
             $providerServices = (array) array_rand(

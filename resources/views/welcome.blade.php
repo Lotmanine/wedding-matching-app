@@ -60,12 +60,16 @@
                         {{ __('form.btn_start') }}
                     </a>
                     <a
-                        href="{{ route('home') }}#provider-soon"
+                        href="{{ route('provider.login') }}"
                         class="inline-flex items-center justify-center px-8 py-4 rounded-xl border-2 border-emerald-200 hover:border-brand text-brand font-semibold text-base bg-white transition-colors w-full sm:w-auto"
                     >
                         {{ __('form.landing_secondary_cta') }}
                     </a>
                 </div>
+
+                <p class="text-xs text-gray-500">
+                    <a href="{{ route('provider.register') }}" class="text-brand hover:underline">{{ __('provider.auth.create_account') }}</a> si vous êtes un nouveau prestataire.
+                </p>
 
                 <div class="flex flex-wrap gap-x-6 gap-y-3 justify-center items-center text-sm text-gray-600 pt-4">
                     <span class="flex items-center gap-2"><span class="text-brand">✓</span> {{ __('form.landing_trust_free') }}</span>
@@ -73,9 +77,6 @@
                     <span class="flex items-center gap-2"><span class="text-brand">✓</span> 58 wilayas couvertes</span>
                 </div>
 
-                <p id="provider-soon" class="text-xs text-amber-700 bg-amber-50 inline-block px-4 py-2 rounded-full border border-amber-100">
-                    ⚙️ {{ __('form.landing_secondary_notice') }}
-                </p>
 
             </div>
         </main>

@@ -13,7 +13,7 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
+        $user = User::updateOrCreate(
             ['email' => 'admin@zawajpro.dz'],
             [
                 'name'              => 'Admin Zawaj Pro',
@@ -23,5 +23,7 @@ class AdminUserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        $user->syncRoles(['admin']);
     }
 }
