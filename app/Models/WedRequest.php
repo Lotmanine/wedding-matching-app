@@ -62,6 +62,13 @@ class WedRequest extends Model
                 $wr->expires_at = now()->addDays(14);
             }
         });
+
+        static::deleted(function (WedRequest $wr): void {
+            if ($wr->isForceDeleting()) {
+                return;
+            }
+            $wr->serviceRequests()->each(fn ($sr) => $sr->delete());
+        });
     }
 
     protected static function generateUid(): string

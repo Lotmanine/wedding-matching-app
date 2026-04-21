@@ -1,11 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Controllers\Couple\CoupleRequestController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn () => view('welcome'))->name('home');
+
+Route::get('/demande', [CoupleRequestController::class, 'create'])
+    ->name('couple.request.create');
+
+Route::get('/demande/confirmation/{wedUid}', [CoupleRequestController::class, 'confirmation'])
+    ->name('couple.request.confirmation');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -17,4 +24,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

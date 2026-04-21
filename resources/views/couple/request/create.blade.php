@@ -1,0 +1,7 @@
+@extends('layouts.couple')
+
+@section('content')
+    <div class="max-w-2xl mx-auto">
+        @livewire('couple-request-form')
+    </div>
+@endsection
