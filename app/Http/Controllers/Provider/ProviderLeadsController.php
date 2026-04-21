@@ -138,8 +138,8 @@ class ProviderLeadsController extends Controller
                     ->with('status', $result->getMessage()),
             AcceptResult::STATUS_INSUFFICIENT_CREDITS
                 => redirect()
-                    ->route('provider.dashboard')
-                    ->with('error', $result->getMessage()),
+                    ->route('provider.credits.index')
+                    ->with('error', __('credits.insufficient_redirect')),
             default
                 => redirect()
                     ->route('provider.leads.index')

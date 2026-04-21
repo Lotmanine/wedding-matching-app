@@ -35,10 +35,13 @@
             </div>
             <nav class="flex-1 py-4 flex sm:flex-col gap-1 px-2 sm:px-4 overflow-x-auto sm:overflow-x-visible">
                 @php
+                    $creditBalance = auth()->user()?->providerProfile?->credit_balance ?? 0;
                     $links = [
-                        ['route' => 'provider.dashboard',    'pattern' => 'provider.dashboard',    'label' => __('provider.nav.dashboard'), 'icon' => '🏠'],
-                        ['route' => 'provider.leads.index',  'pattern' => 'provider.leads.*',      'label' => __('provider.nav.leads'),     'icon' => '📥'],
-                        ['route' => 'provider.profile.edit', 'pattern' => 'provider.profile.*',    'label' => __('provider.nav.profile'),   'icon' => '👤'],
+                        ['route' => 'provider.dashboard',        'pattern' => 'provider.dashboard',    'label' => __('provider.nav.dashboard'), 'icon' => '🏠'],
+                        ['route' => 'provider.leads.index',      'pattern' => 'provider.leads.*',      'label' => __('provider.nav.leads'),     'icon' => '📥'],
+                        ['route' => 'provider.credits.index',    'pattern' => 'provider.credits.*',    'label' => __('provider.nav.credits'),   'icon' => '💳', 'badge' => $creditBalance],
+                        ['route' => 'provider.credits.history',  'pattern' => 'provider.credits.history', 'label' => __('provider.nav.history'), 'icon' => '📜'],
+                        ['route' => 'provider.profile.edit',     'pattern' => 'provider.profile.*',    'label' => __('provider.nav.profile'),   'icon' => '👤'],
                     ];
                 @endphp
                 @foreach ($links as $link)
@@ -52,15 +55,16 @@
                         ])
                     >
                         <span>{{ $link['icon'] }}</span>
-                        <span>{{ $link['label'] }}</span>
+                        <span class="flex-1">{{ $link['label'] }}</span>
+                        @if (isset($link['badge']))
+                            <span @class([
+                                'text-xs font-semibold px-2 py-0.5 rounded-full',
+                                'bg-brand text-white' => $link['badge'] >= (int) config('zawaj.credits.unlock_cost', 1),
+                                'bg-amber-100 text-amber-800' => $link['badge'] < (int) config('zawaj.credits.unlock_cost', 1),
+                            ])>{{ $link['badge'] }}</span>
+                        @endif
                     </a>
                 @endforeach
-                <span class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 whitespace-nowrap" title="Bientôt">
-                    <span>💳</span><span>{{ __('provider.nav.credits') }}</span>
-                </span>
-                <span class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 whitespace-nowrap" title="Bientôt">
-                    <span>📜</span><span>{{ __('provider.nav.history') }}</span>
-                </span>
             </nav>
             <form method="POST" action="{{ route('provider.logout') }}" class="px-4 py-4 border-t border-emerald-100/70">
                 @csrf
@@ -75,6 +79,11 @@
             @if (session('status'))
                 <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-brand text-sm">
                     {{ session('status') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm">
+                    {{ session('error') }}
                 </div>
             @endif
 

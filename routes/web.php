@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Couple\CoupleRequestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Provider\CreditsController;
 use App\Http\Controllers\Provider\ProviderDashboardController;
 use App\Http\Controllers\Provider\ProviderLeadsController;
 use App\Http\Controllers\Provider\ProviderLoginController;
 use App\Http\Controllers\Provider\ProviderPasswordResetController;
 use App\Http\Controllers\Provider\ProviderProfileController;
 use App\Http\Controllers\Provider\ProviderRegistrationController;
+use App\Http\Controllers\Webhooks\ChargilyWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'))->name('home');
@@ -46,8 +48,22 @@ Route::prefix('provider')->name('provider.')->group(function () {
             Route::post('/leads/{serviceUid}/accept', [ProviderLeadsController::class, 'accept'])->name('leads.accept');
             Route::post('/leads/{serviceUid}/refuse', [ProviderLeadsController::class, 'refuse'])->name('leads.refuse');
         });
+
+        Route::get('/credits', [CreditsController::class, 'index'])->name('credits.index');
+        Route::get('/credits/success', [CreditsController::class, 'success'])->name('credits.success');
+        Route::get('/credits/failure', [CreditsController::class, 'failure'])->name('credits.failure');
+        Route::get('/credits/history', [CreditsController::class, 'history'])->name('credits.history');
+        Route::get('/credits/purchases/{purchaseUid}', [CreditsController::class, 'showPurchase'])->name('credits.purchase.show');
+
+        Route::post('/credits/checkout/{packSlug}', [CreditsController::class, 'checkout'])
+            ->middleware('throttle:5,1')
+            ->name('credits.checkout');
     });
 });
+
+Route::post('/webhooks/chargily', ChargilyWebhookController::class)
+    ->middleware('throttle:60,1')
+    ->name('webhooks.chargily');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

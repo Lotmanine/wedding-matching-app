@@ -12,6 +12,16 @@
             </div>
         @endif
 
+        @php $unlockCost = (int) config('zawaj.credits.unlock_cost', 1); @endphp
+        @if ($profile && (int) $profile->credit_balance < $unlockCost)
+            <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-100 text-amber-800 text-sm flex items-center justify-between gap-3">
+                <span>{{ __('credits.low_balance_warning') }}</span>
+                <a href="{{ route('provider.credits.index') }}" class="px-4 py-1.5 rounded-lg bg-brand text-white text-xs font-semibold hover:bg-brand-dark transition whitespace-nowrap">
+                    {{ __('credits.pack_cta') }}
+                </a>
+            </div>
+        @endif
+
         <div class="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
             <a href="{{ route('provider.leads.index') }}" class="p-5 rounded-2xl bg-white border border-emerald-100/60 shadow-sm hover:shadow-md hover:border-brand transition">
                 <p class="text-xs uppercase tracking-wider text-gray-500">{{ __('provider.leads.title') }}</p>
@@ -21,10 +31,10 @@
                 <p class="text-xs uppercase tracking-wider text-gray-500">{{ __('provider.dashboard.stat_accepted') }}</p>
                 <p class="mt-1 font-display text-3xl font-bold text-brand">{{ $profile->leads_accepted ?? 0 }}</p>
             </div>
-            <div class="p-5 rounded-2xl bg-white border border-emerald-100/60 shadow-sm">
+            <a href="{{ route('provider.credits.index') }}" class="p-5 rounded-2xl bg-white border border-emerald-100/60 shadow-sm hover:shadow-md hover:border-brand transition">
                 <p class="text-xs uppercase tracking-wider text-gray-500">{{ __('provider.dashboard.stat_credits') }}</p>
                 <p class="mt-1 font-display text-3xl font-bold text-brand">{{ $profile->credit_balance ?? 0 }}</p>
-            </div>
+            </a>
             <div class="p-5 rounded-2xl bg-white border border-emerald-100/60 shadow-sm">
                 <p class="text-xs uppercase tracking-wider text-gray-500">{{ __('provider.dashboard.stat_rate') }}</p>
                 <p class="mt-1 font-display text-3xl font-bold text-brand">{{ number_format((float) ($profile->acceptance_rate ?? 0), 0) }}%</p>

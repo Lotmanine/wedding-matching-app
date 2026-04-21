@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'       => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

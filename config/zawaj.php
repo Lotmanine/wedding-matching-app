@@ -21,4 +21,17 @@ return [
     'whatsapp' => [
         'link_prefix' => 'https://wa.me/',
     ],
+
+    'chargily' => [
+        'api_key'        => env('CHARGILY_API_KEY'),
+        'secret_key'     => env('CHARGILY_SECRET_KEY'),
+        'webhook_secret' => env('CHARGILY_WEBHOOK_SECRET'),
+        'mode'           => env('CHARGILY_MODE', 'test'),
+        'base_url'       => env('CHARGILY_MODE', 'test') === 'live'
+            ? 'https://pay.chargily.net/api/v2'
+            : 'https://pay.chargily.net/test/api/v2',
+        'success_url'    => env('APP_URL', 'http://localhost') . '/provider/credits/success',
+        'failure_url'    => env('APP_URL', 'http://localhost') . '/provider/credits/failure',
+        'webhook_url'    => env('APP_URL', 'http://localhost') . '/webhooks/chargily',
+    ],
 ];
