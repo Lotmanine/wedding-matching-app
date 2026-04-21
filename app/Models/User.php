@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\UserRole;
-use App\Enums\Wilaya;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,7 +41,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
             'role'              => UserRole::class,
-            'wilaya_code'       => Wilaya::class,
             'last_active_at'    => 'datetime',
         ];
     }

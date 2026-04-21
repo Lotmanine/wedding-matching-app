@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\Wilaya;
 use App\Models\ProviderProfile;
 use App\Models\User;
+use App\Models\Wilaya;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -40,7 +40,7 @@ class ProviderProfileFactory extends Factory
             'business_description' => $this->faker->sentence(15),
             'business_type'        => $this->faker->randomElement(['auto-entrepreneur', 'sarl', 'eurl', 'particulier']),
             'trade_register'       => $this->faker->optional()->numerify('RC-##-######-A'),
-            'primary_wilaya_code'  => $this->faker->randomElement(Wilaya::cases())->value,
+            'primary_wilaya_code'  => Wilaya::inRandomOrder()->value('code') ?? '16',
             'price_tier'           => $priceTier,
             'min_price'            => $min,
             'max_price'            => $max,

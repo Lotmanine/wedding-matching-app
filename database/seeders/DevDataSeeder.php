@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Enums\RequestStatus;
 use App\Enums\ServiceType;
 use App\Enums\UserRole;
-use App\Enums\Wilaya;
+use App\Models\Commune;
 use App\Models\CreditLedger;
 use App\Models\ProviderCoverage;
 use App\Models\ProviderProfile;
@@ -15,26 +15,35 @@ use App\Models\ProviderService;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WedRequest;
+use App\Models\Wilaya;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DevDataSeeder extends Seeder
 {
-    /** Major wilayas for seeded providers. */
-    private const MAJOR_WILAYAS = ['16', '31', '25', '23', '09', '19']; // Alger, Oran, Constantine, Annaba, Blida, Setif
+    /** Major-city wilaya codes for seeded providers: Alger, Oran, Constantine, Annaba, Blida, Sétif. */
+    private const MAJOR_WILAYA_CODES = ['16', '31', '25', '23', '09', '19'];
 
     public function run(): void
     {
-        $this->seedProviders(20);
+        $majorWilayas = Wilaya::whereIn('code', self::MAJOR_WILAYA_CODES)->get()->keyBy('code');
+        if ($majorWilayas->isEmpty()) {
+            $this->command?->warn('No wilayas seeded — skipping DevDataSeeder. Did WilayaSeeder run first?');
+
+            return;
+        }
+
+        $this->seedProviders(20, $majorWilayas);
         $this->seedWedRequests(10);
     }
 
-    private function seedProviders(int $count): void
+    private function seedProviders(int $count, $majorWilayas): void
     {
         $serviceTypes = collect(ServiceType::cases())->map(fn ($s) => $s->value)->all();
 
         for ($i = 1; $i <= $count; $i++) {
-            $wilaya = self::MAJOR_WILAYAS[array_rand(self::MAJOR_WILAYAS)];
+            $wilaya = $majorWilayas->random();
+            $commune = Commune::forWilaya($wilaya->id)->inRandomOrder()->first();
 
             $user = User::create([
                 'name'              => "Provider Dev {$i}",
@@ -43,37 +52,36 @@ class DevDataSeeder extends Seeder
                 'role'              => UserRole::Provider->value,
                 'phone'             => '+213' . str_pad((string) random_int(500000000, 799999999), 9, '0'),
                 'whatsapp'          => '+213' . str_pad((string) random_int(500000000, 799999999), 9, '0'),
-                'wilaya_code'       => $wilaya,
+                'wilaya_code'       => $wilaya->code,
                 'status'            => 'active',
                 'email_verified_at' => now(),
             ]);
 
             ProviderProfile::factory()->create([
                 'user_id'             => $user->id,
-                'primary_wilaya_code' => $wilaya,
+                'primary_wilaya_code' => $wilaya->code,
             ]);
 
-            // Assign 1-3 service types per provider
-            $providerServices = array_unique((array) array_rand(array_flip($serviceTypes), min(count($serviceTypes), random_int(1, 3))));
-            foreach ((array) $providerServices as $svc) {
+            $providerServices = (array) array_rand(
+                array_flip($serviceTypes),
+                min(count($serviceTypes), random_int(1, 3))
+            );
+            foreach ($providerServices as $svc) {
                 ProviderService::firstOrCreate(['user_id' => $user->id, 'service_type' => $svc]);
             }
 
-            // Coverage: primary wilaya + 1-2 neighbouring
             ProviderCoverage::firstOrCreate(
-                ['user_id' => $user->id, 'wilaya_code' => $wilaya],
+                ['user_id' => $user->id, 'wilaya_code' => $wilaya->code],
                 ['travel_fee_dzd' => 0]
             );
-            $extraWilayas = array_filter(self::MAJOR_WILAYAS, fn ($w) => $w !== $wilaya);
-            $extra = array_slice($extraWilayas, 0, random_int(1, 2));
-            foreach ($extra as $w) {
+            $extraCodes = $majorWilayas->except($wilaya->code)->pluck('code')->shuffle()->take(random_int(1, 2));
+            foreach ($extraCodes as $code) {
                 ProviderCoverage::firstOrCreate(
-                    ['user_id' => $user->id, 'wilaya_code' => $w],
+                    ['user_id' => $user->id, 'wilaya_code' => $code],
                     ['travel_fee_dzd' => random_int(1000, 8000)]
                 );
             }
 
-            // Credit ledger: initial bonus + a couple of transactions
             $balance = 3;
             CreditLedger::create([
                 'user_id'       => $user->id,
@@ -101,7 +109,6 @@ class DevDataSeeder extends Seeder
                 ]);
             }
 
-            // Sync credit_balance on profile
             $user->providerProfile->update(['credit_balance' => $balance]);
         }
     }
@@ -115,7 +122,6 @@ class DevDataSeeder extends Seeder
             if (empty($services)) {
                 $services = [ServiceType::Photo->value];
             }
-            // Ensure 2-4 service requests per wedding
             $services = array_slice(array_unique($services), 0, random_int(2, min(4, max(2, count($services)))));
             if (count($services) < 2) {
                 $all = array_diff(collect(ServiceType::cases())->map(fn ($s) => $s->value)->all(), $services);

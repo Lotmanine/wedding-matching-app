@@ -7,7 +7,6 @@ namespace App\Models;
 use App\Enums\BudgetRange;
 use App\Enums\GuestCount;
 use App\Enums\RequestStatus;
-use App\Enums\Wilaya;
 use Database\Factories\WedRequestFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,7 +47,6 @@ class WedRequest extends Model
             'expires_at'           => 'datetime',
             'budget_warning_shown' => 'boolean',
             'status'               => RequestStatus::class,
-            'couple_wilaya_code'   => Wilaya::class,
             'guest_count'          => GuestCount::class,
             'budget_range'         => BudgetRange::class,
         ];

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\Wilaya;
 use Database\Factories\ProviderProfileFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +49,6 @@ class ProviderProfile extends Model
             'languages'            => 'array',
             'verified'             => 'boolean',
             'onboarding_completed' => 'boolean',
-            'primary_wilaya_code'  => Wilaya::class,
             'verified_at'          => 'datetime',
             'rating_avg'           => 'decimal:2',
             'acceptance_rate'      => 'decimal:2',

@@ -8,7 +8,8 @@ use App\Enums\BudgetRange;
 use App\Enums\GuestCount;
 use App\Enums\RequestStatus;
 use App\Enums\ServiceType;
-use App\Enums\Wilaya;
+use App\Models\Commune;
+use App\Models\Wilaya;
 use App\Models\WedRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -33,12 +34,17 @@ class WedRequestFactory extends Factory
 
         $weddingDate = $this->faker->optional(0.85)->dateTimeBetween('+1 month', '+12 months');
 
+        $wilaya = Wilaya::inRandomOrder()->first();
+        $commune = $wilaya
+            ? Commune::forWilaya($wilaya->id)->inRandomOrder()->first()
+            : null;
+
         return [
             'status'               => RequestStatus::New->value,
             'couple_first_name'    => $this->faker->randomElement(self::$algerianFirstNames),
             'couple_whatsapp'      => '+213' . $this->faker->numerify('#########'),
-            'couple_wilaya_code'   => $this->faker->randomElement(Wilaya::cases())->value,
-            'couple_commune'       => $this->faker->optional()->city(),
+            'couple_wilaya_code'   => $wilaya?->code ?? '16',
+            'couple_commune'       => $commune?->name_fr,
             'wedding_date'         => $weddingDate,
             'wedding_season'       => $this->faker->randomElement(['Printemps', 'Été', 'Automne', 'Hiver']),
             'guest_count'          => $this->faker->randomElement(GuestCount::cases())->value,
