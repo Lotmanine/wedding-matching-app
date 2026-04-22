@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProviderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\User;
+use App\Models\Wilaya;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -59,5 +60,113 @@ class ProviderController extends Controller
         }
 
         return ApiResponse::success((new ProviderResource($user))->resolve(request()));
+    }
+
+    /**
+     * Enriched ranking context for AI-driven matching (n8n → Claude).
+     * Includes couple context, wilaya name joins, adjacency classification,
+     * and richer provider attributes (business_description, portfolio, stats).
+     */
+    public function rankingCandidates(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'service_type'        => ['required', 'string'],
+            'wilaya_code'         => ['required', 'string', 'size:2'],
+            'exclude_ids'         => ['nullable'],
+            'limit'               => ['nullable', 'integer', 'min:1', 'max:50'],
+            'service_request_uid' => ['nullable', 'string'],
+        ]);
+
+        // exclude_ids can arrive as array (eligible-style) OR comma-separated string (n8n-friendly)
+        $exclude = $data['exclude_ids'] ?? [];
+        if (is_string($exclude)) {
+            $exclude = array_filter(array_map('trim', explode(',', $exclude)));
+        }
+        $exclude = array_map('intval', (array) $exclude);
+
+        $limit = (int) ($data['limit'] ?? 20);
+        $wilayaCode = (string) $data['wilaya_code'];
+        $serviceType = (string) $data['service_type'];
+
+        $candidatesQuery = User::role('provider')
+            ->where('users.status', 'active')
+            ->whereHas('providerProfile', fn ($q) => $q->where('verified', true)->whereNull('suspended_at'))
+            ->whereHas('providerServices', fn ($q) => $q->where('service_type', $serviceType))
+            ->whereHas('providerCoverage', fn ($q) => $q->where('wilaya_code', $wilayaCode))
+            ->with(['providerProfile', 'providerServices', 'providerCoverage'])
+            ->leftJoin('provider_profiles', 'provider_profiles.user_id', '=', 'users.id')
+            ->select('users.*')
+            ->orderByDesc('provider_profiles.verified')
+            ->orderByDesc('provider_profiles.acceptance_rate')
+            ->orderByDesc('provider_profiles.rating_avg');
+
+        if (! empty($exclude)) {
+            $candidatesQuery->whereNotIn('users.id', $exclude);
+        }
+
+        if (! empty($data['service_request_uid'])) {
+            $candidatesQuery->where('users.id', '!=', (int) (\App\Models\ServiceRequest::where('service_uid', $data['service_request_uid'])->value('unlocked_by_user_id') ?: 0));
+        }
+
+        $candidates = $candidatesQuery->limit($limit)->get();
+
+        $wilayaIndex = Wilaya::whereIn('code', $candidates->pluck('providerProfile.primary_wilaya_code')->push($wilayaCode)->filter()->unique())
+            ->get()->keyBy('code');
+
+        $adjacency = (array) config('wilaya-adjacency', []);
+        $neighbours = $adjacency[$wilayaCode] ?? [];
+
+        $context = [];
+        if (! empty($data['service_request_uid'])) {
+            $sr = \App\Models\ServiceRequest::where('service_uid', $data['service_request_uid'])->with('wedRequest')->first();
+            if ($sr && $sr->wedRequest) {
+                $wr = $sr->wedRequest;
+                $context = [
+                    'couple_commune' => $wr->couple_commune,
+                    'wedding_date'   => $wr->wedding_date?->toDateString(),
+                    'guest_count'    => $wr->guest_count?->value,
+                    'budget_range'   => $wr->budget_range?->value,
+                    'description'    => $wr->description,
+                ];
+            }
+        }
+
+        $payload = array_merge([
+            'service_type' => $serviceType,
+            'wilaya_code'  => $wilayaCode,
+            'wilaya_name'  => $wilayaIndex->get($wilayaCode)?->name_fr,
+        ], $context, [
+            'candidates' => $candidates->map(function (User $u) use ($wilayaCode, $neighbours, $wilayaIndex) {
+                $p = $u->providerProfile;
+                $primary = is_string($p?->primary_wilaya_code) ? $p->primary_wilaya_code : (string) ($p?->getAttributes()['primary_wilaya_code'] ?? '');
+
+                $distance = $primary === $wilayaCode
+                    ? 'same_wilaya'
+                    : (in_array($primary, $neighbours, true) ? 'adjacent' : 'far');
+
+                return [
+                    'id'                   => $u->id,
+                    'business_name'        => $p?->business_name,
+                    'business_description' => $p?->business_description,
+                    'price_tier'           => $p?->price_tier,
+                    'min_price_dzd'        => $p?->min_price,
+                    'max_price_dzd'        => $p?->max_price,
+                    'years_experience'     => $p?->years_experience,
+                    'languages'            => (array) ($p?->languages ?? []),
+                    'rating_avg'           => (float) ($p?->rating_avg ?? 0),
+                    'rating_count'         => (int) ($p?->rating_count ?? 0),
+                    'acceptance_rate'      => (float) ($p?->acceptance_rate ?? 0),
+                    'leads_accepted'       => (int) ($p?->leads_accepted ?? 0),
+                    'portfolio_url'        => $p?->portfolio_url,
+                    'portfolio_images'     => (array) ($p?->portfolio_images ?? []),
+                    'primary_wilaya_code'  => $primary,
+                    'primary_wilaya_name'  => $wilayaIndex->get($primary)?->name_fr,
+                    'coverage_wilayas'     => $u->providerCoverage->pluck('wilaya_code')->map(fn ($v) => (string) $v)->values()->all(),
+                    'distance_from_couple' => $distance,
+                ];
+            })->values(),
+        ]);
+
+        return ApiResponse::success($payload);
     }
 }
