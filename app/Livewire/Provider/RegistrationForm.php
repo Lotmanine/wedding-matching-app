@@ -207,8 +207,10 @@ class RegistrationForm extends Component
         }
         $this->validate($rules);
 
+        $storedPaths = [];
+
         try {
-            $user = DB::transaction(function () {
+            $user = DB::transaction(function () use (&$storedPaths) {
                 $user = User::create([
                     'name'              => $this->full_name,
                     'email'             => $this->email,
@@ -229,6 +231,7 @@ class RegistrationForm extends Component
                         'logo.' . $this->logo_upload->getClientOriginalExtension(),
                         'public',
                     );
+                    $storedPaths[] = $logoPath;
                     $logoUrl = Storage::url($logoPath);
                 }
 
@@ -238,6 +241,7 @@ class RegistrationForm extends Component
                         continue;
                     }
                     $path = $img->store("providers/{$user->id}/portfolio", 'public');
+                    $storedPaths[] = $path;
                     $portfolioLocalUrls[] = Storage::url($path);
                 }
 
@@ -284,6 +288,13 @@ class RegistrationForm extends Component
                 return $user;
             });
         } catch (\Throwable $e) {
+            foreach ($storedPaths as $p) {
+                try {
+                    Storage::disk('public')->delete($p);
+                } catch (\Throwable) {
+                    // best-effort — orphan cleanup command catches anything left
+                }
+            }
             report($e);
             $this->addError('submission', __('provider.registration.failed'));
 

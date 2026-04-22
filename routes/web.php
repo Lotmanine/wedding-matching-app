@@ -39,7 +39,9 @@ Route::prefix('provider')->name('provider.')->group(function () {
         Route::get('/register', [ProviderRegistrationController::class, 'create'])->name('register');
 
         Route::get('/login', [ProviderLoginController::class, 'create'])->name('login');
-        Route::post('/login', [ProviderLoginController::class, 'store'])->name('login.store');
+        Route::post('/login', [ProviderLoginController::class, 'store'])
+            ->middleware('throttle:login')
+            ->name('login.store');
 
         Route::get('/forgot-password', [ProviderPasswordResetController::class, 'requestForm'])->name('password.request');
         Route::post('/forgot-password', [ProviderPasswordResetController::class, 'sendLink'])->name('password.email');
@@ -79,7 +81,9 @@ Route::post('/webhooks/chargily', ChargilyWebhookController::class)
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
-        Route::post('/login', [AdminLoginController::class, 'store'])->name('login.store');
+        Route::post('/login', [AdminLoginController::class, 'store'])
+            ->middleware('throttle:login')
+            ->name('login.store');
     });
 
     Route::middleware(['auth', 'role:admin'])->group(function () {

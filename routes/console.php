@@ -19,3 +19,8 @@ Schedule::command('zawaj:advance-rounds')
     ->everyFiveMinutes()
     ->timezone('Africa/Algiers')
     ->onOneServer();
+
+Schedule::command('zawaj:cleanup-orphan-uploads')
+    ->hourly()
+    ->timezone('Africa/Algiers')
+    ->onOneServer();

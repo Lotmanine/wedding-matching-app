@@ -1,0 +1,17 @@
+[Unit]
+Description=Zawaj Pro Queue Worker
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html
+ExecStart=/usr/bin/php artisan queue:work database --sleep=3 --tries=3 --max-time=3600 --max-jobs=1000 --timeout=90
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/www/html/storage/logs/worker.log
+StandardError=append:/var/www/html/storage/logs/worker.log
+
+[Install]
+WantedBy=multi-user.target

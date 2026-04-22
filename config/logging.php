@@ -65,6 +65,15 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'zawaj_structured' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/zawaj.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => 14,
+            'formatter' => \Monolog\Formatter\JsonFormatter::class,
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
