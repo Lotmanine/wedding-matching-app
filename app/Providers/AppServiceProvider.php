@@ -60,5 +60,18 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \Illuminate\Support\Facades\Event::subscribe(\App\Listeners\WebhookEventListener::class);
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\RoundStarted::class,
+            \App\Listeners\Whatsapp\DispatchRoundStartedWebhook::class,
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\LeadAccepted::class,
+            \App\Listeners\Whatsapp\DispatchLeadAcceptedWebhook::class,
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\LeadOpenedToMarketplace::class,
+            \App\Listeners\Whatsapp\DispatchLeadOpenedToMarketplaceWebhook::class,
+        );
     }
 }

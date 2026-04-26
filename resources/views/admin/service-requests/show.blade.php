@@ -51,5 +51,7 @@
                 </div>
             @endif
         </div>
+
+        @include('admin.service-requests.partials.whatsapp-delivery', ['sr' => $sr])
     </div>
 @endsection
