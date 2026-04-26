@@ -38,7 +38,12 @@
                     @foreach ($messages as $m)
                         <tr>
                             <td class="py-1.5 text-gray-500 whitespace-nowrap">{{ $m->sent_at?->diffForHumans() ?? '—' }}</td>
-                            <td class="py-1.5 font-mono">{{ $m->event_type }}</td>
+                            <td class="py-1.5 font-mono">
+                                @if ($m->direction === 'inbound')
+                                    <span class="text-[10px] px-1 py-0.5 rounded bg-purple-50 text-purple-700 mr-1">←</span>
+                                @endif
+                                {{ $m->event_type }}
+                            </td>
                             <td class="py-1.5 font-mono">{{ $m->recipient_phone_e164 }}</td>
                             <td class="py-1.5">
                                 <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $m->role === 'provider' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">{{ $m->role }}</span>
@@ -46,14 +51,37 @@
                             <td class="py-1.5 font-mono">{{ $m->template_intent ?? '—' }}</td>
                             <td class="py-1.5">
                                 @php
-                                    $statusClass = match ($m->status) {
-                                        'sent', 'delivered', 'read' => 'bg-emerald-100 text-emerald-800',
-                                        'queued'                    => 'bg-amber-100 text-amber-800',
-                                        'failed'                    => 'bg-red-100 text-red-700',
-                                        default                     => 'bg-gray-100 text-gray-600',
-                                    };
+                                    // Pill chain reflects Meta progression: sent → delivered → read.
+                                    // `failed` short-circuits and shows red; inbound rows just show their own status.
+                                    $isFailed = $m->status === 'failed';
+                                    $rank = ['queued' => 0, 'sent' => 1, 'delivered' => 2, 'read' => 3];
+                                    $current = $rank[$m->status] ?? 0;
+                                    $stages = [
+                                        ['label' => 'sent',      'idx' => 1],
+                                        ['label' => 'delivered', 'idx' => 2],
+                                        ['label' => 'read',      'idx' => 3],
+                                    ];
                                 @endphp
-                                <span class="px-1.5 py-0.5 rounded-full {{ $statusClass }}">{{ $m->status }}</span>
+                                @if ($isFailed)
+                                    <span class="px-1.5 py-0.5 rounded-full bg-red-100 text-red-700">failed</span>
+                                @elseif ($m->direction === 'inbound')
+                                    <span class="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800">{{ $m->status }}</span>
+                                @else
+                                    <span class="inline-flex gap-0.5 items-center">
+                                        @foreach ($stages as $stage)
+                                            <span @class([
+                                                'px-1 py-0.5 text-[10px] rounded',
+                                                'bg-emerald-500 text-white'        => $current >= $stage['idx'],
+                                                'bg-gray-100 text-gray-400'        => $current < $stage['idx'],
+                                            ]) title="{{ $stage['label'] }}">
+                                                {{ substr($stage['label'], 0, 1) }}
+                                            </span>
+                                            @if (! $loop->last)
+                                                <span class="text-gray-300 text-[8px]">→</span>
+                                            @endif
+                                        @endforeach
+                                    </span>
+                                @endif
                             </td>
                             <td class="py-1.5 font-mono text-[10px] text-gray-500 truncate max-w-[140px]">{{ $m->wa_message_id ?? '—' }}</td>
                             <td class="py-1.5 text-red-600 truncate max-w-[200px]">{{ $m->error ?? '' }}</td>

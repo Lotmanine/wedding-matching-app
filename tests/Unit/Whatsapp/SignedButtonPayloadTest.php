@@ -18,7 +18,7 @@ class SignedButtonPayloadTest extends TestCase
         $this->assertSame('SRV-20260422-A001', $decoded['service_request_uid']);
         $this->assertSame(12, $decoded['provider_id']);
         $this->assertSame('accept', $decoded['intent']);
-        $this->assertNotEmpty($decoded['nonce']);
+        $this->assertGreaterThan(0, $decoded['issued_at']);
     }
 
     public function test_token_fits_meta_quick_reply_limit(): void
@@ -45,11 +45,11 @@ class SignedButtonPayloadTest extends TestCase
         SignedButtonPayload::encode('SRV-X', 1, 'demolish');
     }
 
-    public function test_different_nonces_produce_different_tokens(): void
+    public function test_different_iv_produce_different_tokens(): void
     {
         $a = SignedButtonPayload::encode('SRV-X', 1, 'accept');
         $b = SignedButtonPayload::encode('SRV-X', 1, 'accept');
 
-        $this->assertNotSame($a, $b, 'Two encodes of the same tuple should produce different tokens (nonce differs)');
+        $this->assertNotSame($a, $b, 'Crypt randomises the IV per call, so two encodes must produce different tokens');
     }
 }

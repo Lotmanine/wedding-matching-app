@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\V1\ProviderController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
 use App\Http\Controllers\Api\V1\WedRequestController;
 use App\Http\Controllers\Api\V1\Webhooks\WhatsappDeliveryStatusController;
+use App\Http\Controllers\Api\V1\Whatsapp\InboundButtonTapController;
+use App\Http\Controllers\Api\V1\Whatsapp\InboundStatusUpdateController;
 use App\Http\Controllers\Webhooks\N8nWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +36,16 @@ Route::prefix('v1')->group(function () {
         Route::middleware('throttle:120,1')->group(function () {
             Route::post('/webhooks/whatsapp/delivery-status', WhatsappDeliveryStatusController::class)
                 ->name('api.v1.webhooks.whatsapp.delivery_status');
+        });
+
+        Route::middleware('throttle:240,1')->group(function () {
+            Route::post('/whatsapp/inbound/button-tap', InboundButtonTapController::class)
+                ->name('api.v1.whatsapp.inbound.button_tap');
+        });
+
+        Route::middleware('throttle:600,1')->group(function () {
+            Route::post('/whatsapp/inbound/status-update', InboundStatusUpdateController::class)
+                ->name('api.v1.whatsapp.inbound.status_update');
         });
     });
 });
