@@ -106,11 +106,34 @@ class WebhookEventListener
 
     public function handleCreditsGranted(CreditsGranted $event): void
     {
+        // Idempotency: never re-dispatch a `purchase.completed` for a purchase whose receipt
+        // has already been emailed. Defends against re-firing of CreditsGranted on retries.
+        $purchase = $event->purchase->fresh(['user.providerProfile', 'unlockPack']);
+        if ($purchase?->receipt_emailed_at !== null) {
+            return;
+        }
+
+        $user = $purchase?->user ?? $event->user;
+        $profile = $user?->providerProfile;
+
+        $langs = (array) ($profile?->languages ?? []);
+        $preferredLanguage = in_array('ar', $langs, true) ? 'ar' : 'fr';
+
+        $receiptUrl = url("/api/v1/n8n/receipts/{$event->purchase->purchase_uid}.pdf");
+
         $this->dispatcher->dispatch('purchase.completed', [
-            'purchase_uid' => $event->purchase->purchase_uid,
-            'user_id'      => $event->user->id,
-            'amount_dzd'   => (int) $event->purchase->amount_dzd,
-            'unlocks'      => (int) $event->purchase->unlocks_count,
+            'purchase_uid'       => $event->purchase->purchase_uid,
+            'user_id'            => $user?->id,
+            'provider_id'        => $user?->id,
+            'provider_email'     => $user?->email,
+            'provider_name'      => $profile?->business_name ?? $user?->name,
+            'preferred_language' => $preferredLanguage,
+            'pack_name'          => $purchase?->unlockPack?->name,
+            'amount_dzd'         => (int) $event->purchase->amount_dzd,
+            'credits_granted'    => (int) $event->purchase->unlocks_count,
+            'unlocks'            => (int) $event->purchase->unlocks_count, // backwards-compat for any older subscriber
+            'completed_at'       => ($purchase?->credits_granted_at ?? $purchase?->paid_at ?? now())->toAtomString(),
+            'receipt_pdf_url'    => $receiptUrl,
         ]);
     }
 

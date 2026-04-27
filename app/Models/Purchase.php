@@ -31,6 +31,8 @@ class Purchase extends Model
         'failure_reason',
         'credits_granted_at',
         'credit_ledger_id',
+        'receipt_emailed_at',
+        'smtp_message_id',
     ];
 
     protected function casts(): array
@@ -40,6 +42,7 @@ class Purchase extends Model
             'paid_at'             => 'datetime',
             'failed_at'           => 'datetime',
             'credits_granted_at'  => 'datetime',
+            'receipt_emailed_at'  => 'datetime',
             'amount_dzd'          => 'integer',
             'unlocks_count'       => 'integer',
         ];

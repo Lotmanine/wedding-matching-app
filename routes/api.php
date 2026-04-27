@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\V1\Admin\HealthSnapshotController;
+use App\Http\Controllers\Api\V1\Admin\N8nHeartbeatController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\N8n\ReceiptStreamController;
 use App\Http\Controllers\Api\V1\ProviderController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
 use App\Http\Controllers\Api\V1\WedRequestController;
@@ -46,6 +49,20 @@ Route::prefix('v1')->group(function () {
         Route::middleware('throttle:600,1')->group(function () {
             Route::post('/whatsapp/inbound/status-update', InboundStatusUpdateController::class)
                 ->name('api.v1.whatsapp.inbound.status_update');
+        });
+
+        Route::middleware('throttle:4,1')->group(function () {
+            Route::get('/admin/ops/health-snapshot', HealthSnapshotController::class)
+                ->name('api.v1.admin.ops.health_snapshot');
+            Route::post('/webhooks/n8n/heartbeat', N8nHeartbeatController::class)
+                ->name('api.v1.webhooks.n8n.heartbeat');
+        });
+
+        Route::middleware('throttle:60,1')->group(function () {
+            Route::get('/n8n/receipts/{purchaseUid}.pdf', [ReceiptStreamController::class, 'show'])
+                ->name('api.v1.n8n.receipts.show');
+            Route::patch('/n8n/receipts/{purchaseUid}/mark-emailed', [ReceiptStreamController::class, 'markEmailed'])
+                ->name('api.v1.n8n.receipts.mark_emailed');
         });
     });
 });

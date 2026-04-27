@@ -5,6 +5,8 @@
         <h1 class="font-display text-2xl sm:text-3xl font-bold text-gray-900">{{ __('admin.dashboard.title') }}</h1>
         <p class="text-sm text-gray-500 mt-1">{{ __('admin.dashboard.sub') }}</p>
 
+        @include('admin.dashboard.partials.ops-heartbeat')
+
         {{-- Alerts --}}
         <div class="mt-6 space-y-2">
             @if ($stats['providers_pending'] > 0)
