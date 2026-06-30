@@ -11,8 +11,17 @@ return [
     'footer_legal'      => 'Mentions légales',
     'footer_privacy'    => 'Confidentialité (ANPDP)',
 
+    // Public navigation
+    'nav_provider_area'   => 'Espace prestataire',
+    'nav_for_couples'     => 'Pour les couples',
+    'nav_submit_request'  => 'Soumettre une demande',
+    'nav_become_provider' => 'Devenez prestataire',
+    'nav_cta'             => 'Décrivez mon mariage',
+
     // Progress
     'step_of'           => 'Étape :current sur :total',
+    'sidebar_journey'   => 'Votre parcours',
+    'services_count'    => '{1} :count service sélectionné|[2,*] :count services sélectionnés',
 
     // Step titles
     'step_1_title'      => 'Parlez-nous du couple',
@@ -88,7 +97,7 @@ return [
     'landing_hero_sub'      => 'Remplissez un formulaire rapide. Nous vous connectons gratuitement avec les meilleurs prestataires de votre région.',
     'landing_trust_free'    => 'Gratuit pour les couples',
     'landing_trust_verified' => 'Prestataires vérifiés',
-    'landing_trust_wilayas' => '58 wilayas couvertes',
+    'landing_trust_wilayas' => '69 wilayas couvertes',
     'landing_secondary_cta' => 'Je suis un prestataire',
     'landing_secondary_notice' => 'L\'espace prestataires arrive très prochainement — restez à l\'écoute !',
 

@@ -1,3 +1,71 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════
+   ZAWAJ PRO — Design system (clay / ink editorial identity)
+   Ported from claude-design mockups. Tokens also live in
+   tailwind.config.js as `z-*` colors + serif/sans families.
+   ═══════════════════════════════════════════════════════ */
+
+@layer base {
+    html {
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: #FDFAF6;       /* z-bg   */
+        color: #1A1A1A;            /* z-primary */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Display face — used for the wordmark, headlines, big numbers */
+    .font-serif,
+    .font-display {
+        font-family: 'Noto Serif', Georgia, serif;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F7F4F0; }
+    ::-webkit-scrollbar-thumb { background: #D4CFC7; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #C8956C; }
+
+    /* Focus ring + selection in clay */
+    :focus-visible { outline: 2px solid #C8956C; outline-offset: 2px; }
+    ::selection { background: #F0D9B5; color: #1A1A1A; }
+
+    /* Alpine: hide x-cloak elements until initialised */
+    [x-cloak] { display: none !important; }
+}
+
+@layer components {
+    /* Material Symbols (icon font loaded via <link> in layouts) */
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        font-style: normal;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        user-select: none;
+    }
+    .material-symbols-outlined.is-filled {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* ── Legacy brand-class shims ──────────────────────────
+       Older screens referenced a green/gold palette via these
+       helpers. Remap them to the clay identity so any view not
+       yet migrated still renders on-brand instead of broken. */
+    .bg-brand   { background-color: #1A1A1A; }   /* primary action / ink */
+    .text-brand { color: #1A1A1A; }
+    .border-brand { border-color: #C8956C; }
+    .ring-brand:focus { --tw-ring-color: #C8956C; }
+    .hover\:bg-brand-dark:hover { background-color: #000000; }
+    .bg-gold    { background-color: #C8956C; }   /* accent / clay */
+    .text-gold  { color: #C8956C; }
+}

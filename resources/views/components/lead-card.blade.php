@@ -5,23 +5,23 @@
     $wr = $lead->wedRequest;
     $statusKey = 'status_' . str_replace('round', 'round_', (string) ($lead->status?->value ?? $lead->status));
     $statusBadge = match ($lead->status?->value ?? (string) $lead->status) {
-        'round1'           => ['label' => '🟢 ' . __('provider.leads.status_round_1'), 'class' => 'bg-emerald-100 text-brand'],
-        'round2'           => ['label' => '🟡 ' . __('provider.leads.status_round_2'), 'class' => 'bg-amber-100 text-amber-800'],
-        'round3'           => ['label' => '🟠 ' . __('provider.leads.status_round_3'), 'class' => 'bg-orange-100 text-orange-800'],
-        'open_marketplace' => ['label' => '🔓 ' . __('provider.leads.status_open_marketplace'), 'class' => 'bg-blue-100 text-blue-800'],
-        default            => ['label' => '• ' . ucfirst((string) ($lead->status?->value ?? $lead->status)), 'class' => 'bg-gray-100 text-gray-700'],
+        'round1'           => ['label' => __('provider.leads.status_round_1'), 'variant' => 'success'],
+        'round2'           => ['label' => __('provider.leads.status_round_2'), 'variant' => 'warning'],
+        'round3'           => ['label' => __('provider.leads.status_round_3'), 'variant' => 'accent'],
+        'open_marketplace' => ['label' => __('provider.leads.status_open_marketplace'), 'variant' => 'blue'],
+        default            => ['label' => ucfirst((string) ($lead->status?->value ?? $lead->status)), 'variant' => 'muted'],
     };
 
     $serviceIcon = match ($lead->service_type?->value) {
-        'photo'      => '📷',
-        'video'      => '🎥',
-        'traiteur'   => '🍽️',
-        'decoration' => '🎨',
-        'patisserie' => '🧁',
-        'salle'      => '🏛️',
-        'musique'    => '🎵',
-        'machta'     => '💇',
-        default      => '📋',
+        'photo'      => 'camera_alt',
+        'video'      => 'videocam',
+        'traiteur'   => 'restaurant',
+        'decoration' => 'local_florist',
+        'patisserie' => 'cake',
+        'salle'      => 'villa',
+        'musique'    => 'music_note',
+        'machta'     => 'face_retouching_natural',
+        default      => 'category',
     };
 
     $serviceLabel = $lead->service_type?->label() ?? (string) $lead->service_type;
@@ -40,41 +40,41 @@
 @endphp
 
 <a href="{{ route('provider.leads.show', $lead->service_uid) }}"
-   class="block bg-white rounded-2xl border border-emerald-100/70 shadow-sm hover:shadow-md hover:border-brand transition p-5 space-y-3 h-full">
+   class="group block bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm hover:shadow-md hover:border-[#C8956C]/40 hover:-translate-y-0.5 transition-all duration-200 p-5 space-y-4 h-full">
 
     <div class="flex items-start justify-between gap-3">
-        <div class="flex items-center gap-2">
-            <span class="text-2xl">{{ $serviceIcon }}</span>
-            <span class="font-display text-lg font-bold text-gray-900">{{ $serviceLabel }}</span>
+        <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-[#F0D9B5]/60 flex items-center justify-center shrink-0">
+                <x-z.icon :name="$serviceIcon" class="text-[#C8956C] text-xl" />
+            </div>
+            <span class="font-serif text-lg font-bold text-[#1A1A1A]">{{ $serviceLabel }}</span>
         </div>
-        <span class="text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap {{ $statusBadge['class'] }}">
-            {{ $statusBadge['label'] }}
-        </span>
+        <x-z.badge :variant="$statusBadge['variant']" class="whitespace-nowrap">{{ $statusBadge['label'] }}</x-z.badge>
     </div>
 
-    <div class="space-y-1.5 text-sm text-gray-700">
-        <p class="flex items-center gap-1.5">
-            <span class="text-gray-400">📍</span> {{ $locationLine }}
+    <div class="space-y-2 text-sm text-[#6B665E]">
+        <p class="flex items-center gap-2">
+            <x-z.icon name="location_on" class="text-[#9A958D] text-base" /> {{ $locationLine }}
         </p>
-        <p class="flex items-center gap-1.5">
-            <span class="text-gray-400">📅</span> {{ $dateLine }}
+        <p class="flex items-center gap-2">
+            <x-z.icon name="calendar_month" class="text-[#9A958D] text-base" /> {{ $dateLine }}
         </p>
-        <p class="flex items-center gap-1.5">
-            <span class="text-gray-400">👥</span> {{ $guestLabel }}
+        <p class="flex items-center gap-2">
+            <x-z.icon name="group" class="text-[#9A958D] text-base" /> {{ $guestLabel }}
         </p>
-        <p class="flex items-center gap-1.5">
-            <span class="text-gray-400">💰</span> <span class="font-medium">{{ $budgetLabel }}</span>
+        <p class="flex items-center gap-2">
+            <x-z.icon name="payments" class="text-[#9A958D] text-base" /> <span class="font-semibold text-[#1A1A1A]">{{ $budgetLabel }}</span>
         </p>
     </div>
 
     @if ($excerpt !== '')
-        <p class="text-sm text-gray-500 italic border-t border-gray-100 pt-3">« {{ $excerpt }} »</p>
+        <p class="text-sm text-[#9A958D] italic border-t border-[#D4CFC7]/30 pt-3 leading-relaxed">« {{ $excerpt }} »</p>
     @endif
 
-    <div class="flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-gray-500">
+    <div class="flex items-center justify-between pt-3 border-t border-[#D4CFC7]/30 text-xs text-[#9A958D]">
         <span>{{ __('provider.leads.card_couple_initial', ['initial' => $initial, 'wilaya' => $wilayaLabel]) }}</span>
-        <span class="text-brand font-medium hover:underline">{{ __('provider.leads.card_see_details') }} →</span>
+        <span class="text-[#1A1A1A] font-bold flex items-center gap-1 group-hover:text-[#C8956C] transition-colors">{{ __('provider.leads.card_see_details') }} <x-z.icon name="arrow_forward" class="text-sm" /></span>
     </div>
 
-    <p class="text-[11px] text-gray-400">{{ __('provider.leads.card_time_ago', ['when' => $lead->created_at->diffForHumans()]) }}</p>
+    <p class="text-[11px] text-[#9A958D]">{{ __('provider.leads.card_time_ago', ['when' => $lead->created_at->diffForHumans()]) }}</p>
 </a>

@@ -3,37 +3,39 @@
 @section('content')
     <div class="max-w-2xl mx-auto">
         <div class="bg-white rounded-2xl border border-red-100 shadow-sm p-8 sm:p-10 text-center space-y-6">
-            <div class="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center text-3xl">⚠️</div>
+            <div class="mx-auto w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center">
+                <x-z.icon name="error" :filled="true" class="text-[#A84936] text-3xl" />
+            </div>
 
             <div>
-                <h1 class="font-display text-2xl font-bold text-gray-900">{{ __('credits.failure_title') }}</h1>
-                <p class="mt-2 text-gray-600">{{ __('credits.failure_sub') }}</p>
+                <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('credits.failure_title') }}</h1>
+                <p class="mt-2 text-[#6B665E]">{{ __('credits.failure_sub') }}</p>
             </div>
 
             @if ($purchase && $purchase->failure_reason)
-                <div class="p-3 rounded-lg bg-gray-50 border border-gray-100 text-sm text-gray-700">
-                    <span class="text-gray-500">{{ __('credits.failure_reason') }} :</span>
-                    <span class="font-mono text-gray-800">{{ $purchase->failure_reason }}</span>
+                <div class="p-3 rounded-lg bg-[#F7F4F0] border border-[#D4CFC7]/50 text-sm text-[#6B665E]">
+                    <span class="text-[#9A958D]">{{ __('credits.failure_reason') }} :</span>
+                    <span class="font-mono text-[#1A1A1A]">{{ $purchase->failure_reason }}</span>
                 </div>
             @endif
 
-            <ul class="text-sm text-gray-600 text-left space-y-2 bg-emerald-50/30 border border-emerald-100 rounded-xl p-4">
+            <ul class="text-sm text-[#6B665E] text-left space-y-2 bg-[#F0D9B5]/20 border border-[#C8956C]/20 rounded-xl p-4">
                 @foreach (__('credits.failure_tips') as $tip)
-                    <li>• {{ $tip }}</li>
+                    <li class="flex items-start gap-2"><x-z.icon name="check" class="text-[#C8956C] text-base shrink-0 mt-0.5" />{{ $tip }}</li>
                 @endforeach
             </ul>
 
             <div class="flex flex-col sm:flex-row gap-2">
-                <a href="{{ route('provider.credits.index') }}" class="flex-1 py-3 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold text-sm transition">
+                <x-z.btn :href="route('provider.credits.index')" variant="accent" size="lg" class="flex-1 justify-center">
                     {{ __('credits.failure_retry') }}
-                </a>
-                <a href="mailto:support@zawajpro.dz" class="flex-1 py-3 rounded-xl border-2 border-gray-200 hover:border-brand text-brand font-semibold text-sm transition">
+                </x-z.btn>
+                <x-z.btn href="mailto:support@zawajpro.dz" variant="outline" size="lg" class="flex-1 justify-center">
                     {{ __('credits.failure_contact') }}
-                </a>
+                </x-z.btn>
             </div>
 
             @if ($purchase)
-                <p class="text-xs text-gray-400 font-mono">{{ $purchase->purchase_uid }}</p>
+                <p class="text-xs text-[#9A958D] font-mono">{{ $purchase->purchase_uid }}</p>
             @endif
         </div>
     </div>

@@ -1,97 +1,390 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Zawaj Pro — Trouvez les meilleurs prestataires pour votre mariage en Algérie.">
-    <title>{{ __('form.brand') }} — Algérie</title>
+@extends('layouts.couple')
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+@section('content')
+@php
+    // ─── Catégories (bento) — adaptées de claude-design/Landing.jsx ───
+    $categories = [
+        ['label' => 'Photographe',     'count' => '840',   'icon' => 'camera_alt',             'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=800&q=80', 'span' => false],
+        ['label' => 'Vidéaste',        'count' => '310',   'icon' => 'videocam',               'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => 'https://images.unsplash.com/photo-1492691527719-9d1e7e7338f9?auto=format&fit=crop&w=800&q=80', 'span' => false],
+        ['label' => 'Traiteur',        'count' => '1 200', 'icon' => 'restaurant',             'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80', 'span' => false],
+        ['label' => 'Salle des fêtes', 'count' => '190',   'icon' => 'villa',                  'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80', 'span' => true],
+        ['label' => 'Décoration',      'count' => '650',   'icon' => 'local_florist',          'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80', 'span' => false],
+        ['label' => 'Pâtisserie',      'count' => '420',   'icon' => 'cake',                   'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80', 'span' => false],
+        ['label' => 'Machta',          'count' => '510',   'icon' => 'face_retouching_natural','gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80', 'span' => false],
+    ];
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    $faqs = [
+        ['q' => "Est-ce vraiment gratuit pour les couples ?", 'a' => "Oui, totalement. Notre mission est de vous aider à trouver l'excellence sans aucuns frais. Les prestataires paient pour accéder à vos coordonnées, pas vous."],
+        ['q' => "Comment sont sélectionnés les prestataires ?", 'a' => "Notre équipe vérifie manuellement chaque prestataire : identité, portfolio, avis clients, et disponibilité. Notre système matche ensuite votre profil avec les meilleurs candidats disponibles."],
+        ['q' => "En combien de temps vais-je recevoir des réponses ?", 'a' => "Dès validation de votre demande, les prestataires sont alertés. Vous recevrez les premiers contacts WhatsApp en général dans les 24 heures."],
+        ['q' => "Mes données sont-elles en sécurité ?", 'a' => "Votre numéro WhatsApp n'est partagé qu'avec les prestataires sélectionnés. Vos données sont protégées conformément à la réglementation ANPDP algérienne et supprimées après 90 jours."],
+        ['q' => "Que se passe-t-il si je ne suis pas satisfait(e) ?", 'a' => "Vous n'avez aucun engagement. Si les propositions ne vous conviennent pas, vous êtes libre de recommencer votre recherche ou de trouver d'autres prestataires sans frais."],
+    ];
 
-    <style>
-        body { font-family: 'DM Sans', system-ui, sans-serif; background: #FEFDF8; }
-        .font-display { font-family: 'Playfair Display', serif; }
-        .bg-brand { background-color: #1B5E20; }
-        .text-brand { color: #1B5E20; }
-        .border-brand { border-color: #1B5E20; }
-        .bg-gold { background-color: #D4A843; }
-        .text-gold { color: #D4A843; }
-        .hover\:bg-brand-dark:hover { background-color: #0f3a14; }
-    </style>
-</head>
-<body class="antialiased text-gray-800">
+    $testimonials = [
+        ['quote' => "En 20 minutes j'ai décrit mon mariage, et le lendemain matin j'avais déjà 3 photographes qui me proposaient des portfolios sublimes. Zawaj Pro a changé la donne.", 'name' => 'Amira B.', 'city' => 'Alger', 'date' => 'Juillet 2025'],
+        ['quote' => "Le traiteur qu'on a trouvé via Zawaj Pro était exactement ce qu'on voulait. Transparent sur les prix, disponible, et le jour J — parfait. Merci infiniment.", 'name' => 'Youcef K.', 'city' => 'Oran', 'date' => 'Septembre 2025'],
+        ['quote' => "Ce qui m'a convaincu c'est la vérification. Je savais que les prestataires étaient sérieux avant même de les contacter. Zéro arnaque, zéro stress.", 'name' => 'Nadia M.', 'city' => 'Constantine', 'date' => 'Octobre 2025'],
+    ];
+@endphp
 
-    <div class="min-h-screen flex flex-col">
+{{-- The layout's <main> applies px/py padding; this landing wants full-bleed sections, so neutralise it. --}}
+<div class="-mx-4 sm:-mx-6 -my-8 sm:-my-12 bg-[#FDFAF6]">
 
-        <header class="px-6 sm:px-10 py-5 border-b border-emerald-100/60">
-            <div class="max-w-6xl mx-auto flex items-center justify-between">
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <span class="inline-block w-9 h-9 rounded-full bg-brand flex items-center justify-center text-white text-lg">💍</span>
-                    <span class="font-display text-2xl font-bold text-brand tracking-tight">{{ __('form.brand') }}</span>
-                </a>
-                <span class="text-xs text-gray-400 uppercase tracking-widest hidden sm:inline">Algérie 🇩🇿</span>
-            </div>
-        </header>
-
-        <main class="flex-1 flex items-center justify-center px-6 py-16 sm:py-24">
-            <div class="max-w-3xl text-center space-y-10">
-
-                <div class="space-y-5">
-                    <span class="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-brand text-sm font-medium">
-                        ✨ Plateforme n°1 pour les mariages en Algérie
-                    </span>
-                    <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] tracking-tight">
-                        {{ __('form.landing_hero_title') }}
-                    </h1>
-                    <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                        {{ __('form.landing_hero_sub') }}
-                    </p>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                    <a
-                        href="{{ route('couple.request.create') }}"
-                        class="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold text-base shadow-lg shadow-emerald-900/10 transition-all hover:scale-[1.02] w-full sm:w-auto"
-                    >
-                        {{ __('form.btn_start') }}
-                    </a>
-                    <a
-                        href="{{ route('provider.login') }}"
-                        class="inline-flex items-center justify-center px-8 py-4 rounded-xl border-2 border-emerald-200 hover:border-brand text-brand font-semibold text-base bg-white transition-colors w-full sm:w-auto"
-                    >
-                        {{ __('form.landing_secondary_cta') }}
-                    </a>
-                </div>
-
-                <p class="text-xs text-gray-500">
-                    <a href="{{ route('provider.register') }}" class="text-brand hover:underline">{{ __('provider.auth.create_account') }}</a> si vous êtes un nouveau prestataire.
+    {{-- ── Hero ────────────────────────────────────────────── --}}
+    <section class="pt-20 md:pt-28 pb-20 px-5 md:px-8 relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" style="background-image:radial-gradient(ellipse at 85% 5%, #F0D9B5 0%, transparent 50%)"></div>
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative">
+            <div>
+                <x-z.badge variant="accent" class="mb-7">
+                    <x-z.icon name="auto_awesome" class="text-sm" /> IA + Expertise humaine
+                </x-z.badge>
+                <h1 class="font-serif text-5xl md:text-6xl lg:text-[72px] text-[#1A1A1A] leading-[1.05] font-bold mb-7 text-balance">
+                    Trouvez l'excellence pour votre mariage
+                </h1>
+                <p class="text-lg md:text-xl text-[#6B665E] leading-relaxed mb-10 max-w-xl">
+                    Décrivez votre vision. Notre système identifie les meilleurs artisans algériens, vérifie leurs disponibilités et vous met en contact en moins de 24h.
                 </p>
-
-                <div class="flex flex-wrap gap-x-6 gap-y-3 justify-center items-center text-sm text-gray-600 pt-4">
-                    <span class="flex items-center gap-2"><span class="text-brand">✓</span> {{ __('form.landing_trust_free') }}</span>
-                    <span class="flex items-center gap-2"><span class="text-brand">✓</span> {{ __('form.landing_trust_verified') }}</span>
-                    <span class="flex items-center gap-2"><span class="text-brand">✓</span> 58 wilayas couvertes</span>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <x-z.btn :href="route('couple.request.create')" size="lg" class="shadow-xl shadow-black/10">
+                        Décrire mon mariage
+                        <x-z.icon name="arrow_forward" class="text-lg" />
+                    </x-z.btn>
+                    <x-z.btn :href="route('couple.request.create')" size="lg" variant="whatsapp">
+                        <x-z.icon name="chat" :filled="true" class="text-lg" /> Via WhatsApp
+                    </x-z.btn>
                 </div>
-
-
+                <p class="text-xs text-[#9A958D] mt-5 flex items-center gap-2">
+                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> Gratuit pour les couples · Résultats sous 24h · Conforme ANPDP
+                </p>
             </div>
-        </main>
 
-        <footer class="border-t border-emerald-100/60 px-6 py-8 bg-white/60">
-            <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-                <p>{{ __('form.footer_copyright', ['year' => date('Y')]) }}</p>
-                <div class="flex items-center gap-6">
-                    <a href="#" class="hover:text-brand">{{ __('form.footer_legal') }}</a>
-                    <a href="#" class="hover:text-brand">{{ __('form.footer_privacy') }}</a>
+            {{-- Phone mockup --}}
+            <div class="hidden lg:flex justify-center items-center">
+                <div class="relative w-[300px] mx-auto">
+                    <div class="absolute -inset-8 bg-[#C8956C]/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="relative w-[280px] bg-[#1A1A1A] rounded-[3rem] p-3 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.35)] border-[6px] border-[#1A1A1A]">
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#1A1A1A] rounded-b-2xl z-10"></div>
+                        <div class="w-full rounded-[2.3rem] overflow-hidden bg-[#F0D9B5]/20 flex flex-col" style="height:560px">
+                            {{-- WA header --}}
+                            <div class="bg-[#1A1A1A] px-4 pt-8 pb-3 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-[#C8956C] flex items-center justify-center text-white text-xs font-bold shrink-0">ZP</div>
+                                <div>
+                                    <p class="text-white text-sm font-bold leading-none">Zawaj Pro</p>
+                                    <p class="text-[#C8956C] text-[10px] mt-0.5">En ligne · IA active</p>
+                                </div>
+                            </div>
+                            {{-- WA chat --}}
+                            <div class="flex-1 bg-[#FDFAF6] p-3 space-y-3 overflow-hidden">
+                                <div class="bg-white rounded-2xl rounded-tl-sm p-3 shadow-sm border border-[#D4CFC7]/30 max-w-[85%] text-[11px] leading-relaxed text-[#1A1A1A]">
+                                    Bonjour ! Mariage à Alger le 15 juillet — je cherche un photographe style naturel/éditorial 📷
+                                    <p class="text-[9px] text-right text-[#9A958D] mt-1">10:14</p>
+                                </div>
+                                <div class="bg-[#F0D9B5] rounded-2xl rounded-tr-sm p-3 shadow-sm max-w-[85%] ml-auto text-[11px] leading-relaxed text-[#1A1A1A]">
+                                    Félicitations 🎉 Notre système analyse <b>42 photographes vérifiés</b> à Alger pour le 15 juillet...
+                                    <p class="text-[9px] text-right text-[#7A5530]/60 mt-1">10:14</p>
+                                </div>
+                                <div class="flex items-center gap-1.5 ml-auto max-w-[85%]">
+                                    <div class="bg-[#F0D9B5] rounded-full px-3 py-1.5 text-[10px] font-bold text-[#1A1A1A] flex items-center gap-1">
+                                        <x-z.icon name="auto_awesome" :filled="true" class="text-xs" /> Analyse en cours
+                                    </div>
+                                    <div class="flex gap-0.5">
+                                        @for ($i = 0; $i < 3; $i++)
+                                            <div class="w-1.5 h-1.5 bg-[#C8956C] rounded-full animate-bounce" style="animation-delay:{{ $i * 0.15 }}s"></div>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <div class="bg-[#F0D9B5] rounded-2xl rounded-tr-sm p-3 shadow-sm max-w-[90%] ml-auto text-[11px] leading-relaxed text-[#1A1A1A]">
+                                    ✅ <b>3 photographes</b> correspondent parfaitement à votre vision. Disponibles le 15/07. Voulez-vous voir leurs portfolios ?
+                                    <p class="text-[9px] text-right text-[#7A5530]/60 mt-1">10:15</p>
+                                </div>
+                            </div>
+                            {{-- WA input --}}
+                            <div class="bg-white px-3 py-2.5 flex items-center gap-2 border-t border-[#D4CFC7]/30">
+                                <div class="flex-1 bg-[#F7F4F0] rounded-full h-8"></div>
+                                <div class="w-8 h-8 rounded-full bg-[#1A1A1A] flex items-center justify-center shrink-0">
+                                    <x-z.icon name="send" class="text-white text-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </footer>
+        </div>
+    </section>
 
-    </div>
+    {{-- ── Trust bar ───────────────────────────────────────── --}}
+    <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
+        <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-10">
+            @foreach ([['2 000+', 'couples servis'], ['500+', 'prestataires vérifiés'], ['69', 'wilayas couvertes'], ['< 24h', 'délai moyen']] as $stat)
+                <div class="flex items-center gap-3">
+                    <span class="font-serif text-2xl font-bold text-[#C8956C]">{{ $stat[0] }}</span>
+                    <span class="text-sm text-[#6B665E] font-medium">{{ $stat[1] }}</span>
+                </div>
+            @endforeach
+        </div>
+    </section>
 
-</body>
-</html>
+    {{-- ── How it works ────────────────────────────────────── --}}
+    <section id="comment" class="py-24 md:py-32 px-5 md:px-8 scroll-mt-28">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 md:mb-20">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Comment ça marche</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-5">Une organisation simplifiée</h2>
+                <p class="text-[#6B665E] text-lg max-w-xl mx-auto">Trois étapes pensées pour transformer votre stress en une célébration mémorable.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6 md:gap-8 relative">
+                <div class="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px bg-gradient-to-r from-[#D4CFC7] via-[#C8956C] to-[#D4CFC7] z-0"></div>
+                @php
+                    $steps = [
+                        ['n' => '01', 'icon' => 'edit_note', 'title' => 'Décrivez vos besoins', 'body' => 'Date, budget, style, wilaya — en quelques minutes, votre profil mariage est complet.'],
+                        ['n' => '02', 'icon' => 'psychology', 'title' => 'Analyse intelligente', 'body' => "Parmi des milliers d'artisans vérifiés, notre système retient uniquement ceux qui correspondent à votre profil."],
+                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => 'Recevez sur WhatsApp', 'body' => '3 prestataires sélectionnés vous contactent avec tarifs et portfolios. Choisissez en toute sérénité.'],
+                    ];
+                @endphp
+                @foreach ($steps as $step)
+                    <div class="relative z-10 bg-white rounded-2xl p-8 border border-[#D4CFC7]/50 shadow-sm hover:shadow-md hover:border-[#C8956C]/40 transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-7">
+                            <span class="font-serif text-5xl font-bold text-[#F0D9B5] group-hover:text-[#C8956C]/30 transition-colors">{{ $step['n'] }}</span>
+                            <div class="w-12 h-12 rounded-xl bg-[#F7F4F0] group-hover:bg-[#F0D9B5] transition-colors flex items-center justify-center">
+                                <x-z.icon :name="$step['icon']" class="text-[#C8956C] text-2xl" />
+                            </div>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A] mb-3">{{ $step['title'] }}</h3>
+                        <p class="text-[#6B665E] leading-relaxed text-sm">{{ $step['body'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Comparison ──────────────────────────────────────── --}}
+    <section class="py-24 md:py-32 px-5 md:px-8 bg-[#F7F4F0]">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-serif text-4xl md:text-5xl font-bold text-center text-[#1A1A1A] mb-14">Pourquoi Zawaj Pro ?</h2>
+            <div class="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl shadow-black/5 border border-[#D4CFC7]/40">
+                {{-- Without --}}
+                <div class="bg-white p-8 md:p-10">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 font-bold text-sm">×</div>
+                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">Recherche classique</h3>
+                    </div>
+                    <ul class="space-y-5">
+                        @foreach (["Des heures à scroller des groupes Facebook désorganisés", "Risque d'arnaques — pas de vérification", "Attendre des jours pour un simple devis", "Prestataires débordés, sans suivi"] as $t)
+                            <li class="flex items-start gap-3 text-sm text-[#6B665E]">
+                                <x-z.icon name="remove_circle_outline" class="text-[#D4CFC7] text-lg shrink-0 mt-0.5" />
+                                {{ $t }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                {{-- With --}}
+                <div class="bg-white p-8 md:p-10 relative">
+                    <div class="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#F0D9B5] via-[#C8956C] to-[#F0D9B5]"></div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-8 h-8 rounded-full bg-[#F0D9B5] flex items-center justify-center">
+                            <x-z.icon name="check" :filled="true" class="text-[#C8956C] text-sm" />
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">Avec Zawaj Pro</h3>
+                    </div>
+                    <ul class="space-y-5">
+                        @foreach (['Notre système cherche pour vous, 24h/24', 'Chaque prestataire est vérifié et noté', 'Devis et disponibilités en moins de 24h', 'Contact WhatsApp direct — simple et rapide'] as $t)
+                            <li class="flex items-start gap-3 text-sm font-semibold text-[#1A1A1A]">
+                                <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-lg shrink-0 mt-0.5" />
+                                {{ $t }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Categories ──────────────────────────────────────── --}}
+    <section class="py-24 md:py-32 px-5 md:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-12">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Nos catégories</p>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">Explorez nos univers</h2>
+                </div>
+                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">Des artisans passionnés pour chaque détail de votre journée.</p>
+            </div>
+
+            {{-- Reusable card markup: render once per layout (desktop bento + mobile grid) --}}
+            @php
+                $renderCategory = function ($c, $span) {
+                    $style = 'background:' . $c['gradient'] . ($span && $c['span'] ? ';grid-row:span 2' : '');
+                    ob_start(); ?>
+                    <div class="group relative rounded-2xl overflow-hidden cursor-pointer" style="<?php echo $style; ?>">
+                        <img src="<?php echo $c['image']; ?>" alt="<?php echo e($c['label']); ?>" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/85 via-[#1A1A1A]/15 to-transparent group-hover:from-[#1A1A1A]/90 transition-all duration-500"></div>
+                        <div class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <span class="material-symbols-outlined text-white text-lg" aria-hidden="true"><?php echo $c['icon']; ?></span>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                            <p class="font-serif text-white text-xl font-bold mb-1 group-hover:-translate-y-0.5 transition-transform duration-300"><?php echo e($c['label']); ?></p>
+                            <p class="text-white/55 text-[11px] font-bold uppercase tracking-widest"><?php echo e($c['count']); ?> prestataires</p>
+                        </div>
+                    </div>
+                    <?php return ob_get_clean();
+                };
+            @endphp
+
+            {{-- Desktop bento — Salle des fêtes spans 2 rows --}}
+            <div class="hidden lg:grid gap-4" style="grid-template-columns:repeat(4,1fr);grid-template-rows:300px 300px">
+                @foreach ($categories as $c)
+                    {!! $renderCategory($c, true) !!}
+                @endforeach
+            </div>
+            {{-- Mobile 2-col --}}
+            <div class="grid grid-cols-2 gap-3 lg:hidden">
+                @foreach ($categories as $c)
+                    <div class="h-52">{!! $renderCategory($c, false) !!}</div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Mission / humanizing ────────────────────────────── --}}
+    <section class="py-24 md:py-32 px-5 md:px-8 bg-[#F7F4F0]">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {{-- Image collage --}}
+            <div class="relative h-[420px] md:h-[520px]">
+                <div class="absolute top-0 left-0 w-[58%] h-[65%] rounded-2xl overflow-hidden shadow-xl shadow-black/10">
+                    <img src="https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=700&q=80" alt="Mariage algérien" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="absolute bottom-0 left-[8%] w-[48%] h-[48%] rounded-2xl overflow-hidden shadow-xl shadow-black/10 border-4 border-white">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=700&q=80" alt="Couple heureux" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="absolute top-[10%] right-0 w-[38%] h-[55%] rounded-2xl overflow-hidden shadow-xl shadow-black/10">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=700&q=80" alt="Cérémonie" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                <div class="absolute bottom-[15%] right-[2%] bg-white rounded-2xl p-4 shadow-lg shadow-black/10 border border-[#D4CFC7]/40">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#F0D9B5] flex items-center justify-center shrink-0">
+                            <x-z.icon name="favorite" :filled="true" class="text-[#C8956C] text-xl" />
+                        </div>
+                        <div>
+                            <p class="font-serif text-2xl font-bold text-[#1A1A1A] leading-none">2 000+</p>
+                            <p class="text-xs text-[#9A958D] mt-0.5">mariages organisés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Text --}}
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">Notre mission</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] leading-[1.1] mb-6 text-balance">
+                    Derrière chaque mariage, une équipe qui vous accompagne
+                </h2>
+                <p class="text-[#6B665E] leading-relaxed text-lg mb-8">
+                    Zawaj Pro est né d'une conviction simple : trouver le bon photographe, le bon traiteur ou la bonne salle ne devrait pas prendre des semaines. Notre équipe algérienne connaît les artisans de votre région, vérifie leur sérieux, et vous les présente directement.
+                </p>
+                <div class="space-y-5">
+                    @php
+                        $missionItems = [
+                            ['icon' => 'handshake', 'title' => 'Des prestataires que nous connaissons', 'body' => "Chaque prestataire est rencontré et vérifié par notre équipe avant d'apparaître sur la plateforme."],
+                            ['icon' => 'shield', 'title' => 'Vos données, votre vie privée', 'body' => "Votre numéro WhatsApp n'est partagé qu'avec les prestataires que vous avez acceptés. Jamais vendu, jamais exploité."],
+                            ['icon' => 'support_agent', 'title' => 'Une équipe disponible', 'body' => "Une question ? Un problème ? Nous répondons via WhatsApp en moins de 2 heures."],
+                        ];
+                    @endphp
+                    @foreach ($missionItems as $item)
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-white border border-[#D4CFC7]/50 flex items-center justify-center shrink-0 shadow-sm">
+                                <x-z.icon :name="$item['icon']" :filled="true" class="text-[#C8956C] text-xl" />
+                            </div>
+                            <div>
+                                <p class="font-semibold text-[#1A1A1A] mb-0.5">{{ $item['title'] }}</p>
+                                <p class="text-sm text-[#6B665E] leading-relaxed">{{ $item['body'] }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Testimonials ────────────────────────────────────── --}}
+    <section class="py-24 md:py-32 px-5 md:px-8 bg-[#F7F4F0]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-14">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Témoignages</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">Ce que disent les couples</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                @foreach ($testimonials as $tm)
+                    <div class="bg-white rounded-2xl p-7 border border-[#D4CFC7]/50 shadow-sm flex flex-col gap-5">
+                        <div class="flex gap-0.5">
+                            @for ($i = 0; $i < 5; $i++)
+                                <x-z.icon name="star" :filled="true" class="text-[#C8956C] text-lg" />
+                            @endfor
+                        </div>
+                        <blockquote class="font-serif text-lg text-[#1A1A1A] leading-relaxed flex-1">"{{ $tm['quote'] }}"</blockquote>
+                        <div class="flex items-center gap-3 pt-1 border-t border-[#D4CFC7]/30">
+                            <div class="w-9 h-9 rounded-full bg-[#F0D9B5] flex items-center justify-center font-bold text-[#1A1A1A] text-sm shrink-0">
+                                {{ \Illuminate\Support\Str::substr($tm['name'], 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-[#1A1A1A]">{{ $tm['name'] }}</p>
+                                <p class="text-xs text-[#9A958D]">{{ $tm['city'] }} · {{ $tm['date'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ── FAQ ─────────────────────────────────────────────── --}}
+    <section id="faq" class="py-24 md:py-32 px-5 md:px-8 scroll-mt-28">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">FAQ</p>
+                <h2 class="font-serif text-4xl font-bold text-[#1A1A1A]">Questions fréquentes</h2>
+            </div>
+            <div class="space-y-3">
+                @foreach ($faqs as $f)
+                    <details class="group rounded-xl border border-[#D4CFC7]/50 bg-white open:border-[#C8956C]/40 hover:border-[#C8956C]/30 transition-all duration-300 overflow-hidden">
+                        <summary class="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8956C]/40 rounded-xl">
+                            <span class="font-semibold text-[#1A1A1A] text-sm md:text-base pr-4">{{ $f['q'] }}</span>
+                            <x-z.icon name="add" class="text-xl shrink-0 text-[#9A958D] group-open:hidden" />
+                            <x-z.icon name="remove" class="text-xl shrink-0 text-[#C8956C] hidden group-open:inline" />
+                        </summary>
+                        <div class="px-5 md:px-6 pb-5 text-sm text-[#6B665E] leading-relaxed border-t border-[#D4CFC7]/30 pt-4">
+                            {{ $f['a'] }}
+                        </div>
+                    </details>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Final CTA ───────────────────────────────────────── --}}
+    <section class="px-5 md:px-8 pb-24">
+        <div class="max-w-5xl mx-auto">
+            <div class="bg-[#1A1A1A] rounded-[2rem] px-8 md:px-20 py-16 md:py-20 text-center relative overflow-hidden">
+                <div class="absolute inset-0 pointer-events-none opacity-[0.04]" style="background-image:radial-gradient(circle at 2px 2px, #F0D9B5 1px, transparent 0);background-size:28px 28px"></div>
+                <div class="relative">
+                    <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">Commencez maintenant</p>
+                    <h2 class="font-serif text-4xl md:text-5xl text-white font-bold mb-6 leading-tight text-balance">
+                        Prêt(e) à organiser le mariage de vos rêves ?
+                    </h2>
+                    <p class="text-white/60 text-lg mb-10 max-w-xl mx-auto">
+                        Rejoignez des milliers de couples algériens qui font confiance à Zawaj Pro.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <x-z.btn :href="route('couple.request.create')" size="lg" variant="accent">
+                            Décrire mon mariage <x-z.icon name="arrow_forward" class="text-lg" />
+                        </x-z.btn>
+                        <x-z.btn :href="route('provider.register')" size="lg" variant="ghost-white">
+                            Rejoindre en tant que prestataire
+                        </x-z.btn>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+@endsection

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminLogsController;
 use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Admin\AdminLogsController;
 use App\Http\Controllers\Admin\AdminPacksController;
 use App\Http\Controllers\Admin\AdminProvidersController;
 use App\Http\Controllers\Admin\AdminPurchasesController;
@@ -32,6 +32,10 @@ Route::get('/demande', [CoupleRequestController::class, 'create'])
 
 Route::get('/demande/confirmation/{wedUid}', [CoupleRequestController::class, 'confirmation'])
     ->name('couple.request.confirmation');
+
+// Legal / ANPDP pages (public)
+Route::view('/confidentialite', 'legal.privacy')->name('legal.privacy');
+Route::view('/conditions-utilisation', 'legal.terms')->name('legal.terms');
 
 Route::prefix('provider')->name('provider.')->group(function () {
 
@@ -154,4 +158,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

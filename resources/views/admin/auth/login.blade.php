@@ -1,51 +1,51 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('admin.auth.title') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        body { font-family: 'DM Sans', sans-serif; background: #0f172a; color: #f1f5f9; }
-        .font-display { font-family: 'Playfair Display', serif; }
-        .bg-brand { background: #1B5E20; }
-        .hover\:bg-brand-dark:hover { background: #0f3a14; }
-    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4">
-    <div class="w-full max-w-md bg-slate-800 rounded-2xl shadow-2xl p-8 border border-slate-700">
-        <div class="flex items-center gap-2 mb-6">
-            <span class="w-8 h-8 rounded-full bg-brand flex items-center justify-center">💍</span>
-            <span class="font-display text-xl font-bold">{{ __('admin.brand') }}</span>
-            <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-brand text-white uppercase tracking-widest">{{ __('admin.admin_badge') }}</span>
-        </div>
+<body class="font-sans antialiased text-white min-h-screen flex flex-col items-center justify-center px-5 bg-[#1A1A1A]">
+    <div class="mb-10 text-center">
+        <div class="font-serif text-3xl font-bold text-white mb-1">{{ __('admin.brand') }}</div>
+        <div class="text-xs text-[#C8956C] font-bold uppercase tracking-widest">{{ __('admin.admin_badge') }}</div>
+    </div>
 
-        <h1 class="font-display text-2xl font-bold mb-1">{{ __('admin.auth.title') }}</h1>
-        <p class="text-sm text-slate-400 mb-6">{{ __('admin.auth.sub') }}</p>
+    <div class="w-full max-w-sm bg-white/5 border border-white/10 rounded-2xl p-8 space-y-5 backdrop-blur-sm">
+        <h1 class="font-serif text-xl font-bold text-white">{{ __('admin.auth.title') }}</h1>
+        <p class="text-sm text-white/50 -mt-2">{{ __('admin.auth.sub') }}</p>
 
         @if ($errors->any())
-            <div class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
+            <div class="p-3 rounded-lg bg-[#A84936]/15 border border-[#A84936]/40 text-red-200 text-sm">
                 @foreach ($errors->all() as $e) <div>• {{ $e }}</div> @endforeach
             </div>
         @endif
 
         <form method="POST" action="{{ route('admin.login.store') }}" class="space-y-4">
             @csrf
-            <div>
-                <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">{{ __('admin.auth.email') }}</label>
-                <input type="email" name="email" required autofocus value="{{ old('email') }}" class="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:border-emerald-500 focus:outline-none" />
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-white/60">{{ __('admin.auth.email') }}</label>
+                <input type="email" name="email" required autofocus value="{{ old('email') }}"
+                       class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/30 outline-none text-sm transition-colors focus:border-[#C8956C]/60 focus:ring-2 focus:ring-[#C8956C]/15" />
             </div>
-            <div>
-                <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">{{ __('admin.auth.password') }}</label>
-                <input type="password" name="password" required class="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:border-emerald-500 focus:outline-none" />
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-white/60">{{ __('admin.auth.password') }}</label>
+                <input type="password" name="password" required
+                       class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/30 outline-none text-sm transition-colors focus:border-[#C8956C]/60 focus:ring-2 focus:ring-[#C8956C]/15" />
             </div>
-            <button type="submit" class="w-full py-3 rounded-lg bg-brand hover:bg-brand-dark text-white font-semibold text-sm transition">
+            <button type="submit"
+                    class="w-full py-3 mt-2 bg-[#C8956C] hover:bg-[#B8845B] text-white font-bold rounded-lg transition-all active:scale-[0.98] text-sm">
                 {{ __('admin.auth.btn_login') }}
             </button>
         </form>
     </div>
+
+    <a href="{{ route('home') }}" class="mt-8 text-xs text-white/30 hover:text-white/60 transition-colors">← {{ __('Retour au site') }}</a>
 </body>
 </html>

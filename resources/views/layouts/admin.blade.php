@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,91 +8,89 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-
-    <style>
-        body { font-family: 'DM Sans', system-ui, sans-serif; background: #F7F5EF; }
-        .font-display { font-family: 'Playfair Display', serif; }
-        .bg-brand { background-color: #1B5E20; }
-        .text-brand { color: #1B5E20; }
-        .border-brand { border-color: #1B5E20; }
-        .hover\:bg-brand-dark:hover { background-color: #0f3a14; }
-        .bg-ink { background-color: #0f172a; }
-        .text-ink { color: #0f172a; }
-    </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="antialiased text-[#1A1A1A]">
 
-    <div class="min-h-screen flex flex-col sm:flex-row">
+    @php
+        $items = [
+            ['route' => 'admin.dashboard',            'pattern' => 'admin.dashboard',         'icon' => 'analytics',     'label' => __('admin.nav.dashboard')],
+            ['route' => 'admin.requests.index',       'pattern' => 'admin.requests.*',        'icon' => 'inbox',         'label' => __('admin.nav.requests')],
+            ['route' => 'admin.service_requests.index','pattern' => 'admin.service_requests.*','icon' => 'list_alt',      'label' => __('admin.nav.service_requests')],
+            ['route' => 'admin.providers.index',      'pattern' => 'admin.providers.*',       'icon' => 'storefront',    'label' => __('admin.nav.providers')],
+            ['route' => 'admin.packs.index',          'pattern' => 'admin.packs.*',           'icon' => 'inventory_2',   'label' => __('admin.nav.packs')],
+            ['route' => 'admin.purchases.index',      'pattern' => 'admin.purchases.*',       'icon' => 'payments',      'label' => __('admin.nav.purchases')],
+            ['route' => 'admin.users.index',          'pattern' => 'admin.users.*',           'icon' => 'group',         'label' => __('admin.nav.users')],
+            ['route' => 'admin.logs.audit',           'pattern' => 'admin.logs.*',            'icon' => 'receipt_long',  'label' => __('admin.nav.logs')],
+            ['route' => 'admin.webhooks.index',       'pattern' => 'admin.webhooks.*',        'icon' => 'webhook',       'label' => 'Webhooks'],
+            ['route' => 'admin.settings.index',       'pattern' => 'admin.settings.*',        'icon' => 'settings',      'label' => __('admin.nav.settings')],
+        ];
+    @endphp
 
-        <aside class="sm:w-60 sm:min-h-screen bg-ink text-gray-200 flex sm:flex-col">
+    <div class="min-h-screen bg-[#F7F4F0] flex">
+
+        {{-- Desktop sidebar --}}
+        <aside class="hidden lg:flex flex-col w-56 bg-[#1A1A1A] sticky top-0 h-screen shrink-0">
             <div class="px-5 py-5 border-b border-white/10">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white">💍</span>
-                    <div>
-                        <div class="font-display text-lg font-bold">{{ __('admin.brand') }}</div>
-                        <div class="text-[10px] uppercase tracking-widest text-gray-400">{{ __('admin.admin_badge') }}</div>
-                    </div>
-                </a>
+                <a href="{{ route('admin.dashboard') }}" class="font-serif text-lg font-bold text-white">{{ __('admin.brand') }}</a>
+                <div class="text-[10px] text-[#C8956C] font-bold uppercase tracking-wider mt-0.5">{{ __('admin.admin_badge') }}</div>
             </div>
-            <nav class="flex-1 py-3 flex sm:flex-col gap-0.5 px-2 overflow-x-auto sm:overflow-x-visible">
-                @php
-                    $items = [
-                        ['route' => 'admin.dashboard',          'label' => __('admin.nav.dashboard'),        'icon' => '📊'],
-                        ['route' => 'admin.providers.index',    'label' => __('admin.nav.providers'),        'icon' => '🤝'],
-                        ['route' => 'admin.requests.index',     'label' => __('admin.nav.requests'),         'icon' => '💍'],
-                        ['route' => 'admin.service_requests.index', 'label' => __('admin.nav.service_requests'), 'icon' => '📋'],
-                        ['route' => 'admin.packs.index',        'label' => __('admin.nav.packs'),            'icon' => '🎟️'],
-                        ['route' => 'admin.purchases.index',    'label' => __('admin.nav.purchases'),        'icon' => '💰'],
-                        ['route' => 'admin.users.index',        'label' => __('admin.nav.users'),            'icon' => '👥'],
-                        ['route' => 'admin.logs.audit',         'label' => __('admin.nav.logs'),             'icon' => '📜'],
-                        ['route' => 'admin.webhooks.index',     'label' => 'Webhooks',                       'icon' => '🔔'],
-                        ['route' => 'admin.settings.index',     'label' => __('admin.nav.settings'),         'icon' => '⚙️'],
-                    ];
-                @endphp
+            <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
                 @foreach ($items as $item)
-                    @php $active = request()->routeIs(str_replace('index', '*', $item['route'])) || request()->routeIs($item['route']); @endphp
-                    <a href="{{ route($item['route']) }}" @class([
-                        'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap',
-                        'bg-white/10 text-white' => $active,
-                        'text-gray-300 hover:bg-white/5 hover:text-white' => ! $active,
-                    ])>
-                        <span>{{ $item['icon'] }}</span>
-                        <span>{{ $item['label'] }}</span>
+                    @php $active = request()->routeIs($item['pattern']); @endphp
+                    <a href="{{ route($item['route']) }}"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left {{ $active ? 'bg-[#C8956C] text-white font-semibold' : 'text-white/60 hover:text-white hover:bg-white/10 font-medium' }}">
+                        <x-z.icon :name="$item['icon']" :filled="$active" class="text-lg" />
+                        {{ $item['label'] }}
                     </a>
                 @endforeach
             </nav>
-            <form method="POST" action="{{ route('admin.logout') }}" class="px-3 py-3 border-t border-white/10">
+            <form method="POST" action="{{ route('admin.logout') }}" class="px-4 py-4 border-t border-white/10">
                 @csrf
-                <div class="px-2 mb-2 text-xs text-gray-400">
-                    <div class="text-gray-100 font-medium">{{ auth()->user()?->name }}</div>
-                    <div class="text-[10px]">{{ auth()->user()?->email }}</div>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-[#C8956C] flex items-center justify-center text-xs font-bold text-white shrink-0 uppercase">{{ mb_substr(auth()->user()?->name ?? 'A', 0, 1) }}</div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-white truncate">{{ auth()->user()?->name }}</p>
+                        <button type="submit" class="text-[10px] text-white/40 hover:text-white/80 transition-colors">{{ __('admin.nav.logout') }}</button>
+                    </div>
                 </div>
-                <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-red-300 hover:bg-red-500/10 transition">
-                    <span>🚪</span><span>{{ __('admin.nav.logout') }}</span>
-                </button>
             </form>
         </aside>
 
-        <main class="flex-1 px-4 sm:px-8 py-6 sm:py-8">
-            @if (session('status'))
-                <div class="mb-5 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-brand text-sm">{{ session('status') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{{ session('error') }}</div>
-            @endif
-            @if ($errors->any())
-                <div class="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-                    @foreach ($errors->all() as $e) <div>• {{ $e }}</div> @endforeach
+        <main class="flex-1 min-w-0">
+            {{-- Mobile top bar --}}
+            <header class="lg:hidden bg-[#1A1A1A] px-5 py-3.5 flex items-center justify-between sticky top-0 z-40 overflow-x-auto">
+                <span class="font-serif font-bold text-white text-lg shrink-0 mr-4">{{ __('admin.brand') }}</span>
+                <div class="flex items-center gap-4">
+                    @foreach ($items as $item)
+                        @php $active = request()->routeIs($item['pattern']); @endphp
+                        <a href="{{ route($item['route']) }}" title="{{ $item['label'] }}" class="shrink-0 {{ $active ? 'text-[#C8956C]' : 'text-white/50 hover:text-white' }} transition-colors">
+                            <x-z.icon :name="$item['icon']" :filled="$active" class="text-xl" />
+                        </a>
+                    @endforeach
                 </div>
-            @endif
+            </header>
 
-            @yield('content')
+            <div class="px-4 sm:px-8 py-6 sm:py-8">
+                @if (session('status'))
+                    <div class="mb-5 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">{{ session('status') }}</div>
+                @endif
+                @if (session('error'))
+                    <div class="mb-5 p-3 rounded-lg bg-red-50 border border-red-100 text-[#A84936] text-sm">{{ session('error') }}</div>
+                @endif
+                @if ($errors->any())
+                    <div class="mb-5 p-3 rounded-lg bg-red-50 border border-red-100 text-[#A84936] text-sm">
+                        @foreach ($errors->all() as $e) <div>• {{ $e }}</div> @endforeach
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
         </main>
-
     </div>
 
     @livewireScripts

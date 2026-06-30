@@ -2,43 +2,52 @@
 
 @section('content')
     <div class="max-w-7xl">
-        <h1 class="font-display text-2xl font-bold mb-4">{{ __('admin.users.title') }}</h1>
+        <div class="mb-8">
+            <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('admin.users.title') }}</h1>
+        </div>
 
-        <form method="GET" class="flex gap-3 mb-4 items-end bg-white p-3 rounded-xl border border-gray-200">
-            <input type="text" name="q" value="{{ $search }}" placeholder="Rechercher…" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm" />
-            <select name="role" class="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm">
+        <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
+            <input type="text" name="q" value="{{ $search }}" placeholder="Rechercher…" class="flex-1 min-w-[200px] px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
+            <select name="role" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
                 <option value="all" @selected($role === 'all')>Tous</option>
                 <option value="admin" @selected($role === 'admin')>Admin</option>
                 <option value="provider" @selected($role === 'provider')>Prestataire</option>
                 <option value="couple" @selected($role === 'couple')>Couple</option>
             </select>
-            <button class="px-4 py-2 rounded-lg bg-brand hover:bg-brand-dark text-white text-sm font-semibold transition">Filtrer</button>
+            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">Filtrer</x-z.btn>
         </form>
 
-        <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
-                    <tr>
-                        <th class="text-left px-4 py-3">{{ __('admin.users.col_name') }}</th>
-                        <th class="text-left px-4 py-3">{{ __('admin.users.col_email') }}</th>
-                        <th class="text-left px-4 py-3">{{ __('admin.users.col_role') }}</th>
-                        <th class="text-left px-4 py-3">{{ __('admin.users.col_status') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($users as $u)
-                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='{{ route('admin.users.show', $u->id) }}'">
-                            <td class="px-4 py-3">{{ $u->name }}</td>
-                            <td class="px-4 py-3 text-xs">{{ $u->email }}</td>
-                            <td class="px-4 py-3 text-xs">{{ $u->roles->pluck('name')->join(', ') }}</td>
-                            <td class="px-4 py-3 text-xs">{{ $u->status }}</td>
+        <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-[#F7F4F0] text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/40">
+                            <th class="text-left px-5 py-4">{{ __('admin.users.col_name') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.users.col_email') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.users.col_role') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.users.col_status') }}</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="4" class="p-6 text-center text-gray-500 text-sm">Aucun utilisateur.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-            @if ($users->hasPages()) <div class="p-3 border-t border-gray-100">{{ $users->links() }}</div> @endif
+                    </thead>
+                    <tbody class="divide-y divide-[#D4CFC7]/20">
+                        @forelse ($users as $u)
+                            <tr class="hover:bg-[#F7F4F0]/50 cursor-pointer transition-colors" onclick="window.location='{{ route('admin.users.show', $u->id) }}'">
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-[#F0D9B5] flex items-center justify-center text-xs font-bold text-[#1A1A1A] shrink-0 uppercase">{{ mb_substr($u->name, 0, 1) }}</div>
+                                        <span class="font-semibold text-[#1A1A1A]">{{ $u->name }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $u->email }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $u->roles->pluck('name')->join(', ') }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $u->status }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="4" class="p-6 text-center text-[#9A958D] text-sm">Aucun utilisateur.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if ($users->hasPages()) <div class="px-5 py-4 border-t border-[#D4CFC7]/20">{{ $users->links() }}</div> @endif
         </div>
     </div>
 @endsection

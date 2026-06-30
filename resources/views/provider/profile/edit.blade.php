@@ -1,8 +1,8 @@
 @extends('layouts.provider')
 
 @section('content')
-    <div class="max-w-4xl">
-        <h1 class="font-display text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="font-serif text-3xl font-bold text-[#1A1A1A] mb-8">
             {{ __('provider.profile.title') }}
         </h1>
 

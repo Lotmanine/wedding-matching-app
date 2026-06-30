@@ -10,8 +10,8 @@ return [
 
     'matching' => [
         'round_timeout_minutes' => (int) env('ZAWAJ_ROUND_TIMEOUT_MINUTES', 120),
-        'providers_per_round'   => (int) env('ZAWAJ_PROVIDERS_PER_ROUND', 3),
-        'max_rounds'            => 3,
+        'providers_per_round' => (int) env('ZAWAJ_PROVIDERS_PER_ROUND', 3),
+        'max_rounds' => 3,
     ],
 
     'anpdp' => [
@@ -22,16 +22,23 @@ return [
         'link_prefix' => 'https://wa.me/',
     ],
 
+    'n8n' => [
+        // Shared secret guarding the public n8n -> Laravel error webhook.
+        // When set, the request must carry a matching X-Zawaj-Token header.
+        // Reuses the same secret n8n already holds (ZAWAJ_WEBHOOK_SECRET).
+        'webhook_secret' => env('ZAWAJ_WEBHOOK_SECRET'),
+    ],
+
     'chargily' => [
-        'api_key'        => env('CHARGILY_API_KEY'),
-        'secret_key'     => env('CHARGILY_SECRET_KEY'),
+        'api_key' => env('CHARGILY_API_KEY'),
+        'secret_key' => env('CHARGILY_SECRET_KEY'),
         'webhook_secret' => env('CHARGILY_WEBHOOK_SECRET'),
-        'mode'           => env('CHARGILY_MODE', 'test'),
-        'base_url'       => env('CHARGILY_MODE', 'test') === 'live'
+        'mode' => env('CHARGILY_MODE', 'test'),
+        'base_url' => env('CHARGILY_MODE', 'test') === 'live'
             ? 'https://pay.chargily.net/api/v2'
             : 'https://pay.chargily.net/test/api/v2',
-        'success_url'    => env('APP_URL', 'http://localhost') . '/provider/credits/success',
-        'failure_url'    => env('APP_URL', 'http://localhost') . '/provider/credits/failure',
-        'webhook_url'    => env('APP_URL', 'http://localhost') . '/webhooks/chargily',
+        'success_url' => env('APP_URL', 'http://localhost').'/provider/credits/success',
+        'failure_url' => env('APP_URL', 'http://localhost').'/provider/credits/failure',
+        'webhook_url' => env('APP_URL', 'http://localhost').'/webhooks/chargily',
     ],
 ];

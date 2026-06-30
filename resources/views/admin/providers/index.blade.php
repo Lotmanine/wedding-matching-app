@@ -2,16 +2,18 @@
 
 @section('content')
     <div class="max-w-7xl">
-        <h1 class="font-display text-2xl font-bold text-gray-900 mb-4">{{ __('admin.providers.title') }}</h1>
+        <div class="mb-8">
+            <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('admin.providers.title') }}</h1>
+        </div>
 
-        <form method="GET" class="flex flex-wrap gap-3 mb-4 items-end bg-white p-3 rounded-xl border border-gray-200">
+        <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
             <div class="flex-1 min-w-[200px]">
-                <label class="block text-xs text-gray-500 mb-1">Recherche</label>
-                <input name="q" value="{{ $search }}" placeholder="{{ __('admin.providers.search_placeholder') }}" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-brand focus:outline-none" />
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">Recherche</label>
+                <input name="q" value="{{ $search }}" placeholder="{{ __('admin.providers.search_placeholder') }}" class="w-full px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
             </div>
             <div>
-                <label class="block text-xs text-gray-500 mb-1">{{ __('admin.providers.filter_status') }}</label>
-                <select name="status" class="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.providers.filter_status') }}</label>
+                <select name="status" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
                     <option value="all"       @selected($status === 'all')>{{ __('admin.providers.status_all') }}</option>
                     <option value="verified"  @selected($status === 'verified')>{{ __('admin.providers.status_verified') }}</option>
                     <option value="pending"   @selected($status === 'pending')>{{ __('admin.providers.status_pending') }}</option>
@@ -19,70 +21,77 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs text-gray-500 mb-1">{{ __('admin.providers.filter_wilaya') }}</label>
-                <select name="wilaya" class="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.providers.filter_wilaya') }}</label>
+                <select name="wilaya" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
                     <option value="">—</option>
                     @foreach ($wilayas as $w)
                         <option value="{{ $w->code }}" @selected($wilaya === $w->code)>{{ $w->code }} — {{ $w->name_fr }}</option>
                     @endforeach
                 </select>
             </div>
-            <button class="px-4 py-2 rounded-lg bg-brand hover:bg-brand-dark text-white text-sm font-semibold transition">Filtrer</button>
+            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">Filtrer</x-z.btn>
         </form>
 
-        <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
-                    <tr>
-                        <th class="text-left px-4 py-3">{{ __('admin.providers.col_business') }}</th>
-                        <th class="text-left px-4 py-3">{{ __('admin.providers.col_email') }}</th>
-                        <th class="text-left px-4 py-3">{{ __('admin.providers.col_wilaya') }}</th>
-                        <th class="text-left px-4 py-3">{{ __('admin.providers.col_status') }}</th>
-                        <th class="text-right px-4 py-3">{{ __('admin.providers.col_credits') }}</th>
-                        <th class="text-right px-4 py-3">{{ __('admin.providers.col_stats') }}</th>
-                        <th class="text-right px-4 py-3">{{ __('admin.providers.col_actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($providers as $p)
-                        @php $prof = $p->providerProfile; @endphp
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3">
-                                <div class="font-medium text-gray-900">{{ $prof?->business_name ?? '—' }}</div>
-                                <div class="text-xs text-gray-500">{{ $p->name }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-xs">
-                                <div>{{ $p->email }}</div>
-                                <div class="text-gray-500 font-mono">{{ $p->phone }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-xs">{{ $prof?->primary_wilaya_code ?? '—' }}</td>
-                            <td class="px-4 py-3">
-                                @if ($prof?->suspended_at)
-                                    <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">Suspendu</span>
-                                @elseif ($prof?->verified)
-                                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Vérifié</span>
-                                @else
-                                    <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">En attente</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-right font-semibold">{{ $prof?->credit_balance ?? 0 }}</td>
-                            <td class="px-4 py-3 text-right text-xs text-gray-600">
-                                {{ $prof?->leads_accepted ?? 0 }}/{{ $prof?->leads_received ?? 0 }}
-                                @if ($prof && $prof->rating_count > 0)
-                                    <div class="text-[10px]">⭐ {{ number_format($prof->rating_avg, 1) }} ({{ $prof->rating_count }})</div>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-right">
-                                <a href="{{ route('admin.providers.show', $p->id) }}" class="text-brand text-xs font-medium hover:underline">{{ __('admin.providers.action_view') }}</a>
-                            </td>
+        <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-[#F7F4F0] text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/40">
+                            <th class="text-left px-5 py-4">{{ __('admin.providers.col_business') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.providers.col_email') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.providers.col_wilaya') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.providers.col_status') }}</th>
+                            <th class="text-right px-5 py-4">{{ __('admin.providers.col_credits') }}</th>
+                            <th class="text-right px-5 py-4">{{ __('admin.providers.col_stats') }}</th>
+                            <th class="text-right px-5 py-4">{{ __('admin.providers.col_actions') }}</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="7" class="p-6 text-center text-gray-500 text-sm">Aucun prestataire.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-[#D4CFC7]/20">
+                        @forelse ($providers as $p)
+                            @php $prof = $p->providerProfile; @endphp
+                            <tr class="hover:bg-[#F7F4F0]/50 transition-colors">
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-[#F0D9B5] flex items-center justify-center text-xs font-bold text-[#1A1A1A] shrink-0 uppercase">{{ mb_substr($prof?->business_name ?? $p->name, 0, 1) }}</div>
+                                        <div class="min-w-0">
+                                            <div class="font-semibold text-[#1A1A1A]">{{ $prof?->business_name ?? '—' }}</div>
+                                            <div class="text-xs text-[#9A958D]">{{ $p->name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4 text-xs">
+                                    <div class="text-[#1A1A1A]">{{ $p->email }}</div>
+                                    <div class="text-[#9A958D] font-mono">{{ $p->phone }}</div>
+                                </td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_wilaya_code ?? '—' }}</td>
+                                <td class="px-5 py-4">
+                                    @if ($prof?->suspended_at)
+                                        <x-z.badge variant="danger">Suspendu</x-z.badge>
+                                    @elseif ($prof?->verified)
+                                        <x-z.badge variant="success">Vérifié</x-z.badge>
+                                    @else
+                                        <x-z.badge variant="warning">En attente</x-z.badge>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-4 text-right font-bold text-[#1A1A1A]">{{ $prof?->credit_balance ?? 0 }}</td>
+                                <td class="px-5 py-4 text-right text-xs text-[#6B665E]">
+                                    {{ $prof?->leads_accepted ?? 0 }}/{{ $prof?->leads_received ?? 0 }}
+                                    @if ($prof && $prof->rating_count > 0)
+                                        <div class="text-[10px] text-[#C8956C]">⭐ {{ number_format($prof->rating_avg, 1) }} ({{ $prof->rating_count }})</div>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <a href="{{ route('admin.providers.show', $p->id) }}" class="text-[#C8956C] text-xs font-bold hover:underline">{{ __('admin.providers.action_view') }}</a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="7" class="p-6 text-center text-[#9A958D] text-sm">Aucun prestataire.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
             @if ($providers->hasPages())
-                <div class="p-3 border-t border-gray-100">{{ $providers->links() }}</div>
+                <div class="px-5 py-4 border-t border-[#D4CFC7]/20">{{ $providers->links() }}</div>
             @endif
         </div>
     </div>

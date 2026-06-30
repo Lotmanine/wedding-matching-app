@@ -14,6 +14,10 @@ return [
         'credits'   => 'Crédits',
         'history'   => 'Historique',
         'logout'    => 'Déconnexion',
+        'area'              => 'Espace prestataire',
+        'credit_balance'    => 'Solde crédits',
+        'credits_available' => 'crédits disponibles',
+        'recharge'          => 'Recharger',
     ],
 
     'leads' => [

@@ -3,50 +3,51 @@
 @section('content')
     @php $isEdit = (bool) $endpoint->exists; @endphp
     <div class="max-w-2xl">
-        <nav class="text-sm text-gray-500 mb-3"><a href="{{ route('admin.webhooks.index') }}" class="hover:text-brand">← Webhooks</a></nav>
-        <h1 class="font-display text-2xl font-bold mb-4">{{ $isEdit ? 'Éditer' : 'Nouveau webhook' }}</h1>
+        <nav class="text-sm text-[#9A958D] mb-3"><a href="{{ route('admin.webhooks.index') }}" class="inline-flex items-center gap-1 hover:text-[#C8956C] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> Webhooks</a></nav>
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-6">{{ $isEdit ? 'Éditer' : 'Nouveau webhook' }}</h1>
 
-        <form method="POST" action="{{ $isEdit ? route('admin.webhooks.update', $endpoint->id) : route('admin.webhooks.store') }}" class="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+        <form method="POST" action="{{ $isEdit ? route('admin.webhooks.update', $endpoint->id) : route('admin.webhooks.store') }}" class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6 md:p-8 space-y-5">
             @csrf
             @if ($isEdit) @method('PUT') @endif
 
             <div>
-                <label class="block text-sm font-medium mb-1">Nom</label>
-                <input type="text" name="name" required maxlength="100" value="{{ old('name', $endpoint->name) }}" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">Nom</label>
+                <input type="text" name="name" required maxlength="100" value="{{ old('name', $endpoint->name) }}" class="w-full px-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-1">URL</label>
-                <input type="url" name="url" required value="{{ old('url', $endpoint->url) }}" placeholder="https://n8n.example.com/webhook/xxx" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm font-mono" />
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">URL</label>
+                <input type="url" name="url" required value="{{ old('url', $endpoint->url) }}" placeholder="https://n8n.example.com/webhook/xxx" class="w-full px-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm font-mono outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-1">Secret HMAC</label>
-                <input type="text" name="secret" value="{{ old('secret', $endpoint->secret) }}" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm font-mono" />
-                <p class="text-xs text-gray-400 mt-1">Utilisé pour signer chaque livraison via HMAC-SHA256. Vide = garder le secret actuel.</p>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">Secret HMAC</label>
+                <input type="text" name="secret" value="{{ old('secret', $endpoint->secret) }}" class="w-full px-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm font-mono outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
+                <p class="text-xs text-[#9A958D] mt-1.5">Utilisé pour signer chaque livraison via HMAC-SHA256. Vide = garder le secret actuel.</p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-2">Événements à recevoir</label>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-2">Événements à recevoir</label>
                 @php $subscribed = (array) old('events', $endpoint->events ?? []); @endphp
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                     @foreach ($availableEvents as $ev)
-                        <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 has-[:checked]:border-brand has-[:checked]:bg-emerald-50/50 transition cursor-pointer">
-                            <input type="checkbox" name="events[]" value="{{ $ev }}" @checked(in_array($ev, $subscribed, true)) class="rounded text-brand">
-                            <span class="text-xs font-mono">{{ $ev }}</span>
+                        <label class="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-[#D4CFC7] has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/30 transition cursor-pointer">
+                            <input type="checkbox" name="events[]" value="{{ $ev }}" @checked(in_array($ev, $subscribed, true)) class="rounded border-[#D4CFC7] text-[#C8956C] focus:ring-[#C8956C]/30">
+                            <span class="text-xs font-mono text-[#1A1A1A]">{{ $ev }}</span>
                         </label>
                     @endforeach
                 </div>
             </div>
 
-            <label class="flex items-center gap-2 text-sm">
+            <label class="flex items-center gap-2 text-sm text-[#1A1A1A]">
                 <input type="hidden" name="active" value="0">
-                <input type="checkbox" name="active" value="1" @checked(old('active', $endpoint->active ?? true)) class="rounded text-brand">
+                <input type="checkbox" name="active" value="1" @checked(old('active', $endpoint->active ?? true)) class="rounded border-[#D4CFC7] text-[#C8956C] focus:ring-[#C8956C]/30">
                 Actif
             </label>
 
-            <div class="pt-3 border-t border-gray-100">
-                <button class="px-5 py-2 rounded-lg bg-brand hover:bg-brand-dark text-white font-semibold text-sm transition">{{ $isEdit ? 'Enregistrer' : 'Créer' }}</button>
+            <div class="pt-4 border-t border-[#D4CFC7]/30 flex justify-end gap-3">
+                <x-z.btn :href="route('admin.webhooks.index')" variant="outline" size="sm">Annuler</x-z.btn>
+                <x-z.btn type="submit" variant="accent" size="sm">{{ $isEdit ? 'Enregistrer' : 'Créer' }}</x-z.btn>
             </div>
         </form>
     </div>

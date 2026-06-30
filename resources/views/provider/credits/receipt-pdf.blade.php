@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <title>Reçu {{ $purchase->purchase_uid }}</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #1f2937; }
-        h1 { font-size: 20px; color: #1B5E20; margin: 0 0 5px; }
-        .brand { color: #1B5E20; font-weight: 700; font-size: 14px; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #1A1A1A; }
+        h1 { font-size: 20px; color: #1A1A1A; margin: 0 0 5px; }
+        .brand { color: #C8956C; font-weight: 700; font-size: 14px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         td { padding: 6px 0; vertical-align: top; }
-        .label { color: #6b7280; text-transform: uppercase; font-size: 9px; letter-spacing: 1px; }
-        .value { color: #111827; font-weight: 600; }
-        .total-row td { padding-top: 14px; border-top: 1px solid #e5e7eb; font-size: 14px; }
-        .amount { color: #1B5E20; font-size: 18px; font-weight: 700; text-align: right; }
-        .footer { margin-top: 40px; font-size: 10px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 12px; line-height: 1.4; }
-        .header { border-bottom: 2px solid #1B5E20; padding-bottom: 14px; margin-bottom: 20px; }
+        .label { color: #9A958D; text-transform: uppercase; font-size: 9px; letter-spacing: 1px; }
+        .value { color: #1A1A1A; font-weight: 600; }
+        .total-row td { padding-top: 14px; border-top: 1px solid #D4CFC7; font-size: 14px; }
+        .amount { color: #C8956C; font-size: 18px; font-weight: 700; text-align: right; }
+        .footer { margin-top: 40px; font-size: 10px; color: #9A958D; border-top: 1px solid #D4CFC7; padding-top: 12px; line-height: 1.4; }
+        .header { border-bottom: 2px solid #C8956C; padding-bottom: 14px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
