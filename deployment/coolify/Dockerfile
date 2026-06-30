@@ -1,15 +1,18 @@
 FROM php:8.3-fpm-alpine AS base
 
+# Runtime + build tooling
 RUN apk add --no-cache \
     nginx supervisor \
     bash curl git \
-    libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev \
-    icu-dev oniguruma-dev \
     mysql-client \
     nodejs npm \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl opcache \
     && rm -rf /var/cache/apk/*
+
+# PHP extensions via PREBUILT binaries (no source compilation). Compiling intl/gd/opcache
+# from source is slow and memory-hungry, which OOM-kills the build on small hosts. The
+# extension installer downloads ready-made binaries instead — fast and low-memory.
+COPY --from=mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions pdo_mysql mbstring exif pcntl bcmath gd zip intl opcache
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
