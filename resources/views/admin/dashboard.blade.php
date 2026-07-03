@@ -56,7 +56,7 @@
                     ['label' => __('admin.dashboard.kpi_revenue'),     'value' => number_format($stats['revenue_dzd'], 0, ',', ' '), 'icon' => 'payments'],
                     ['label' => __('admin.dashboard.kpi_credits_out'), 'value' => $stats['credits_outstanding'], 'icon' => 'toll'],
                     ['label' => __('admin.dashboard.kpi_match_rate'),  'value' => $stats['match_rate'] . '%',    'icon' => 'percent'],
-                    ['label' => __('admin.dashboard.kpi_avg_accept'),  'value' => $stats['avg_time_to_accept'] ?? '—', 'icon' => 'timer'],
+                    ['label' => __('admin.dashboard.kpi_avg_accept'),  'value' => $stats['avg_time_to_accept'] ?? 'Non renseigné', 'icon' => 'timer'],
                 ];
             @endphp
             @foreach ($kpis as $k)

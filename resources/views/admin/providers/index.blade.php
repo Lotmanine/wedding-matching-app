@@ -23,9 +23,9 @@
             <div>
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.providers.filter_wilaya') }}</label>
                 <select name="wilaya" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
-                    <option value="">—</option>
+                    <option value="">Toutes</option>
                     @foreach ($wilayas as $w)
-                        <option value="{{ $w->code }}" @selected($wilaya === $w->code)>{{ $w->code }} — {{ $w->name_fr }}</option>
+                        <option value="{{ $w->code }}" @selected($wilaya === $w->code)>{{ $w->code }} · {{ $w->name_fr }}</option>
                     @endforeach
                 </select>
             </div>
@@ -54,7 +54,7 @@
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-lg bg-[#F0D9B5] flex items-center justify-center text-xs font-bold text-[#1A1A1A] shrink-0 uppercase">{{ mb_substr($prof?->business_name ?? $p->name, 0, 1) }}</div>
                                         <div class="min-w-0">
-                                            <div class="font-semibold text-[#1A1A1A]">{{ $prof?->business_name ?? '—' }}</div>
+                                            <div class="font-semibold text-[#1A1A1A]">{{ $prof?->business_name ?? 'Non renseigné' }}</div>
                                             <div class="text-xs text-[#9A958D]">{{ $p->name }}</div>
                                         </div>
                                     </div>
@@ -63,7 +63,7 @@
                                     <div class="text-[#1A1A1A]">{{ $p->email }}</div>
                                     <div class="text-[#9A958D] font-mono">{{ $p->phone }}</div>
                                 </td>
-                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_wilaya_code ?? '—' }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_wilaya_code ?? 'Non renseigné' }}</td>
                                 <td class="px-5 py-4">
                                     @if ($prof?->suspended_at)
                                         <x-z.badge variant="danger">Suspendu</x-z.badge>

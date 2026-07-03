@@ -94,7 +94,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.business_type') }}</label>
                     <select wire:model="business_type" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">—</option>
+                        <option value="">Sélectionner…</option>
                         @foreach (__('provider.registration.business_type_options') as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
@@ -112,9 +112,9 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.primary_wilaya') }}</label>
                     <select wire:model.live="primary_wilaya_code" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">—</option>
+                        <option value="">Sélectionner…</option>
                         @foreach ($this->wilayas as $w)
-                            <option value="{{ $w->code }}">{{ $w->code }} — {{ $w->name_fr }}</option>
+                            <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name_fr }}</option>
                         @endforeach
                     </select>
                     @error('primary_wilaya_code') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
@@ -122,7 +122,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.price_tier') }}</label>
                     <select wire:model="price_tier" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">—</option>
+                        <option value="">Sélectionner…</option>
                         @foreach (__('provider.registration.price_tier_options') as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
@@ -186,7 +186,7 @@
                                    @checked($isSelected || $isPrimary)
                                    @disabled($isPrimary)
                                    class="w-5 h-5 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-[#C8956C]/30" />
-                            <span class="text-sm font-medium text-[#1A1A1A]">{{ $w->code }} — {{ $w->name_fr }}</span>
+                            <span class="text-sm font-medium text-[#1A1A1A]">{{ $w->code }} · {{ $w->name_fr }}</span>
                             @if ($isPrimary)
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-[#7A5530] bg-[#F0D9B5] px-2 py-0.5 rounded-full">{{ __('provider.registration.coverage_primary_badge') }}</span>
                             @endif

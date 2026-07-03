@@ -3,11 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title') — Zawaj Pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>@yield('title') · Zawaj Pro</title>
     <style>
+        /* Self-hosted fonts — error pages are standalone (no Vite bundle),
+           so we declare the two faces they use directly. No network needed. */
+        @font-face { font-family:'Plus Jakarta Sans'; font-style:normal; font-weight:300 700; font-display:swap; src:url('/fonts/plus-jakarta-sans-400-normal-latin.woff2') format('woff2'); }
+        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:400; font-display:swap; src:url('/fonts/noto-serif-400-normal-latin.woff2') format('woff2'); }
+        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:700; font-display:swap; src:url('/fonts/noto-serif-700-normal-latin.woff2') format('woff2'); }
         :root { --ink:#1A1A1A; --clay:#C8956C; --bg:#FDFAF6; --muted:#6B665E; --faint:#9A958D; --outline:#D4CFC7; }
         * { box-sizing: border-box; }
         body {

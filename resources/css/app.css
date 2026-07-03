@@ -1,3 +1,10 @@
+/* Self-hosted webfonts (Noto Serif, Plus Jakarta Sans, Material Symbols).
+   Replaces the Google Fonts <link>s so the UI — and especially the icon
+   font — never depends on fonts.googleapis.com / fonts.gstatic.com being
+   reachable. Material Symbols uses font-display:block so glyphs never flash
+   as their raw text names while loading. */
+@import './fonts.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

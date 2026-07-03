@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.paid_on') }}</dt>
-                    <dd class="mt-1 font-medium text-[#1A1A1A]">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? '—' }}</dd>
+                    <dd class="mt-1 font-medium text-[#1A1A1A]">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? 'Non renseigné' }}</dd>
                 </div>
                 <div>
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.status') }}</dt>
@@ -44,7 +44,7 @@
                 </div>
                 <div>
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.gateway_ref') }}</dt>
-                    <dd class="mt-1 font-mono text-[#6B665E] text-xs">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? '—' }}</dd>
+                    <dd class="mt-1 font-mono text-[#6B665E] text-xs">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? 'Non renseigné' }}</dd>
                 </div>
                 <div class="sm:col-span-2 pt-5 border-t border-[#D4CFC7]/30">
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ $purchase->unlockPack?->name }}</dt>

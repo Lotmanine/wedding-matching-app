@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Provider;
 use App\Enums\BudgetRange;
 use App\Enums\ServiceType;
 use App\Http\Controllers\Controller;
+use App\Models\LeadDispute;
 use App\Models\ServiceRequest;
 use App\Models\Wilaya;
 use App\Services\Matching\LeadAcceptanceService;
@@ -90,6 +91,20 @@ class ProviderLeadsController extends Controller
         ]);
     }
 
+    /**
+     * "Mes demandes acceptées" — every lead this provider unlocked. Contact
+     * details are masked once the ANPDP anonymization window has passed.
+     */
+    public function accepted(Request $request)
+    {
+        $leads = ServiceRequest::where('unlocked_by_user_id', $request->user()->id)
+            ->with('wedRequest')
+            ->orderByDesc('unlocked_at')
+            ->paginate(12);
+
+        return view('provider.leads.accepted-list', ['leads' => $leads]);
+    }
+
     public function show(Request $request, string $serviceUid)
     {
         $sr = ServiceRequest::where('service_uid', $serviceUid)
@@ -106,6 +121,9 @@ class ProviderLeadsController extends Controller
             return view('provider.leads.accepted', [
                 'lead'       => $sr,
                 'wedRequest' => $sr->wedRequest,
+                'dispute'    => LeadDispute::where('service_request_id', $sr->id)
+                    ->where('provider_user_id', $user->id)
+                    ->first(),
             ]);
         }
 
@@ -164,5 +182,40 @@ class ProviderLeadsController extends Controller
         $flashKey = $result->isSuccess() ? 'status' : 'error';
 
         return redirect()->route('provider.leads.index')->with($flashKey, $result->getMessage());
+    }
+
+    /**
+     * Flag an unlocked lead as bad (litige). One dispute per lead per
+     * provider; an admin reviews it and refunds the credits if justified.
+     */
+    public function dispute(Request $request, string $serviceUid): RedirectResponse
+    {
+        $validated = $request->validate([
+            'reason'  => ['required', 'in:' . implode(',', LeadDispute::REASONS)],
+            'details' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $user = $request->user();
+        $sr = ServiceRequest::where('service_uid', $serviceUid)->firstOrFail();
+
+        if ($sr->unlocked_by_user_id !== $user->id) {
+            abort(403);
+        }
+
+        $exists = LeadDispute::where('service_request_id', $sr->id)
+            ->where('provider_user_id', $user->id)
+            ->exists();
+        if ($exists) {
+            return back()->with('error', 'Un signalement existe déjà pour cette demande.');
+        }
+
+        LeadDispute::create([
+            'service_request_id' => $sr->id,
+            'provider_user_id'   => $user->id,
+            'reason'             => $validated['reason'],
+            'details'            => $validated['details'] ?? null,
+        ]);
+
+        return back()->with('status', 'Signalement envoyé. Notre équipe vérifie et vous recrédite si le problème est confirmé.');
     }
 }

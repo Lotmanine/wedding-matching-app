@@ -45,7 +45,7 @@ return [
 
         'card_see_details'    => 'Voir les détails',
         'card_guests'         => ':count invités',
-        'card_couple_initial' => 'Couple :initial — :wilaya',
+        'card_couple_initial' => 'Couple :initial · :wilaya',
         'card_time_ago'       => 'Créée :when',
 
         'breadcrumb'      => 'Demandes',
@@ -99,7 +99,7 @@ return [
         'tip_title'         => 'Astuce pour maximiser vos chances',
         'tip_body'          => 'Contactez le couple dans les 24 heures. Les réponses rapides convertissent mieux.',
         'credits_charged'   => ':count crédit(s) débité(s)',
-        'back_to_leads'     => '← Retour aux demandes',
+        'back_to_leads'     => 'Retour aux demandes',
     ],
 
     'auth' => [
@@ -183,8 +183,8 @@ return [
         'add_url'          => '+ Ajouter un lien',
         'remove_url'       => 'Supprimer',
 
-        'previous'         => '← Retour',
-        'next'             => 'Continuer →',
+        'previous'         => 'Retour',
+        'next'             => 'Continuer',
         'submit'           => 'Créer mon compte',
 
         'success' => 'Votre compte a été créé. Votre profil est en cours de vérification.',

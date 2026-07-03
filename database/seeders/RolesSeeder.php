@@ -14,7 +14,9 @@ class RolesSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        foreach (['admin', 'provider', 'couple'] as $name) {
+        // 'manager' = day-to-day back-office ops (demandes, round-robin,
+        // providers, purchases) without money-config / settings / user admin.
+        foreach (['admin', 'manager', 'provider', 'couple'] as $name) {
             Role::findOrCreate($name, 'web');
         }
     }

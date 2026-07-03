@@ -30,7 +30,7 @@
                                 <td class="px-5 py-3 text-xs text-[#9A958D] whitespace-nowrap">{{ $log->created_at?->isoFormat('DD/MM HH:mm:ss') }}</td>
                                 <td class="px-5 py-3 text-xs text-[#6B665E]">{{ $log->user?->email ?? 'système' }}</td>
                                 <td class="px-5 py-3 text-xs"><code class="font-mono font-bold text-[#C8956C] bg-[#F0D9B5]/40 px-2 py-0.5 rounded">{{ $log->action }}</code></td>
-                                <td class="px-5 py-3 text-xs text-[#9A958D] font-mono">{{ class_basename((string) $log->subject_type) }}#{{ $log->subject_id ?? '—' }}</td>
+                                <td class="px-5 py-3 text-xs text-[#9A958D] font-mono">{{ class_basename((string) $log->subject_type) }}#{{ $log->subject_id ?? 'Non renseigné' }}</td>
                                 <td class="px-5 py-3 text-xs"><pre class="text-[10px] text-[#6B665E] overflow-hidden max-w-md truncate">{{ $log->metadata ? json_encode($log->metadata, JSON_UNESCAPED_UNICODE) : '' }}</pre></td>
                             </tr>
                         @empty

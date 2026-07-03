@@ -96,6 +96,28 @@ class ServiceRequest extends Model
         return $this->belongsTo(User::class, 'unlocked_by_user_id');
     }
 
+    /**
+     * ANPDP display anonymization: the couple's contact details stop being
+     * shown to the provider N days after acceptance (retention_days, 14 by
+     * default). This masks the UI only — actual data erasure stays with the
+     * scheduled zawaj:cleanup-* commands.
+     */
+    public function anonymizeAt(): ?\Illuminate\Support\Carbon
+    {
+        if ($this->unlocked_at === null) {
+            return null;
+        }
+
+        return $this->unlocked_at->copy()->addDays((int) config('zawaj.anpdp.retention_days', 14));
+    }
+
+    public function isAnonymized(): bool
+    {
+        $at = $this->anonymizeAt();
+
+        return $at !== null && $at->isPast();
+    }
+
     public function scopePendingMatch(Builder $query): Builder
     {
         return $query->whereIn('status', [
@@ -140,8 +162,16 @@ class ServiceRequest extends Model
                 $q->whereNull('refused_by_provider_ids')
                   ->orWhereJsonDoesntContain('refused_by_provider_ids', $providerId);
             })
-            ->whereHas('wedRequest', function (Builder $q) use ($coverage) {
-                $q->whereIn('couple_wilaya_code', $coverage);
+            // Wilaya coverage is required for automatic/marketplace visibility,
+            // BUT a provider explicitly placed in a round (e.g. an admin manual
+            // assignment overriding geography) always sees that lead.
+            ->where(function (Builder $q) use ($coverage, $providerId) {
+                $q->whereHas('wedRequest', function (Builder $q2) use ($coverage) {
+                    $q2->whereIn('couple_wilaya_code', $coverage);
+                })
+                    ->orWhereJsonContains('round_1_provider_ids', $providerId)
+                    ->orWhereJsonContains('round_2_provider_ids', $providerId)
+                    ->orWhereJsonContains('round_3_provider_ids', $providerId);
             })
             ->where(function (Builder $q) use ($providerId) {
                 $q->where(function (Builder $q2) use ($providerId) {

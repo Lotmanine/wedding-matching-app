@@ -19,9 +19,9 @@
             <div>
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">Wilaya</label>
                 <select name="wilaya" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
-                    <option value="">—</option>
+                    <option value="">Toutes</option>
                     @foreach ($wilayas as $w)
-                        <option value="{{ $w->code }}" @selected($wilaya === $w->code)>{{ $w->code }} — {{ $w->name_fr }}</option>
+                        <option value="{{ $w->code }}" @selected($wilaya === $w->code)>{{ $w->code }} · {{ $w->name_fr }}</option>
                     @endforeach
                 </select>
             </div>
@@ -46,7 +46,7 @@
                             <tr class="hover:bg-[#F7F4F0]/50 cursor-pointer transition-colors" onclick="window.location='{{ route('admin.requests.show', $r->wed_uid) }}'">
                                 <td class="px-5 py-4"><code class="text-xs font-bold text-[#C8956C] bg-[#F0D9B5]/40 px-2 py-1 rounded">{{ $r->wed_uid }}</code></td>
                                 <td class="px-5 py-4 font-semibold text-[#1A1A1A]">{{ $r->couple_first_name }}</td>
-                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $r->couple_wilaya_code }}{{ $r->couple_commune ? ' — ' . $r->couple_commune : '' }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $r->couple_wilaya_code }}{{ $r->couple_commune ? ' · ' . $r->couple_commune : '' }}</td>
                                 <td class="px-5 py-4 text-xs text-[#9A958D]">{{ $r->serviceRequests->count() }} service(s)</td>
                                 <td class="px-5 py-4">
                                     <x-z.badge variant="default">{{ $r->status?->value ?? $r->status }}</x-z.badge>

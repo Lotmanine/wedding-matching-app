@@ -46,6 +46,50 @@ class RoundStateMachine
     }
 
     /**
+     * Manually assign a single provider to a service request WITHOUT firing the
+     * RoundStarted webhook — for admin-driven ("manual round-robin") matching
+     * where the admin notifies the provider themselves. The provider is recorded
+     * on the current (or given) round exactly as an automated round would, so
+     * they become eligible to see and accept the lead through the normal flow.
+     */
+    public function assignProviderSilently(ServiceRequest $sr, int $providerId, ?int $round = null): ServiceRequest
+    {
+        $round = $round ?? ($sr->current_round >= 1 && $sr->current_round <= 3 ? $sr->current_round : 1);
+        $round = max(1, min(3, $round));
+
+        $status = match ($round) {
+            1 => RequestStatus::Round1->value,
+            2 => RequestStatus::Round2->value,
+            3 => RequestStatus::Round3->value,
+        };
+
+        $roundIds = (array) ($sr->getAttribute("round_{$round}_provider_ids") ?? []);
+        $roundIds = array_values(array_unique([...$roundIds, $providerId]));
+
+        $allIds = array_values(array_unique([
+            ...((array) ($sr->all_notified_provider_ids ?? [])),
+            $providerId,
+        ]));
+
+        $sr->status = $status;
+        $sr->current_round = $round;
+        $sr->round_started_at = now();
+        // Ensure the lead is live: give it a fresh timeout window if it has no
+        // future expiry, otherwise a manually-assigned (often older) request
+        // would already be past its expires_at and stay invisible.
+        if ($sr->expires_at === null || $sr->expires_at->isPast()) {
+            $sr->expires_at = now()->addMinutes(self::ROUND_TIMEOUT_MINUTES);
+        }
+        $sr->setAttribute("round_{$round}_provider_ids", $roundIds);
+        $sr->all_notified_provider_ids = $allIds;
+        $sr->save();
+
+        // Intentionally NO RoundStarted event — the admin notifies the provider.
+
+        return $sr;
+    }
+
+    /**
      * Advance the current round. If round 3 is timing out / finishing, open to marketplace.
      * Otherwise, move into "matching" state so n8n can pick the next round's providers.
      */

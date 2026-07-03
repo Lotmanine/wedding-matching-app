@@ -11,6 +11,9 @@
                 <p class="text-xs font-mono text-[#9A958D] mt-0.5">{{ $wr->wed_uid }}</p>
             </div>
             <div class="flex gap-2">
+                @if (! $wr->deleted_at)
+                    <x-z.btn :href="route('admin.requests.edit', $wr->wed_uid)" variant="outline" size="sm" icon="edit">Modifier</x-z.btn>
+                @endif
                 @if (! $wr->deleted_at && $wr->status?->value !== 'expired')
                     <form method="POST" action="{{ route('admin.requests.expire', $wr->wed_uid) }}">@csrf
                         <x-z.btn type="submit" variant="accent-outline" size="sm" icon="schedule">Expirer</x-z.btn>
@@ -27,10 +30,10 @@
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Prénom</dt><dd class="font-semibold text-[#1A1A1A] mt-0.5">{{ $wr->couple_first_name }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">WhatsApp</dt><dd class="font-mono text-[#1A1A1A] mt-0.5">{{ $wr->couple_whatsapp }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Wilaya</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->couple_wilaya_code }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Commune</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->couple_commune ?? '—' }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Commune</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->couple_commune ?? 'Non renseigné' }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Date</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->wedding_date?->isoFormat('LL') ?? $wr->wedding_season }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Invités</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->guest_count?->label() ?? '—' }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Budget</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->budget_range?->label() ?? '—' }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Invités</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->guest_count?->label() ?? 'Non renseigné' }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Budget</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->budget_range?->label() ?? 'Non renseigné' }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Expire</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $wr->expires_at?->isoFormat('LL') }}</dd></div>
                     </dl>
                     @if ($wr->description)

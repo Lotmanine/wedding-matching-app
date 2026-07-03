@@ -114,7 +114,13 @@ class ProfileEditor extends Component
     #[Computed]
     public function serviceTypes(): array
     {
-        return ServiceType::cases();
+        // Active catalog services, plus any the provider already offers —
+        // deactivating a service must not strip it from existing profiles.
+        $active = ServiceType::activeCases();
+        $ownedValues = array_diff($this->services ?? [], array_map(fn ($c) => $c->value, $active));
+        $owned = array_values(array_filter(array_map(fn ($v) => ServiceType::tryFrom((string) $v), $ownedValues)));
+
+        return array_merge($active, $owned);
     }
 
     public function toggleCoverageWilaya(string $code): void

@@ -4,13 +4,13 @@
 @php
     // ─── Catégories (bento) — adaptées de claude-design/Landing.jsx ───
     $categories = [
-        ['label' => 'Photographe',     'count' => '840',   'icon' => 'camera_alt',             'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=800&q=80', 'span' => false],
-        ['label' => 'Vidéaste',        'count' => '310',   'icon' => 'videocam',               'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => 'https://images.unsplash.com/photo-1492691527719-9d1e7e7338f9?auto=format&fit=crop&w=800&q=80', 'span' => false],
-        ['label' => 'Traiteur',        'count' => '1 200', 'icon' => 'restaurant',             'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80', 'span' => false],
-        ['label' => 'Salle des fêtes', 'count' => '190',   'icon' => 'villa',                  'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80', 'span' => true],
-        ['label' => 'Décoration',      'count' => '650',   'icon' => 'local_florist',          'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80', 'span' => false],
-        ['label' => 'Pâtisserie',      'count' => '420',   'icon' => 'cake',                   'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80', 'span' => false],
-        ['label' => 'Machta',          'count' => '510',   'icon' => 'face_retouching_natural','gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80', 'span' => false],
+        ['label' => 'Photographe',     'count' => '840',   'icon' => 'camera_alt',             'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => asset('images/categories/photographe.jpg'), 'span' => false],
+        ['label' => 'Vidéaste',        'count' => '310',   'icon' => 'videocam',               'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => asset('images/categories/videaste.jpg'), 'span' => false],
+        ['label' => 'Traiteur',        'count' => '1 200', 'icon' => 'restaurant',             'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => asset('images/categories/traiteur.jpg'), 'span' => false],
+        ['label' => 'Salle des fêtes', 'count' => '190',   'icon' => 'villa',                  'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => asset('images/categories/salle.jpg'), 'span' => true],
+        ['label' => 'Décoration',      'count' => '650',   'icon' => 'local_florist',          'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => asset('images/categories/decoration.jpg'), 'span' => false],
+        ['label' => 'Pâtisserie',      'count' => '420',   'icon' => 'cake',                   'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => asset('images/categories/patisserie.jpg'), 'span' => false],
+        ['label' => 'Machta',          'count' => '510',   'icon' => 'face_retouching_natural','gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => asset('images/categories/machta.jpg'), 'span' => false],
     ];
 
     $faqs = [
@@ -23,7 +23,7 @@
 
     $testimonials = [
         ['quote' => "En 20 minutes j'ai décrit mon mariage, et le lendemain matin j'avais déjà 3 photographes qui me proposaient des portfolios sublimes. Zawaj Pro a changé la donne.", 'name' => 'Amira B.', 'city' => 'Alger', 'date' => 'Juillet 2025'],
-        ['quote' => "Le traiteur qu'on a trouvé via Zawaj Pro était exactement ce qu'on voulait. Transparent sur les prix, disponible, et le jour J — parfait. Merci infiniment.", 'name' => 'Youcef K.', 'city' => 'Oran', 'date' => 'Septembre 2025'],
+        ['quote' => "Le traiteur qu'on a trouvé via Zawaj Pro était exactement ce qu'on voulait. Transparent sur les prix, disponible, et le jour J, parfait. Merci infiniment.", 'name' => 'Youcef K.', 'city' => 'Oran', 'date' => 'Septembre 2025'],
         ['quote' => "Ce qui m'a convaincu c'est la vérification. Je savais que les prestataires étaient sérieux avant même de les contacter. Zéro arnaque, zéro stress.", 'name' => 'Nadia M.', 'city' => 'Constantine', 'date' => 'Octobre 2025'],
     ];
 @endphp
@@ -77,7 +77,7 @@
                             {{-- WA chat --}}
                             <div class="flex-1 bg-[#FDFAF6] p-3 space-y-3 overflow-hidden">
                                 <div class="bg-white rounded-2xl rounded-tl-sm p-3 shadow-sm border border-[#D4CFC7]/30 max-w-[85%] text-[11px] leading-relaxed text-[#1A1A1A]">
-                                    Bonjour ! Mariage à Alger le 15 juillet — je cherche un photographe style naturel/éditorial 📷
+                                    Bonjour ! Mariage à Alger le 15 juillet, je cherche un photographe style naturel/éditorial 📷
                                     <p class="text-[9px] text-right text-[#9A958D] mt-1">10:14</p>
                                 </div>
                                 <div class="bg-[#F0D9B5] rounded-2xl rounded-tr-sm p-3 shadow-sm max-w-[85%] ml-auto text-[11px] leading-relaxed text-[#1A1A1A]">
@@ -137,7 +137,7 @@
                 <div class="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px bg-gradient-to-r from-[#D4CFC7] via-[#C8956C] to-[#D4CFC7] z-0"></div>
                 @php
                     $steps = [
-                        ['n' => '01', 'icon' => 'edit_note', 'title' => 'Décrivez vos besoins', 'body' => 'Date, budget, style, wilaya — en quelques minutes, votre profil mariage est complet.'],
+                        ['n' => '01', 'icon' => 'edit_note', 'title' => 'Décrivez vos besoins', 'body' => 'Date, budget, style, wilaya : en quelques minutes, votre profil mariage est complet.'],
                         ['n' => '02', 'icon' => 'psychology', 'title' => 'Analyse intelligente', 'body' => "Parmi des milliers d'artisans vérifiés, notre système retient uniquement ceux qui correspondent à votre profil."],
                         ['n' => '03', 'icon' => 'chat_bubble', 'title' => 'Recevez sur WhatsApp', 'body' => '3 prestataires sélectionnés vous contactent avec tarifs et portfolios. Choisissez en toute sérénité.'],
                     ];
@@ -170,7 +170,7 @@
                         <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">Recherche classique</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach (["Des heures à scroller des groupes Facebook désorganisés", "Risque d'arnaques — pas de vérification", "Attendre des jours pour un simple devis", "Prestataires débordés, sans suivi"] as $t)
+                        @foreach (["Des heures à scroller des groupes Facebook désorganisés", "Risque d'arnaques : pas de vérification", "Attendre des jours pour un simple devis", "Prestataires débordés, sans suivi"] as $t)
                             <li class="flex items-start gap-3 text-sm text-[#6B665E]">
                                 <x-z.icon name="remove_circle_outline" class="text-[#D4CFC7] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -188,7 +188,7 @@
                         <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">Avec Zawaj Pro</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach (['Notre système cherche pour vous, 24h/24', 'Chaque prestataire est vérifié et noté', 'Devis et disponibilités en moins de 24h', 'Contact WhatsApp direct — simple et rapide'] as $t)
+                        @foreach (['Notre système cherche pour vous, 24h/24', 'Chaque prestataire est vérifié et noté', 'Devis et disponibilités en moins de 24h', 'Contact WhatsApp direct, simple et rapide'] as $t)
                             <li class="flex items-start gap-3 text-sm font-semibold text-[#1A1A1A]">
                                 <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -252,13 +252,13 @@
             {{-- Image collage --}}
             <div class="relative h-[420px] md:h-[520px]">
                 <div class="absolute top-0 left-0 w-[58%] h-[65%] rounded-2xl overflow-hidden shadow-xl shadow-black/10">
-                    <img src="https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=700&q=80" alt="Mariage algérien" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ asset('images/gallery/mariage.jpg') }}" alt="Mariage algérien" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute bottom-0 left-[8%] w-[48%] h-[48%] rounded-2xl overflow-hidden shadow-xl shadow-black/10 border-4 border-white">
-                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=700&q=80" alt="Couple heureux" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ asset('images/gallery/couple.jpg') }}" alt="Couple heureux" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute top-[10%] right-0 w-[38%] h-[55%] rounded-2xl overflow-hidden shadow-xl shadow-black/10">
-                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=700&q=80" alt="Cérémonie" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ asset('images/gallery/ceremonie.jpg') }}" alt="Cérémonie" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute bottom-[15%] right-[2%] bg-white rounded-2xl p-4 shadow-lg shadow-black/10 border border-[#D4CFC7]/40">
                     <div class="flex items-center gap-3">

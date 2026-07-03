@@ -4,12 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? __('admin.brand') . ' — Admin' }}</title>
+    <title>{{ $title ?? __('admin.brand') . ' · Admin' }}</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -22,13 +18,22 @@
             ['route' => 'admin.requests.index',       'pattern' => 'admin.requests.*',        'icon' => 'inbox',         'label' => __('admin.nav.requests')],
             ['route' => 'admin.service_requests.index','pattern' => 'admin.service_requests.*','icon' => 'list_alt',      'label' => __('admin.nav.service_requests')],
             ['route' => 'admin.providers.index',      'pattern' => 'admin.providers.*',       'icon' => 'storefront',    'label' => __('admin.nav.providers')],
-            ['route' => 'admin.packs.index',          'pattern' => 'admin.packs.*',           'icon' => 'inventory_2',   'label' => __('admin.nav.packs')],
+            ['route' => 'admin.packs.index',          'pattern' => 'admin.packs.*',           'icon' => 'inventory_2',   'label' => __('admin.nav.packs'),      'admin_only' => true],
             ['route' => 'admin.purchases.index',      'pattern' => 'admin.purchases.*',       'icon' => 'payments',      'label' => __('admin.nav.purchases')],
-            ['route' => 'admin.users.index',          'pattern' => 'admin.users.*',           'icon' => 'group',         'label' => __('admin.nav.users')],
-            ['route' => 'admin.logs.audit',           'pattern' => 'admin.logs.*',            'icon' => 'receipt_long',  'label' => __('admin.nav.logs')],
-            ['route' => 'admin.webhooks.index',       'pattern' => 'admin.webhooks.*',        'icon' => 'webhook',       'label' => 'Webhooks'],
-            ['route' => 'admin.settings.index',       'pattern' => 'admin.settings.*',        'icon' => 'settings',      'label' => __('admin.nav.settings')],
+            ['route' => 'admin.disputes.index',       'pattern' => 'admin.disputes.*',        'icon' => 'flag',          'label' => 'Litiges'],
+            ['route' => 'admin.payments.edit',        'pattern' => 'admin.payments.*',        'icon' => 'account_balance','label' => 'Paiements',               'admin_only' => true],
+            ['route' => 'admin.catalog.edit',         'pattern' => 'admin.catalog.*',         'icon' => 'category',      'label' => 'Catalogue',                'admin_only' => true],
+            ['route' => 'admin.users.index',          'pattern' => 'admin.users.*',           'icon' => 'group',         'label' => __('admin.nav.users'),      'admin_only' => true],
+            ['route' => 'admin.logs.audit',           'pattern' => 'admin.logs.*',            'icon' => 'receipt_long',  'label' => __('admin.nav.logs'),       'admin_only' => true],
+            ['route' => 'admin.webhooks.index',       'pattern' => 'admin.webhooks.*',        'icon' => 'webhook',       'label' => 'Webhooks',                 'admin_only' => true],
+            ['route' => 'admin.settings.index',       'pattern' => 'admin.settings.*',        'icon' => 'settings',      'label' => __('admin.nav.settings'),   'admin_only' => true],
         ];
+
+        // Managers only see the operations tabs — admin-only sections are
+        // hidden here AND blocked by route middleware (defence in depth).
+        if (! auth()->user()?->hasRole('admin')) {
+            $items = array_values(array_filter($items, fn ($i) => empty($i['admin_only'])));
+        }
     @endphp
 
     <div class="min-h-screen bg-[#F7F4F0] flex">

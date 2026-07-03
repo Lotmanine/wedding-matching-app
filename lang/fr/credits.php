@@ -50,8 +50,14 @@ return [
     ],
 
     'checkout' => [
-        'failed' => 'Impossible de démarrer le paiement. Merci de réessayer.',
-        'no_url' => 'Réponse inattendue du prestataire de paiement.',
+        'failed'       => 'Impossible de démarrer le paiement. Merci de réessayer.',
+        'no_url'       => 'Réponse inattendue du prestataire de paiement.',
+        'not_verified' => 'Votre compte doit être vérifié par notre équipe avant de pouvoir acheter des crédits.',
+        'no_method'    => "Aucun mode de paiement n'est disponible pour le moment. Merci de contacter notre équipe.",
+    ],
+
+    'offline' => [
+        'submitted' => 'Votre versement a été déclaré. Vos crédits seront ajoutés dès validation par notre équipe.',
     ],
 
     'receipt' => [
@@ -64,7 +70,7 @@ return [
         'status'       => 'Statut',
         'amount'       => 'Montant',
         'unlocks'      => 'Crédits de déblocage',
-        'footer'       => 'Zawaj Pro — plateforme de mariage en Algérie. Auto-entrepreneur. Paiements sécurisés via Chargily Pay.',
+        'footer'       => 'Zawaj Pro · Plateforme de mariage en Algérie. Auto-entrepreneur. Paiements sécurisés via Chargily Pay.',
     ],
 
     'low_balance_warning' => '⚠️ Crédits insuffisants pour accepter une demande. Rechargez votre compte.',

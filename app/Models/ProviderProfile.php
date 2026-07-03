@@ -77,4 +77,33 @@ class ProviderProfile extends Model
             : 0;
         $this->save();
     }
+
+    /**
+     * Whether the account is currently suspended by an admin.
+     */
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
+    }
+
+    /**
+     * A provider is "active" — eligible to receive/accept leads and spend
+     * credits — only when a super-admin has verified them and they are not
+     * suspended. This is the single gate every credit/lead action checks.
+     */
+    public function isActive(): bool
+    {
+        return (bool) $this->verified && ! $this->isSuspended();
+    }
+
+    /**
+     * Whether the provider may buy credit packs. Unverified or suspended
+     * providers cannot: they could otherwise accumulate credits they are
+     * not allowed to spend. Kept identical to isActive() so the buy gate
+     * and the lead gate never drift apart.
+     */
+    public function canPurchaseCredits(): bool
+    {
+        return $this->isActive();
+    }
 }

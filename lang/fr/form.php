@@ -7,7 +7,7 @@ return [
     // Brand + layout
     'brand'             => 'Zawaj Pro',
     'brand_tagline'     => 'Votre mariage, facilité.',
-    'footer_copyright'  => '© :year Zawaj Pro — Algérie',
+    'footer_copyright'  => '© :year Zawaj Pro · Algérie',
     'footer_legal'      => 'Mentions légales',
     'footer_privacy'    => 'Confidentialité (ANPDP)',
 
@@ -26,15 +26,15 @@ return [
     // Step titles
     'step_1_title'      => 'Parlez-nous du couple',
     'step_2_title'      => 'Où se déroule le mariage ?',
-    'step_3_title'      => 'Détails du mariage',
-    'step_4_title'      => 'Budget et prestataires recherchés',
+    'step_3_title'      => 'Budget et prestataires recherchés',
+    'step_4_title'      => 'Détails du mariage',
     'step_5_title'      => 'Finalisez votre demande',
 
     // Step intros
     'step_1_intro'      => 'Quelques informations pour vous contacter.',
     'step_2_intro'      => 'Sélectionnez la wilaya (et la commune si vous la connaissez).',
-    'step_3_intro'      => 'Facultatif — plus c\'est précis, mieux c\'est.',
-    'step_4_intro'      => 'Choisissez les prestataires dont vous avez besoin.',
+    'step_3_intro'      => 'Choisissez les prestataires dont vous avez besoin.',
+    'step_4_intro'      => 'Précisez la date et les détails de votre mariage.',
     'step_5_intro'      => 'Vérifiez vos informations et envoyez votre demande.',
 
     // Field labels
@@ -65,9 +65,9 @@ return [
     'help_char_count'    => ':count / :max caractères',
 
     // Buttons
-    'btn_start'         => 'Je planifie mon mariage →',
-    'btn_previous'      => '← Retour',
-    'btn_next'          => 'Continuer →',
+    'btn_start'         => 'Je planifie mon mariage',
+    'btn_previous'      => 'Retour',
+    'btn_next'          => 'Continuer',
     'btn_submit'        => 'Envoyer ma demande',
     'btn_home'          => 'Retour à l\'accueil',
     'btn_copy'          => 'Copier',
@@ -88,7 +88,7 @@ return [
     'review_budget'     => 'Budget',
     'review_services'   => 'Prestataires',
     'review_notes'      => 'Précisions',
-    'review_none'       => '—',
+    'review_none'       => 'Non renseigné',
     'review_date_only'  => 'Date : :date',
     'review_season_only' => 'Saison : :season',
 
@@ -99,7 +99,7 @@ return [
     'landing_trust_verified' => 'Prestataires vérifiés',
     'landing_trust_wilayas' => '69 wilayas couvertes',
     'landing_secondary_cta' => 'Je suis un prestataire',
-    'landing_secondary_notice' => 'L\'espace prestataires arrive très prochainement — restez à l\'écoute !',
+    'landing_secondary_notice' => 'L\'espace prestataires arrive très prochainement, restez à l\'écoute !',
 
     // Confirmation
     'confirm_title'       => 'Merci :name ! Votre demande est bien reçue 🎉',

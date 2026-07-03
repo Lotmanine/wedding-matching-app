@@ -9,6 +9,7 @@ use App\Models\CreditLedger;
 use App\Models\Purchase;
 use App\Models\UnlockPack;
 use App\Services\Payments\ChargilyClient;
+use App\Services\Payments\PaymentSettings;
 use App\Services\Payments\PurchaseService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
@@ -24,6 +25,7 @@ class CreditsController extends Controller
     public function __construct(
         private readonly PurchaseService $purchases,
         private readonly ChargilyClient $chargily,
+        private readonly PaymentSettings $paymentSettings,
     ) {
     }
 
@@ -38,17 +40,64 @@ class CreditsController extends Controller
             'profile' => $user->providerProfile,
             'packs'   => $packs,
             'recent'  => $recent,
+            'canBuy'  => (bool) $user->providerProfile?->canPurchaseCredits(),
         ]);
     }
 
-    public function checkout(Request $request, string $packSlug): RedirectResponse
+    /**
+     * Payment-method choice page (logged-in providers only). Shows the enabled
+     * methods (online Chargily and/or offline versement) for a pack.
+     */
+    public function pay(Request $request, string $packSlug)
     {
+        $user = $request->user()->load('providerProfile');
+
+        if (! $user->providerProfile?->canPurchaseCredits()) {
+            return redirect()->route('provider.credits.index')
+                ->with('error', __('credits.checkout.not_verified'));
+        }
+
         $pack = UnlockPack::where('slug', $packSlug)->where('active', true)->first();
         if (! $pack) {
             throw new NotFoundHttpException('Pack introuvable ou inactif.');
         }
 
-        $user = $request->user();
+        $methods = $this->paymentSettings->enabledMethods();
+        if ($methods === []) {
+            return redirect()->route('provider.credits.index')
+                ->with('error', __('credits.checkout.no_method'));
+        }
+
+        return view('provider.credits.pay', [
+            'pack'           => $pack,
+            'methods'        => $methods,
+            'offlineDetails' => $this->paymentSettings->offlineDetails(),
+        ]);
+    }
+
+    /**
+     * Start an online Chargily checkout and redirect to the gateway.
+     */
+    public function checkout(Request $request, string $packSlug): RedirectResponse
+    {
+        $user = $request->user()->load('providerProfile');
+
+        // Only verified, non-suspended providers may buy credits. Otherwise a
+        // provider could accumulate credits they are not allowed to spend.
+        if (! $user->providerProfile?->canPurchaseCredits()) {
+            return redirect()->route('provider.credits.index')
+                ->with('error', __('credits.checkout.not_verified'));
+        }
+
+        if (! $this->paymentSettings->isMethodEnabled(PaymentSettings::METHOD_ONLINE)) {
+            return redirect()->route('provider.credits.index')->with('error', __('credits.checkout.no_method'));
+        }
+
+        $pack = UnlockPack::where('slug', $packSlug)->where('active', true)->first();
+        if (! $pack) {
+            throw new NotFoundHttpException('Pack introuvable ou inactif.');
+        }
+
         $purchase = $this->purchases->initiate($user, $pack);
 
         try {
@@ -70,6 +119,45 @@ class CreditsController extends Controller
         }
 
         return redirect()->route('provider.credits.index')->with('error', __('credits.checkout.no_url'));
+    }
+
+    /**
+     * Record an offline (bank transfer / CCP) payment declaration. Credits are
+     * NOT granted here — the purchase waits in 'pending_verification' for an
+     * admin to confirm the funds arrived.
+     */
+    public function offlineSubmit(Request $request, string $packSlug): RedirectResponse
+    {
+        $user = $request->user()->load('providerProfile');
+
+        if (! $user->providerProfile?->canPurchaseCredits()) {
+            return redirect()->route('provider.credits.index')
+                ->with('error', __('credits.checkout.not_verified'));
+        }
+
+        if (! $this->paymentSettings->isMethodEnabled(PaymentSettings::METHOD_OFFLINE)) {
+            return redirect()->route('provider.credits.index')->with('error', __('credits.checkout.no_method'));
+        }
+
+        $pack = UnlockPack::where('slug', $packSlug)->where('active', true)->first();
+        if (! $pack) {
+            throw new NotFoundHttpException('Pack introuvable ou inactif.');
+        }
+
+        $validated = $request->validate([
+            'payment_reference' => ['required', 'string', 'min:3', 'max:120'],
+            'proof'             => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+        ]);
+
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('payment-proofs', 'local');
+        }
+
+        $purchase = $this->purchases->initiateOffline($user, $pack, $validated['payment_reference'], $proofPath);
+
+        return redirect()->route('provider.credits.purchase.show', $purchase->purchase_uid)
+            ->with('status', __('credits.offline.submitted'));
     }
 
     public function success(Request $request)

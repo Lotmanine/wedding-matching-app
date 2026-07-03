@@ -39,10 +39,10 @@
                 <tbody class="divide-y divide-[#D4CFC7]/20">
                     @foreach ($messages as $m)
                         <tr class="hover:bg-[#F7F4F0]/50 transition-colors">
-                            <td class="px-3 py-2 text-[#9A958D] whitespace-nowrap">{{ $m->sent_at?->diffForHumans() ?? '—' }}</td>
+                            <td class="px-3 py-2 text-[#9A958D] whitespace-nowrap">{{ $m->sent_at?->diffForHumans() ?? 'Non renseigné' }}</td>
                             <td class="px-3 py-2 font-mono text-[#1A1A1A]">
                                 @if ($m->direction === 'inbound')
-                                    <span class="text-[10px] px-1 py-0.5 rounded bg-[#F0D9B5]/50 text-[#7A5530] mr-1">←</span>
+                                    <span class="inline-flex text-[10px] px-1 py-0.5 rounded bg-[#F0D9B5]/50 text-[#7A5530] mr-1"><x-z.icon name="arrow_back" class="text-[10px]" /></span>
                                 @endif
                                 {{ $m->event_type }}
                             </td>
@@ -50,7 +50,7 @@
                             <td class="px-3 py-2">
                                 <span class="px-1.5 py-0.5 rounded-full text-[10px] font-medium {{ $m->role === 'provider' ? 'bg-[#25D366]/10 text-[#1ebe5d]' : 'bg-[#F0D9B5]/50 text-[#7A5530]' }}">{{ $m->role }}</span>
                             </td>
-                            <td class="px-3 py-2 font-mono text-[#6B665E]">{{ $m->template_intent ?? '—' }}</td>
+                            <td class="px-3 py-2 font-mono text-[#6B665E]">{{ $m->template_intent ?? 'Non renseigné' }}</td>
                             <td class="px-3 py-2">
                                 @php
                                     // Pill chain reflects Meta progression: sent → delivered → read.
@@ -79,13 +79,13 @@
                                                 {{ substr($stage['label'], 0, 1) }}
                                             </span>
                                             @if (! $loop->last)
-                                                <span class="text-[#D4CFC7] text-[8px]">→</span>
+                                                <x-z.icon name="chevron_right" class="text-[#D4CFC7] text-[10px]" />
                                             @endif
                                         @endforeach
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-3 py-2 font-mono text-[10px] text-[#9A958D] truncate max-w-[140px]">{{ $m->wa_message_id ?? '—' }}</td>
+                            <td class="px-3 py-2 font-mono text-[10px] text-[#9A958D] truncate max-w-[140px]">{{ $m->wa_message_id ?? 'Non renseigné' }}</td>
                             <td class="px-3 py-2 text-[#A84936] truncate max-w-[200px]">{{ $m->error ?? '' }}</td>
                         </tr>
                     @endforeach

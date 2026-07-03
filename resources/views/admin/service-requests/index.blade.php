@@ -37,7 +37,7 @@
                                 <td class="px-5 py-4 text-[#1A1A1A]">{{ $sr->service_type?->label() }}</td>
                                 <td class="px-5 py-4"><x-z.badge variant="default">{{ $sr->status?->value ?? $sr->status }}</x-z.badge></td>
                                 <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $sr->current_round }}</td>
-                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $sr->unlockedBy?->email ?? '—' }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $sr->unlockedBy?->email ?? 'Non renseigné' }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="6" class="p-6 text-center text-[#9A958D] text-sm">Aucune demande.</td></tr>

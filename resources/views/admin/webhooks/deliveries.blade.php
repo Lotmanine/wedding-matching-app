@@ -47,7 +47,7 @@
                                 </td>
                                 <td class="px-5 py-3 text-right text-xs text-[#6B665E]">{{ $d->attempts }}</td>
                                 <td class="px-5 py-3 text-xs text-[#9A958D]">{{ $d->created_at?->diffForHumans() }}</td>
-                                <td class="px-5 py-3 text-xs text-[#9A958D]">{{ $d->delivered_at?->diffForHumans() ?? '—' }}</td>
+                                <td class="px-5 py-3 text-xs text-[#9A958D]">{{ $d->delivered_at?->diffForHumans() ?? 'Non renseigné' }}</td>
                                 <td class="px-5 py-3 text-right">
                                     <form method="POST" action="{{ route('admin.webhooks.deliveries.replay', $d->id) }}" class="inline">@csrf
                                         <button class="text-[#C8956C] text-xs font-bold hover:underline">Rejouer</button>

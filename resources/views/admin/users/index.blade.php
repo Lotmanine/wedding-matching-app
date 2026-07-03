@@ -2,8 +2,9 @@
 
 @section('content')
     <div class="max-w-7xl">
-        <div class="mb-8">
+        <div class="mb-8 flex items-start justify-between gap-3">
             <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('admin.users.title') }}</h1>
+            <x-z.btn :href="route('admin.users.create')" variant="accent" size="sm" icon="person_add">Créer un utilisateur</x-z.btn>
         </div>
 
         <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
@@ -11,6 +12,7 @@
             <select name="role" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
                 <option value="all" @selected($role === 'all')>Tous</option>
                 <option value="admin" @selected($role === 'admin')>Admin</option>
+                <option value="manager" @selected($role === 'manager')>Manager</option>
                 <option value="provider" @selected($role === 'provider')>Prestataire</option>
                 <option value="couple" @selected($role === 'couple')>Couple</option>
             </select>

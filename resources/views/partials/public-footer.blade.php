@@ -29,9 +29,9 @@
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-4">Prestataires</p>
                 <ul class="space-y-2.5">
-                    <li><a href="{{ route('provider.register') }}" class="text-sm text-white/55 hover:text-white transition-colors">Devenir prestataire</a></li>
+                    <li><a href="{{ route('provider.landing') }}" class="text-sm text-white/55 hover:text-white transition-colors">Devenir prestataire</a></li>
                     <li><a href="{{ route('provider.login') }}" class="text-sm text-white/55 hover:text-white transition-colors">Se connecter</a></li>
-                    <li><a href="{{ route('provider.register') }}#tarifs" class="text-sm text-white/55 hover:text-white transition-colors">Tarifs crédits</a></li>
+                    <li><a href="{{ route('provider.landing') }}#tarifs" class="text-sm text-white/55 hover:text-white transition-colors">Tarifs crédits</a></li>
                 </ul>
             </div>
 
@@ -40,6 +40,7 @@
                 <p class="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-4">Entreprise</p>
                 <ul class="space-y-2.5">
                     <li><a href="mailto:contact@zawajpro.dz" class="text-sm text-white/55 hover:text-white transition-colors">Contact</a></li>
+                    <li><a href="{{ route('admin.login') }}" class="text-sm text-white/40 hover:text-white/70 transition-colors inline-flex items-center gap-1.5"><x-z.icon name="shield_person" class="text-sm" />Administration</a></li>
                 </ul>
             </div>
 

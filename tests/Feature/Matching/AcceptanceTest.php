@@ -155,8 +155,34 @@ class AcceptanceTest extends TestCase
         $this->assertNull($lead->fresh()->unlocked_by_user_id);
     }
 
-    public function test_ineligible_lead_rejected(): void
+    public function test_out_of_coverage_lead_rejected_when_not_assigned(): void
     {
+        // A provider who covers wilaya 16 must NOT be able to accept a lead in
+        // wilaya 31 that they were never placed in a round for (open marketplace).
+        $user = $this->makeProvider(); // offers photo, covers 16
+        $wr = WedRequest::factory()->create([
+            'couple_wilaya_code' => '31', // outside coverage
+            'services_needed'    => ['photo'],
+        ]);
+        $lead = ServiceRequest::create([
+            'wed_request_id'   => $wr->id,
+            'service_type'     => 'photo',
+            'status'           => RequestStatus::OpenMarketplace->value,
+            'current_round'    => 4,
+            'expires_at'       => now()->addHour(),
+        ]);
+
+        $svc = app(LeadAcceptanceService::class);
+        $result = $svc->accept($user->fresh(['providerProfile', 'providerServices', 'providerCoverage']), $lead);
+
+        $this->assertSame(AcceptResult::STATUS_NOT_ELIGIBLE, $result->status);
+    }
+
+    public function test_manually_assigned_provider_can_accept_outside_coverage(): void
+    {
+        // Manual round-robin: an admin assigns a verified provider to a lead
+        // outside their coverage. Being placed in a round list overrides the
+        // geographic filter, so they can accept it.
         $user = $this->makeProvider(); // offers photo, covers 16
         $wr = WedRequest::factory()->create([
             'couple_wilaya_code' => '31', // outside coverage
@@ -168,6 +194,31 @@ class AcceptanceTest extends TestCase
             'status'               => RequestStatus::Round1->value,
             'current_round'        => 1,
             'round_started_at'     => now(),
+            'expires_at'           => now()->addHour(),
+            'round_1_provider_ids' => [$user->id],
+        ]);
+
+        $svc = app(LeadAcceptanceService::class);
+        $result = $svc->accept($user->fresh(['providerProfile', 'providerServices', 'providerCoverage']), $lead);
+
+        $this->assertSame(AcceptResult::STATUS_SUCCESS, $result->status);
+    }
+
+    public function test_unverified_provider_cannot_accept_even_if_assigned(): void
+    {
+        // Verification is still required even for a manually-assigned lead.
+        $user = $this->makeProvider(verified: false); // covers 16, NOT verified
+        $wr = WedRequest::factory()->create([
+            'couple_wilaya_code' => '16',
+            'services_needed'    => ['photo'],
+        ]);
+        $lead = ServiceRequest::create([
+            'wed_request_id'       => $wr->id,
+            'service_type'         => 'photo',
+            'status'               => RequestStatus::Round1->value,
+            'current_round'        => 1,
+            'round_started_at'     => now(),
+            'expires_at'           => now()->addHour(),
             'round_1_provider_ids' => [$user->id],
         ]);
 

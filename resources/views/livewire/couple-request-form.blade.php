@@ -17,8 +17,8 @@
     $stepMeta = [
         1 => ['label' => __('form.step_1_title'), 'icon' => 'person'],
         2 => ['label' => __('form.step_2_title'), 'icon' => 'location_on'],
-        3 => ['label' => __('form.step_3_title'), 'icon' => 'calendar_month'],
-        4 => ['label' => __('form.step_4_title'), 'icon' => 'checklist'],
+        3 => ['label' => __('form.step_3_title'), 'icon' => 'checklist'],
+        4 => ['label' => __('form.step_4_title'), 'icon' => 'calendar_month'],
         5 => ['label' => __('form.step_5_title'), 'icon' => 'edit_note'],
     ];
 
@@ -207,7 +207,7 @@
                             >
                                 <option value="">{{ __('form.placeholder_wilaya') }}</option>
                                 @foreach ($this->wilayas as $w)
-                                    <option value="{{ $w->code }}">{{ $w->code }} — {{ $w->name_fr }}</option>
+                                    <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name_fr }}</option>
                                 @endforeach
                             </select>
                             @error('couple_wilaya_code') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
@@ -234,12 +234,12 @@
                     </div>
                 @endif
 
-                {{-- STEP 3 — Date / saison / invités --}}
-                @if ($step === 3)
+                {{-- STEP 4 — Date / saison / invités (conditionnel) --}}
+                @if ($step === 4)
                     <div class="space-y-6">
                         <div>
                             <label for="wedding_date" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_wedding_date') }} <span class="text-[#9A958D] font-normal">(facultatif)</span>
+                                {{ __('form.label_wedding_date') }} <span class="text-[#C8956C]">*</span>
                             </label>
                             <input
                                 type="date"
@@ -247,6 +247,7 @@
                                 wire:model.live="wedding_date"
                                 min="{{ now()->toDateString() }}"
                                 max="{{ now()->addYears(2)->toDateString() }}"
+                                required
                                 class="{{ $inputClass }}"
                             />
                             @error('wedding_date') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
@@ -254,7 +255,7 @@
 
                         <div>
                             <label for="wedding_season" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_wedding_season') }} <span class="text-[#9A958D] font-normal">(si pas de date)</span>
+                                {{ __('form.label_wedding_season') }} <span class="text-[#9A958D] font-normal">(facultatif)</span>
                             </label>
                             <select
                                 id="wedding_season"
@@ -267,53 +268,52 @@
                                 <option value="Automne">{{ __('form.season_automne') }}</option>
                                 <option value="Hiver">{{ __('form.season_hiver') }}</option>
                             </select>
-                            <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_date_or_season') }}</p>
                             @error('wedding_season') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
 
-                        <div>
-                            <label for="guest_count" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_guest_count') }} <span class="text-[#C8956C]">*</span>
-                            </label>
-                            <select
-                                id="guest_count"
-                                wire:model="guest_count"
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pr-11"
-                                required
-                            >
-                                <option value="">{{ __('form.placeholder_guest_count') }}</option>
-                                @foreach ($this->guestCounts as $g)
-                                    <option value="{{ $g->value }}">{{ $g->label() }}</option>
-                                @endforeach
-                            </select>
-                            @error('guest_count') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
-                        </div>
+                        {{-- Guest count only when a headcount-dependent service (traiteur / salle) is chosen --}}
+                        @if ($this->needsGuestCount())
+                            <div>
+                                <label for="guest_count" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
+                                    {{ __('form.label_guest_count') }} <span class="text-[#C8956C]">*</span>
+                                </label>
+                                <select
+                                    id="guest_count"
+                                    wire:model="guest_count"
+                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pr-11"
+                                    required
+                                >
+                                    <option value="">{{ __('form.placeholder_guest_count') }}</option>
+                                    @foreach ($this->guestCounts as $g)
+                                        <option value="{{ $g->value }}">{{ $g->label() }}</option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-2 text-xs text-[#9A958D]">Requis pour le traiteur et la salle des fêtes.</p>
+                                @error('guest_count') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
+                            </div>
+                        @endif
                     </div>
                 @endif
 
-                {{-- STEP 4 — Budget (cartes) + services (chips) --}}
-                @if ($step === 4)
+                {{-- STEP 3 — Budget (cartes) + services (chips) --}}
+                @if ($step === 3)
                     <div class="space-y-7">
                         {{-- Budget cards --}}
                         <div>
                             <p class="text-sm font-semibold text-[#1A1A1A] mb-3">{{ __('form.label_budget') }} <span class="text-[#C8956C]">*</span></p>
                             <div class="grid grid-cols-2 gap-3">
                                 @foreach ($this->budgetRanges as $b)
-                                    @php $selected = $budget_range === $b->value; @endphp
-                                    <label @class([
-                                        'block text-left p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98]',
-                                        'border-[#C8956C] bg-[#F0D9B5]/40 shadow-sm' => $selected,
-                                        'border-[#D4CFC7] bg-white hover:border-[#C8956C]/50' => ! $selected,
-                                    ])>
-                                        <input type="radio" wire:model="budget_range" value="{{ $b->value }}" class="sr-only" />
+                                    {{-- Highlight is driven by the native :checked state, so selection is
+                                         instant. `name` makes the radios a real DOM group (the browser
+                                         unchecks the previous one immediately); the inner dot/check use a
+                                         named group-has variant because peer-checked can't reach elements
+                                         nested inside a sibling wrapper. --}}
+                                    <label class="group/budget relative block text-left p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98] border-[#D4CFC7] bg-white hover:border-[#C8956C]/50 has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/40 has-[:checked]:shadow-sm">
+                                        <input type="radio" name="budget_range" wire:model.live="budget_range" value="{{ $b->value }}" class="sr-only" />
                                         <div class="flex items-start justify-between gap-2">
-                                            <p @class(['font-semibold text-sm', 'text-[#1A1A1A]' => $selected, 'text-[#6B665E]' => ! $selected])>{{ $b->label() }}</p>
-                                            <span @class([
-                                                'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all',
-                                                'border-[#C8956C] bg-[#C8956C]' => $selected,
-                                                'border-[#D4CFC7]' => ! $selected,
-                                            ])>
-                                                @if ($selected)<x-z.icon name="check" class="text-white text-xs" />@endif
+                                            <p class="font-semibold text-sm text-[#6B665E] group-has-[:checked]/budget:text-[#1A1A1A]">{{ $b->label() }}</p>
+                                            <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all border-[#D4CFC7] group-has-[:checked]/budget:border-[#C8956C] group-has-[:checked]/budget:bg-[#C8956C]">
+                                                <x-z.icon name="check" class="text-white text-xs opacity-0 group-has-[:checked]/budget:opacity-100" />
                                             </span>
                                         </div>
                                     </label>
@@ -327,15 +327,12 @@
                             <legend class="text-sm font-semibold text-[#1A1A1A] mb-3">{{ __('form.label_services') }} <span class="text-[#C8956C]">*</span></legend>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 @foreach ($this->serviceTypes as $svc)
-                                    @php $selected = in_array($svc->value, $services_needed, true); @endphp
-                                    <label @class([
-                                        'flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 text-sm font-semibold cursor-pointer transition-all duration-200 active:scale-[0.97]',
-                                        'border-[#C8956C] bg-[#F0D9B5]/50 text-[#1A1A1A] shadow-sm' => $selected,
-                                        'border-[#D4CFC7] bg-white text-[#6B665E] hover:border-[#C8956C]/50 hover:bg-[#F7F4F0]' => ! $selected,
-                                    ])>
-                                        <input type="checkbox" value="{{ $svc->value }}" wire:model="services_needed" class="sr-only" />
+                                    {{-- Instant highlight via native :checked (peer). wire:model.live keeps
+                                         guest-count conditional logic + review in sync on each toggle. --}}
+                                    <label class="flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 text-sm font-semibold cursor-pointer transition-all duration-200 active:scale-[0.97] border-[#D4CFC7] bg-white text-[#6B665E] hover:border-[#C8956C]/50 hover:bg-[#F7F4F0] has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/50 has-[:checked]:text-[#1A1A1A] has-[:checked]:shadow-sm">
+                                        <input type="checkbox" value="{{ $svc->value }}" wire:model.live="services_needed" class="peer sr-only" />
                                         <span>{{ $svc->label() }}</span>
-                                        @if ($selected)<x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-base ml-auto" />@endif
+                                        <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-base ml-auto opacity-0 peer-checked:opacity-100" />
                                     </label>
                                 @endforeach
                             </div>
@@ -379,7 +376,7 @@
                             <h2 class="font-serif text-lg font-semibold text-[#7A5530]">{{ __('form.review_title') }}</h2>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }} :</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]">({{ $couple_whatsapp ?: '—' }})</span></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }} :</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]">({{ $couple_whatsapp ?: 'Non renseigné' }})</span></div>
                                 <div><span class="text-[#9A958D]">{{ __('form.review_location') }} :</span> <strong class="text-[#1A1A1A]">{{ $wilayaRow?->name_fr ?? __('form.review_none') }}</strong>{{ $couple_commune ? ', ' . $couple_commune : '' }}</div>
                                 <div>
                                     <span class="text-[#9A958D]">{{ __('form.review_wedding') }} :</span>

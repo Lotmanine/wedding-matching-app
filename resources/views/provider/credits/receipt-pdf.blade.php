@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="brand">💍 Zawaj Pro — Algérie</div>
+        <div class="brand">💍 Zawaj Pro · Algérie</div>
         <h1>{{ __('credits.receipt.title') }}</h1>
         <p style="font-family: monospace; color: #6b7280; font-size: 11px; margin: 4px 0;">{{ $purchase->purchase_uid }}</p>
     </div>
@@ -34,11 +34,11 @@
         </tr>
         <tr>
             <td class="label">{{ __('credits.receipt.paid_on') }}</td>
-            <td class="value">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? '—' }}</td>
+            <td class="value">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? 'Non renseigné' }}</td>
         </tr>
         <tr>
             <td class="label">{{ __('credits.receipt.reference') }}</td>
-            <td style="font-family: monospace; font-size: 11px;">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? '—' }}</td>
+            <td style="font-family: monospace; font-size: 11px;">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? 'Non renseigné' }}</td>
         </tr>
         <tr>
             <td class="label">{{ __('credits.receipt.status') }}</td>
@@ -48,7 +48,7 @@
 
     <table style="margin-top: 30px;">
         <tr>
-            <td class="value">{{ $purchase->unlockPack?->name ?? '—' }}</td>
+            <td class="value">{{ $purchase->unlockPack?->name ?? 'Non renseigné' }}</td>
             <td style="text-align: right;" class="value">{{ $purchase->unlocks_count }} {{ __('credits.receipt.unlocks') }}</td>
         </tr>
         <tr class="total-row">
@@ -59,7 +59,7 @@
 
     <p class="footer">
         {{ __('credits.receipt.footer') }}<br>
-        Document généré le {{ now()->isoFormat('LL') }} — Zawaj Pro.
+        Document généré le {{ now()->isoFormat('LL') }} · Zawaj Pro.
     </p>
 </body>
 </html>

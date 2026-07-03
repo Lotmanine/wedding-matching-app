@@ -58,12 +58,12 @@
             <p>Zawaj Pro applique les principes fondamentaux de la loi 18-07 :</p>
             <ul class="list-disc pl-5 space-y-1 mt-2">
                 <li>Licéité, loyauté et transparence du traitement</li>
-                <li>Limitation des finalités — données utilisées uniquement pour la mise en relation</li>
-                <li>Minimisation des données — seules les données nécessaires sont collectées</li>
-                <li>Exactitude — les utilisateurs peuvent corriger leurs données à tout moment</li>
-                <li>Limitation de la conservation — suppression automatique des données des couples</li>
-                <li>Intégrité et confidentialité — chiffrement et contrôle d'accès strict</li>
-                <li>Responsabilité — désignation d'un délégué à la protection des données (DPD)</li>
+                <li>Limitation des finalités : données utilisées uniquement pour la mise en relation</li>
+                <li>Minimisation des données : seules les données nécessaires sont collectées</li>
+                <li>Exactitude : les utilisateurs peuvent corriger leurs données à tout moment</li>
+                <li>Limitation de la conservation : suppression automatique des données des couples</li>
+                <li>Intégrité et confidentialité : chiffrement et contrôle d'accès strict</li>
+                <li>Responsabilité : désignation d'un délégué à la protection des données (DPD)</li>
             </ul>
             <p class="mt-4">Délégué à la Protection des Données : <strong>dpo@zawajpro.dz</strong>. Vous pouvez également adresser une réclamation à l'Autorité Nationale de Protection des Données Personnelles (ANPDP).</p>
         </x-legal-section>

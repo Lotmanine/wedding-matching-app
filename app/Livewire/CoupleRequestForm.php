@@ -61,7 +61,8 @@ class CoupleRequestForm extends Component
     #[Computed]
     public function serviceTypes(): array
     {
-        return ServiceType::cases();
+        // Only services currently activated in the admin catalog.
+        return ServiceType::activeCases();
     }
 
     #[Computed]
@@ -76,6 +77,21 @@ class CoupleRequestForm extends Component
         return BudgetRange::cases();
     }
 
+    /**
+     * Services whose quotes depend on the headcount. The "nombre d'invités"
+     * question is only shown (and required) when at least one of these is
+     * selected — a photographer or DJ doesn't need it.
+     *
+     * @var list<string>
+     */
+    public const GUEST_COUNT_SERVICES = ['traiteur', 'salle'];
+
+    #[Computed]
+    public function needsGuestCount(): bool
+    {
+        return count(array_intersect($this->services_needed, self::GUEST_COUNT_SERVICES)) > 0;
+    }
+
     public function updatedCoupleWilayaCode(): void
     {
         $this->couple_commune = '';
@@ -85,6 +101,15 @@ class CoupleRequestForm extends Component
     {
         if (! empty($this->wedding_date)) {
             $this->wedding_season = $this->deriveSeason($this->wedding_date);
+        }
+    }
+
+    public function updatedServicesNeeded(): void
+    {
+        // If the couple no longer needs a headcount-dependent service, drop any
+        // previously chosen guest count so we don't submit a stale value.
+        if (! $this->needsGuestCount()) {
+            $this->guest_count = '';
         }
     }
 
@@ -106,8 +131,8 @@ class CoupleRequestForm extends Component
     protected function rulesForStep(int $step): array
     {
         $whatsappRegex = '/^\+213[567]\d{8}$/';
-        $wilayaCodes = Wilaya::pluck('code')->all();
-        $svcValues = collect(ServiceType::cases())->pluck('value')->all();
+        $wilayaCodes = Wilaya::active()->pluck('code')->all();
+        $svcValues = ServiceType::activeValues();
         $gcValues = collect(GuestCount::cases())->pluck('value')->all();
         $brValues = collect(BudgetRange::cases())->pluck('value')->all();
 
@@ -121,14 +146,16 @@ class CoupleRequestForm extends Component
                 'couple_commune'     => ['nullable', 'string', 'max:120'],
             ],
             3 => [
-                'wedding_date'   => ['nullable', 'date', 'after_or_equal:today', 'before:' . now()->addYears(2)->toDateString()],
-                'wedding_season' => ['nullable', 'in:Printemps,Été,Automne,Hiver'],
-                'guest_count'    => ['required', 'in:' . implode(',', $gcValues)],
-            ],
-            4 => [
                 'budget_range'       => ['required', 'in:' . implode(',', $brValues)],
                 'services_needed'    => ['required', 'array', 'min:1', 'max:8'],
                 'services_needed.*'  => ['string', 'in:' . implode(',', $svcValues)],
+            ],
+            4 => [
+                // Wedding date is now required. Guest count is required only when
+                // a headcount-dependent service (traiteur / salle) is selected.
+                'wedding_date'   => ['required', 'date', 'after_or_equal:today', 'before:' . now()->addYears(2)->toDateString()],
+                'wedding_season' => ['nullable', 'in:Printemps,Été,Automne,Hiver'],
+                'guest_count'    => [$this->needsGuestCount() ? 'required' : 'nullable', 'in:' . implode(',', $gcValues)],
             ],
             5 => [
                 'description' => ['nullable', 'string', 'max:500'],
@@ -194,7 +221,7 @@ class CoupleRequestForm extends Component
                     'couple_commune'     => $this->couple_commune !== '' ? $this->couple_commune : null,
                     'wedding_date'       => $this->wedding_date ?: null,
                     'wedding_season'     => $this->wedding_season ?: null,
-                    'guest_count'        => $this->guest_count,
+                    'guest_count'        => $this->guest_count !== '' ? $this->guest_count : null,
                     'budget_range'       => $this->budget_range,
                     'description'        => $this->description !== '' ? $this->description : null,
                     'services_needed'    => array_values($this->services_needed),

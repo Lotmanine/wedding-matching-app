@@ -6,10 +6,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? __('form.brand') }}</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -33,7 +29,7 @@
                 <div class="hidden md:flex items-center gap-7">
                     <a href="{{ route('home') }}" class="text-sm font-medium text-[#6B665E] hover:text-[#1A1A1A] transition-colors">{{ __('form.nav_for_couples') }}</a>
                     <a href="{{ route('couple.request.create') }}" class="text-sm font-medium {{ request()->routeIs('couple.request.*') ? 'text-[#C8956C] font-semibold' : 'text-[#6B665E] hover:text-[#1A1A1A]' }} transition-colors">{{ __('form.nav_submit_request') }}</a>
-                    <a href="{{ route('provider.login') }}" class="text-sm font-medium text-[#6B665E] hover:text-[#1A1A1A] transition-colors">{{ __('form.nav_become_provider') }}</a>
+                    <a href="{{ route('provider.landing') }}" class="text-sm font-medium {{ request()->routeIs('provider.landing') ? 'text-[#C8956C] font-semibold' : 'text-[#6B665E] hover:text-[#1A1A1A]' }} transition-colors">{{ __('form.nav_become_provider') }}</a>
                 </div>
                 <div class="hidden sm:flex items-center">
                     <x-z.btn :href="route('couple.request.create')" size="sm">{{ __('form.nav_cta') }}</x-z.btn>
@@ -45,6 +41,7 @@
             <div x-show="open" x-cloak class="md:hidden bg-[#FDFAF6] border-t border-[#D4CFC7]/30 px-5 py-5 space-y-3">
                 <a href="{{ route('home') }}" class="block text-sm font-medium text-[#6B665E] py-2">{{ __('form.nav_for_couples') }}</a>
                 <a href="{{ route('couple.request.create') }}" class="block text-sm font-semibold text-[#1A1A1A] py-2">{{ __('form.nav_submit_request') }}</a>
+                <a href="{{ route('provider.landing') }}" class="block text-sm font-medium text-[#6B665E] py-2">{{ __('form.nav_become_provider') }}</a>
                 <a href="{{ route('provider.login') }}" class="block text-sm font-medium text-[#9A958D] py-2 flex items-center gap-2"><x-z.icon name="login" class="text-sm" />{{ __('form.nav_provider_area') }}</a>
                 <div class="pt-2">
                     <x-z.btn :href="route('couple.request.create')" class="w-full justify-center">{{ __('form.nav_cta') }}</x-z.btn>

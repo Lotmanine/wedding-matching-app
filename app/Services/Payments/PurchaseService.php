@@ -28,6 +28,27 @@ class PurchaseService
             'unlocks_count'  => (int) $pack->unlocks_count,
             'status'         => 'pending',
             'gateway'        => 'chargily',
+            'payment_method' => 'online_chargily',
+        ]);
+    }
+
+    /**
+     * Record an offline (bank transfer / CCP) purchase. No credits are granted
+     * yet — the purchase sits in 'pending_verification' until an admin confirms
+     * the funds arrived and marks it paid.
+     */
+    public function initiateOffline(User $user, UnlockPack $pack, string $reference, ?string $proofPath = null): Purchase
+    {
+        return Purchase::create([
+            'user_id'           => $user->id,
+            'unlock_pack_id'    => $pack->id,
+            'amount_dzd'        => (int) $pack->price_dzd,
+            'unlocks_count'     => (int) $pack->unlocks_count,
+            'status'            => 'pending_verification',
+            'gateway'           => 'offline',
+            'payment_method'    => 'offline_versement',
+            'payment_reference' => $reference,
+            'proof_path'        => $proofPath,
         ]);
     }
 

@@ -22,7 +22,7 @@
     </div>
 
     @if (! $beat)
-        <p class="text-sm text-[#9A958D] italic">No heartbeat received yet — n8n cron leg has not run since this table was created.</p>
+        <p class="text-sm text-[#9A958D] italic">No heartbeat received yet : n8n cron leg has not run since this table was created.</p>
     @else
         <dl class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div class="p-3 rounded-lg bg-[#F7F4F0]">
@@ -46,13 +46,13 @@
         @if ($isOverdue)
             <p class="mt-3 flex items-center gap-2 text-xs px-3 py-2 rounded-lg bg-red-50 border border-red-100 text-[#A84936]">
                 <x-z.icon name="warning" :filled="true" class="text-base" />
-                Cron is overdue — last beat was more than 45 minutes ago. Check n8n workflow 4 status.
+                Cron is overdue : last beat was more than 45 minutes ago. Check n8n workflow 4 status.
             </p>
         @endif
 
         <div class="mt-3 flex gap-4 text-[10px] text-[#9A958D]">
-            <span class="flex items-center gap-1"><x-z.icon name="mail" class="text-sm" /> email alert {{ ($beat->alerts_sent['email'] ?? false) ? '✅ sent' : '— skipped' }}</span>
-            <span class="flex items-center gap-1"><x-z.icon name="chat" class="text-sm" /> telegram alert {{ ($beat->alerts_sent['telegram'] ?? false) ? '✅ sent' : '— skipped' }}</span>
+            <span class="flex items-center gap-1"><x-z.icon name="mail" class="text-sm" /> email alert {{ ($beat->alerts_sent['email'] ?? false) ? '✅ sent' : 'skipped' }}</span>
+            <span class="flex items-center gap-1"><x-z.icon name="chat" class="text-sm" /> telegram alert {{ ($beat->alerts_sent['telegram'] ?? false) ? '✅ sent' : 'skipped' }}</span>
         </div>
     @endif
 </section>

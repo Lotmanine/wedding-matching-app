@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('admin.auth.title') }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased text-white min-h-screen flex flex-col items-center justify-center px-5 bg-[#1A1A1A]">
@@ -46,6 +42,6 @@
         </form>
     </div>
 
-    <a href="{{ route('home') }}" class="mt-8 text-xs text-white/30 hover:text-white/60 transition-colors">← {{ __('Retour au site') }}</a>
+    <a href="{{ route('home') }}" class="mt-8 inline-flex items-center gap-1 text-xs text-white/30 hover:text-white/60 transition-colors"><x-z.icon name="arrow_back" class="text-sm" /> {{ __('Retour au site') }}</a>
 </body>
 </html>

@@ -60,4 +60,49 @@ class AdminPurchasesController extends Controller
 
         return back()->with('status', __('admin.purchases.marked_paid_ok'));
     }
+
+    /**
+     * Confirm an offline versement: grant the credits and mark the purchase
+     * paid. Used from the offline verification queue.
+     */
+    public function confirmOffline(string $purchaseUid): RedirectResponse
+    {
+        $purchase = Purchase::where('purchase_uid', $purchaseUid)->firstOrFail();
+
+        if ($purchase->status === 'paid') {
+            return back()->with('error', __('admin.purchases.already_paid'));
+        }
+
+        if ($purchase->status !== 'pending_verification') {
+            return back()->with('error', 'Ce paiement n\'est pas en attente de vérification.');
+        }
+
+        $this->purchases->markPaid($purchase, [
+            'manual'            => true,
+            'offline'           => true,
+            'payment_reference' => $purchase->payment_reference,
+        ]);
+        $this->audit->log('purchase.confirm_offline', $purchase, ['reference' => $purchase->payment_reference]);
+
+        return back()->with('status', 'Versement confirmé, crédits ajoutés.');
+    }
+
+    /**
+     * Reject an offline versement declaration (e.g. funds never arrived).
+     */
+    public function rejectOffline(Request $request, string $purchaseUid): RedirectResponse
+    {
+        $request->validate(['reason' => ['required', 'string', 'max:500']]);
+
+        $purchase = Purchase::where('purchase_uid', $purchaseUid)->firstOrFail();
+
+        if ($purchase->status !== 'pending_verification') {
+            return back()->with('error', 'Ce paiement n\'est pas en attente de vérification.');
+        }
+
+        $this->purchases->markFailed($purchase, 'offline_rejected: ' . $request->input('reason'));
+        $this->audit->log('purchase.reject_offline', $purchase, ['reason' => $request->input('reason')]);
+
+        return back()->with('status', 'Versement rejeté.');
+    }
 }

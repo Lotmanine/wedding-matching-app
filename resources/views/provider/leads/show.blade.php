@@ -17,8 +17,8 @@
         };
         $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value('name_fr') ?? $wr->couple_wilaya_code;
         $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
-        $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->wedding_season . ' ' . $wr->created_at->year : '—');
-        $durationLeft = $lead->expires_at ? $lead->expires_at->diffForHumans(now(), ['parts' => 2]) : '—';
+        $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->wedding_season . ' ' . $wr->created_at->year : 'Date flexible');
+        $durationLeft = $lead->expires_at ? $lead->expires_at->diffForHumans(now(), ['parts' => 2]) : 'Non défini';
         $cost = (int) config('zawaj.credits.unlock_cost', 1);
         $balance = (int) (auth()->user()?->providerProfile?->credit_balance ?? 0);
     @endphp
@@ -44,16 +44,16 @@
                     </div>
                     <div class="flex flex-wrap gap-3">
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' — ' . $wr->couple_commune : '' }}
+                            <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->couple_commune : '' }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
                             <x-z.icon name="calendar_month" class="text-[#C8956C] text-base" />{{ $dateLine }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? '—' }}
+                            <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? 'Non renseigné' }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label() ?? '—' }}
+                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label() ?? 'Non renseigné' }}
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
 
                 <p class="text-xs text-[#9A958D] pt-2">
                     {{ __('provider.leads.created_on', ['date' => $lead->created_at->isoFormat('LL')]) }} ·
-                    {{ __('provider.leads.expires_on', ['date' => $lead->expires_at?->isoFormat('LL') ?? '—']) }}
+                    {{ __('provider.leads.expires_on', ['date' => $lead->expires_at?->isoFormat('LL') ?? 'Non renseigné']) }}
                 </p>
             </div>
         </div>

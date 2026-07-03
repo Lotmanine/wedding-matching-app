@@ -34,6 +34,17 @@
             </div>
         </section>
 
+        {{-- Verification gate notice --}}
+        @unless ($canBuy)
+            <div class="mb-8 flex items-start gap-3 p-5 rounded-2xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530]">
+                <x-z.icon name="hourglass_top" :filled="true" class="text-xl shrink-0" />
+                <div>
+                    <p class="font-semibold text-sm text-[#1A1A1A]">Compte en attente de vérification</p>
+                    <p class="text-sm mt-0.5">L'achat de crédits sera débloqué dès que notre équipe aura vérifié votre profil. Vous recevrez alors les demandes correspondant à votre activité.</p>
+                </div>
+            </div>
+        @endunless
+
         {{-- Packs --}}
         <section class="mb-10">
             <div class="flex items-center gap-3 mb-6">
@@ -60,12 +71,16 @@
                         <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DZD</p>
                         <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', ' ')]) }}</p>
 
-                        <form method="POST" action="{{ route('provider.credits.checkout', $pack->slug) }}" class="mt-auto">
-                            @csrf
-                            <x-z.btn type="submit" :variant="$pack->is_popular ? 'primary' : 'outline'" size="md" class="w-full justify-center">
+                        @if ($canBuy)
+                            <x-z.btn :href="route('provider.credits.pay', $pack->slug)" :variant="$pack->is_popular ? 'primary' : 'outline'" size="md" class="mt-auto w-full justify-center">
                                 {{ __('credits.pack_cta') }}
                             </x-z.btn>
-                        </form>
+                        @else
+                            <button type="button" disabled aria-disabled="true"
+                                class="mt-auto w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[#F7F4F0] text-[#9A958D] cursor-not-allowed select-none">
+                                <x-z.icon name="lock" class="text-base" /> Vérification requise
+                            </button>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -88,7 +103,7 @@
                         <div class="flex items-center justify-between gap-4 px-6 py-4">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-[#1A1A1A] truncate">{{ __('credits.type.' . $entry->type) }}</p>
-                                <p class="text-xs text-[#9A958D] truncate">{{ $entry->notes ?? '—' }} · {{ $entry->created_at->diffForHumans() }}</p>
+                                <p class="text-xs text-[#9A958D] truncate">{{ $entry->notes ?? 'Non renseigné' }} · {{ $entry->created_at->diffForHumans() }}</p>
                             </div>
                             <div class="text-right shrink-0">
                                 <p @class([

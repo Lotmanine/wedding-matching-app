@@ -125,7 +125,8 @@ class RegistrationForm extends Component
     #[Computed]
     public function serviceTypes(): array
     {
-        return ServiceType::cases();
+        // Only services currently activated in the admin catalog.
+        return ServiceType::activeCases();
     }
 
     protected function rulesForStep(int $step): array
@@ -157,7 +158,7 @@ class RegistrationForm extends Component
             ],
             3 => [
                 'services'   => ['required', 'array', 'min:1'],
-                'services.*' => ['in:' . implode(',', array_column(ServiceType::cases(), 'value'))],
+                'services.*' => ['in:' . implode(',', ServiceType::activeValues())],
             ],
             4 => [
                 'coverage_wilayas'   => ['required', 'array', 'min:1'],

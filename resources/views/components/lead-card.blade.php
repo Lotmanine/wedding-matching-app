@@ -26,14 +26,14 @@
 
     $serviceLabel = $lead->service_type?->label() ?? (string) $lead->service_type;
     $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value('name_fr') ?? $wr->couple_wilaya_code;
-    $locationLine = $wilayaLabel . ($wr->couple_commune ? " — {$wr->couple_commune}" : '');
+    $locationLine = $wilayaLabel . ($wr->couple_commune ? " · {$wr->couple_commune}" : '');
 
     $dateLine = $wr->wedding_date
         ? $wr->wedding_date->isoFormat('LL')
-        : ($wr->wedding_season ? $wr->wedding_season . ' ' . $wr->created_at->year : '—');
+        : ($wr->wedding_season ? $wr->wedding_season . ' ' . $wr->created_at->year : 'Date flexible');
 
-    $guestLabel = $wr->guest_count?->label() ?? '—';
-    $budgetLabel = $wr->budget_range?->label() ?? '—';
+    $guestLabel = $wr->guest_count?->label() ?? 'Non renseigné';
+    $budgetLabel = $wr->budget_range?->label() ?? 'Non renseigné';
 
     $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
     $excerpt = $wr->description ? \Illuminate\Support\Str::limit($wr->description, 120) : '';

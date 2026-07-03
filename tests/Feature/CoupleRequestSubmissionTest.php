@@ -109,7 +109,7 @@ class CoupleRequestSubmissionTest extends TestCase
             ->set('couple_first_name', 'Amina')
             ->set('couple_whatsapp', '+213661234567')
             ->set('couple_wilaya_code', '16')
-            ->set('guest_count', 'from_100_to_200')
+            ->set('wedding_date', now()->addMonths(6)->toDateString())
             ->set('budget_range', 'from_500k_to_1m')
             ->set('services_needed', ['photo'])
             ->set('acceptTerms', true)

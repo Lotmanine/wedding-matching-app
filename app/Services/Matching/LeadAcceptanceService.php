@@ -91,9 +91,19 @@ class LeadAcceptanceService
                 return RefuseResult::notEligible($locked);
             }
 
+            // Idempotency first: a provider already in the refused list gets
+            // "already_refused". This must precede the eligibility gate below,
+            // because being on the refused list itself makes canViewLead() false.
             $refused = (array) ($locked->refused_by_provider_ids ?? []);
             if (in_array($provider->id, $refused, true)) {
                 return RefuseResult::alreadyRefused($locked);
+            }
+
+            // Only a provider who could actually see this lead may refuse it —
+            // mirrors the accept() gate so an unverified/suspended provider
+            // cannot pollute refused_by_provider_ids or their refusal stats.
+            if (! $this->eligibility->canViewLead($provider, $locked)) {
+                return RefuseResult::notEligible($locked);
             }
 
             $refused[] = $provider->id;

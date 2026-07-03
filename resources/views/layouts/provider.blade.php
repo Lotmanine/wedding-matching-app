@@ -4,12 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? __('provider.brand') . ' — ' . __('provider.dashboard_title') }}</title>
+    <title>{{ $title ?? __('provider.brand') . ' · ' . __('provider.dashboard_title') }}</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -25,7 +21,8 @@
             ->explode(' ')->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
         $nav = [
             ['route' => 'provider.dashboard',       'pattern' => 'provider.dashboard',    'icon' => 'dashboard',       'label' => __('provider.nav.dashboard')],
-            ['route' => 'provider.leads.index',     'pattern' => 'provider.leads.*',      'icon' => 'inbox',           'label' => __('provider.nav.leads')],
+            ['route' => 'provider.leads.index',     'pattern' => 'provider.leads.index',  'icon' => 'inbox',           'label' => __('provider.nav.leads')],
+            ['route' => 'provider.leads.accepted',  'pattern' => 'provider.leads.accepted','icon' => 'workspace_premium','label' => 'Acceptées'],
             ['route' => 'provider.credits.index',   'pattern' => 'provider.credits.index','icon' => 'toll',            'label' => __('provider.nav.credits')],
             ['route' => 'provider.credits.history', 'pattern' => 'provider.credits.history','icon' => 'history',       'label' => __('provider.nav.history')],
             ['route' => 'provider.profile.edit',    'pattern' => 'provider.profile.*',    'icon' => 'manage_accounts','label' => __('provider.nav.profile')],

@@ -12,6 +12,10 @@ use RuntimeException;
 
 class ChargilyClient
 {
+    public function __construct(private readonly PaymentSettings $settings)
+    {
+    }
+
     public function createCheckout(Purchase $purchase): array
     {
         $purchase->loadMissing(['user', 'unlockPack']);
@@ -35,11 +39,11 @@ class ChargilyClient
         ];
 
         try {
-            $response = Http::withToken((string) config('zawaj.chargily.secret_key'))
+            $response = Http::withToken($this->settings->chargilySecretKey())
                 ->acceptJson()
                 ->timeout(15)
                 ->retry(2, 500, throw: false)
-                ->post(config('zawaj.chargily.base_url') . '/checkouts', $payload);
+                ->post($this->settings->chargilyBaseUrl() . '/checkouts', $payload);
         } catch (ConnectionException $e) {
             Log::error('Chargily: connection error creating checkout', ['error' => $e->getMessage()]);
             throw new RuntimeException('Chargily indisponible — merci de réessayer dans un instant.', previous: $e);
@@ -68,7 +72,7 @@ class ChargilyClient
             return false;
         }
 
-        $secret = (string) config('zawaj.chargily.webhook_secret');
+        $secret = $this->settings->chargilyWebhookSecret();
         if ($secret === '') {
             return false;
         }
@@ -80,10 +84,10 @@ class ChargilyClient
 
     public function getCheckoutStatus(string $checkoutId): array
     {
-        $response = Http::withToken((string) config('zawaj.chargily.secret_key'))
+        $response = Http::withToken($this->settings->chargilySecretKey())
             ->acceptJson()
             ->timeout(10)
-            ->get(config('zawaj.chargily.base_url') . '/checkouts/' . $checkoutId);
+            ->get($this->settings->chargilyBaseUrl() . '/checkouts/' . $checkoutId);
 
         return $response->successful() ? (array) $response->json() : [];
     }

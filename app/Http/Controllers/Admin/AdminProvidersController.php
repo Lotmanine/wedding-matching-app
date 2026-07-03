@@ -83,6 +83,12 @@ class AdminProvidersController extends Controller
         $profile = ProviderProfile::where('user_id', $id)->firstOrFail();
         $profile->forceFill(['verified' => true, 'verified_at' => now()])->save();
 
+        // Keep the account status in sync: registration leaves users.status at
+        // 'pending_verification' and lead eligibility requires 'active', so a
+        // verified provider must also be activated (suspended accounts are
+        // left untouched — reactivate() is the explicit path for those).
+        User::where('id', $id)->where('status', 'pending_verification')->update(['status' => 'active']);
+
         $this->audit->log('provider.verify', $profile, ['user_id' => $id]);
 
         return back()->with('status', __('admin.providers.verified_ok'));
@@ -92,6 +98,11 @@ class AdminProvidersController extends Controller
     {
         $profile = ProviderProfile::where('user_id', $id)->firstOrFail();
         $profile->forceFill(['verified' => false, 'verified_at' => null])->save();
+
+        // Mirror of verify(): the account goes back to pending review so the
+        // Users tab and the provider badge tell the same story. Suspended
+        // accounts keep their 'suspended' status.
+        User::where('id', $id)->where('status', 'active')->update(['status' => 'pending_verification']);
 
         $this->audit->log('provider.unverify', $profile, ['user_id' => $id]);
 
@@ -138,11 +149,15 @@ class AdminProvidersController extends Controller
 
         $user = User::findOrFail($id);
 
+        // The validated value arrives as a string from the form; CreditsService
+        // is strictly typed (int $amount) so cast once here.
+        $amount = (int) $data['amount'];
+
         try {
-            if ($data['amount'] > 0) {
-                $ledger = $this->credits->add($user, $data['amount'], 'admin_adjustment', null, $data['reason']);
+            if ($amount > 0) {
+                $ledger = $this->credits->add($user, $amount, 'admin_adjustment', null, $data['reason']);
             } else {
-                $ledger = $this->credits->deduct($user, abs($data['amount']), 'admin_adjustment', null, $data['reason']);
+                $ledger = $this->credits->deduct($user, abs($amount), 'admin_adjustment', null, $data['reason']);
             }
         } catch (\App\Exceptions\InsufficientCreditsException $e) {
             return back()->withErrors(['amount' => __('admin.providers.credits_insufficient', ['available' => $e->available])]);

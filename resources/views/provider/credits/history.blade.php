@@ -52,7 +52,7 @@
                                     <td class="px-5 py-4">
                                         <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F4F0] text-[#6B665E] border border-[#D4CFC7] font-bold uppercase tracking-wider">{{ __('credits.type.' . $e->type) }}</span>
                                     </td>
-                                    <td class="px-5 py-4 text-[#6B665E] max-w-xs truncate">{{ $e->notes ?? '—' }}</td>
+                                    <td class="px-5 py-4 text-[#6B665E] max-w-xs truncate">{{ $e->notes ?? 'Non renseigné' }}</td>
                                     <td @class([
                                         'px-5 py-4 text-right font-bold font-serif whitespace-nowrap',
                                         'text-green-600' => $e->delta > 0,
