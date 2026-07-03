@@ -8,11 +8,13 @@ RUN apk add --no-cache \
     nodejs npm \
     && rm -rf /var/cache/apk/*
 
-# PHP extensions via PREBUILT binaries (no source compilation). Compiling intl/gd/opcache
-# from source is slow and memory-hungry, which OOM-kills the build on small hosts. The
-# extension installer downloads ready-made binaries instead — fast and low-memory.
+# PHP extensions. NOTE: on this Alpine/musl base the extension installer has no prebuilt
+# binaries, so each extension compiles from source. `intl` (with ICU) is enormous and
+# OOM-kills the build on small hosts — and the app does not use it (no NumberFormatter /
+# IntlDateFormatter / Collator / Number:: anywhere) — so it is intentionally omitted.
+# The remaining extensions compile quickly and cheaply.
 COPY --from=mlocati/php-extension-installer:latest /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions pdo_mysql mbstring exif pcntl bcmath gd zip intl opcache
+RUN install-php-extensions pdo_mysql mbstring exif pcntl bcmath gd zip opcache
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
