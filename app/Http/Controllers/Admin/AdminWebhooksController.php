@@ -17,6 +17,7 @@ use Illuminate\View\View;
 class AdminWebhooksController extends Controller
 {
     public const AVAILABLE_EVENTS = [
+        // Événements de domaine « fins » (payload minimal : identifiants seulement).
         'wed_request.submitted',
         'service_request.round_started',
         'service_request.round_timed_out',
@@ -25,6 +26,15 @@ class AdminWebhooksController extends Controller
         'service_request.opened_to_marketplace',
         'provider.registered',
         'purchase.completed',
+
+        // Événements « enrichis » destinés au canal WhatsApp (App\Listeners\Whatsapp\*).
+        // Ils transportent les destinataires : téléphones E.164, langue préférée et
+        // charges utiles de boutons signées (Crypt::encryptString) que n8n ne peut pas
+        // fabriquer lui-même. Sans ces trois entrées, WebhookDispatcher::dispatch()
+        // filtrait ces événements et AUCUNE notification WhatsApp ne partait.
+        'round.started',
+        'lead.accepted',
+        'lead.opened_to_marketplace',
     ];
 
     public function __construct(private readonly AuditLogger $audit)

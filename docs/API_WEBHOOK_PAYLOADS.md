@@ -84,5 +84,79 @@ Verify HMAC on receipt before trusting payload.
 ### `purchase.completed`
 
 ```json
-{ "purchase_uid": "PUR-20260421-XXXX", "user_id": 42, "amount_dzd": 7650, "unlocks": 6 }
+{
+  "purchase_uid": "PUR-20260421-XXXX",
+  "user_id": 42,
+  "provider_id": 42,
+  "provider_email": "...",
+  "provider_name": "Studio Photo Alger",
+  "preferred_language": "fr",
+  "pack_name": "Pack 6 déblocages",
+  "amount_dzd": 7650,
+  "credits_granted": 6,
+  "unlocks": 6,
+  "completed_at": "2026-04-21T14:00:00+01:00",
+  "receipt_pdf_url": "https://.../api/v1/n8n/receipts/PUR-20260421-XXXX.pdf"
+}
 ```
+
+`unlocks` is a backwards-compat alias of `credits_granted`. Not re-dispatched
+once `purchases.receipt_emailed_at` is set (idempotency).
+
+---
+
+## Enriched WhatsApp events
+
+Separate from the thin domain events above, `App\Listeners\Whatsapp\*` emits
+three **enriched** events carrying everything the messaging channel needs:
+E.164 phone numbers, preferred language, and **signed button payloads**.
+
+Button payloads are `Crypt::encryptString` tokens minted by
+`App\Support\Whatsapp\SignedButtonPayload` — n8n cannot generate them, so they
+must travel in the payload and return verbatim on the button tap.
+
+> ⚠️ The n8n WhatsApp workflow must subscribe to **these** names. The
+> `service_request.*` equivalents carry identifiers only and contain nothing
+> sendable.
+
+### `round.started`
+
+```json
+{
+  "service_request_id": "SRV-...",
+  "round_number": 1,
+  "expires_at": "2026-04-21T16:00:00+01:00",
+  "couple": { "first_name": "...", "city": "..." },
+  "service": { "type": "photo", "budget_hint_dzd": 1500000, "event_date": "2026-07-15" },
+  "template_intent": "round_teaser",
+  "recipients": [
+    {
+      "provider_id": 12,
+      "phone_e164": "+213...",
+      "preferred_language": "ar",
+      "buttons": [
+        { "id": "<encrypted>", "intent": "accept", "label_ar": "قبول", "label_fr": "Accepter" },
+        { "id": "<encrypted>", "intent": "refuse", "label_ar": "رفض",  "label_fr": "Refuser"  }
+      ]
+    }
+  ]
+}
+```
+
+### `lead.accepted`
+
+```json
+{
+  "service_request_id": "SRV-...",
+  "winner": { "provider_id": 42, "business_name": "...", "phone_e164": "+213...", "preferred_language": "ar" },
+  "couple": { "first_name": "...", "phone_e164": "+213...", "preferred_language": "fr" },
+  "service": { "type": "photo", "event_date": "2026-07-15" },
+  "template_intent": "winner_confirmation"
+}
+```
+
+### `lead.opened_to_marketplace`
+
+Same shape as `round.started` minus `round_number` / `expires_at`;
+`template_intent` is `marketplace_broadcast`. Recipients are every eligible
+provider not already notified, refused, or the winner.
