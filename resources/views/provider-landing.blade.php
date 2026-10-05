@@ -326,7 +326,7 @@
                     <div class="relative rounded-2xl p-7 flex flex-col border transition-all {{ $p->is_popular ? 'bg-[#1A1A1A] border-transparent shadow-2xl shadow-black/10 scale-[1.02]' : 'bg-white border-[#D4CFC7]/50 shadow-sm hover:shadow-md' }}">
                         <p class="text-xs font-bold uppercase tracking-widest mb-4 {{ $p->is_popular ? 'text-white/50' : 'text-[#9A958D]' }}">{{ __($p->name) }}</p>
                         <p class="font-serif text-5xl font-bold mb-1 {{ $p->is_popular ? 'text-white' : 'text-[#1A1A1A]' }}">{{ $p->unlocks_count }}</p>
-                        <p class="text-sm mb-1 {{ $p->is_popular ? 'text-white/60' : 'text-[#6B665E]' }}">{{ $unlockCost === 1 ? __('crédits · 1 crédit = 1 demande') : __('crédits · :count crédits = 1 demande', ['count' => $unlockCost]) }}</p>
+                        <p class="text-sm mb-1 {{ $p->is_popular ? 'text-white/60' : 'text-[#6B665E]' }}">{{ trans_choice('credits.unit', (int) $p->unlocks_count) }} · {{ $unlockCost === 1 ? __('1 crédit = 1 demande') : __(':count crédits = 1 demande', ['count' => $unlockCost]) }}</p>
                         <p class="font-serif text-2xl font-bold mt-4 mb-0.5 {{ $p->is_popular ? 'text-[#C8956C]' : 'text-[#1A1A1A]' }}"><bdi>{{ number_format($p->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
                         <p class="text-xs mb-8 {{ $p->is_popular ? 'text-white/40' : 'text-[#9A958D]' }}">{{ __(':price DA par demande', ['price' => number_format($perLead, 0, ',', "\u{00A0}")]) }}</p>
                         <x-z.btn :href="route('provider.register')" :variant="$p->is_popular ? 'accent' : 'outline'" class="w-full justify-center mt-auto">
