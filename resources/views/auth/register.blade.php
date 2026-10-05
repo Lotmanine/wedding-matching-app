@@ -9,7 +9,7 @@
 
         <!-- Name -->
         <div class="space-y-1.5">
-            <label for="name" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Nom') }}</label>
+            <label for="name" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Nom complet') }}</label>
             <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus autocomplete="name"
                    class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none transition-all duration-200 focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15" />
             <x-input-error :messages="$errors->get('name')" class="text-xs text-[#A84936]" />

@@ -12,18 +12,28 @@
                 <p class="mt-2 text-[#6B665E]">{{ __('credits.failure_sub') }}</p>
             </div>
 
-            @if ($purchase && $purchase->failure_reason)
-                <div class="p-3 rounded-lg bg-[#F7F4F0] border border-[#D4CFC7]/50 text-sm text-[#6B665E]">
-                    <span class="text-[#9A958D]">{{ __('credits.failure_reason') }} :</span>
-                    <span class="font-mono text-[#1A1A1A]">{{ $purchase->failure_reason }}</span>
+            {{-- What we actually know about this payment: a sentence, never the stored technical code --}}
+            @if ($explanation ?? null)
+                <div class="p-3 rounded-lg bg-[#F7F4F0] border border-[#D4CFC7]/50 text-sm text-[#1A1A1A]">
+                    <p>{{ $explanation }}</p>
+                    @if (($teamNote ?? '') !== '')
+                        <p class="mt-1 text-[#6B665E]">{{ __('credits.failure_team_note') }} <span dir="auto">{{ $teamNote }}</span></p>
+                    @endif
                 </div>
             @endif
 
-            <ul class="text-sm text-[#6B665E] text-start space-y-2 bg-[#F0D9B5]/20 border border-[#C8956C]/20 rounded-xl p-4">
-                @foreach (__('credits.failure_tips') as $tip)
-                    <li class="flex items-start gap-2"><x-z.icon name="check" class="text-[#C8956C] text-base shrink-0 mt-0.5" />{{ $tip }}</li>
-                @endforeach
-            </ul>
+            <div class="text-sm text-[#6B665E] text-start space-y-2 bg-[#F0D9B5]/20 border border-[#C8956C]/20 rounded-xl p-4">
+                {{-- Possible causes, not established facts: the payment service does not tell us why a card was declined --}}
+                @if ($showCardCauses ?? true)
+                    <p class="font-semibold text-[#1A1A1A]">{{ __('credits.failure_causes_title') }}</p>
+                    <ul class="space-y-1.5">
+                        @foreach (__('credits.failure_causes') as $cause)
+                            <li class="flex items-start gap-2"><x-z.icon name="help" class="text-[#C8956C] text-base shrink-0 mt-0.5" />{{ $cause }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+                <p>{{ ($offlineEnabled ?? false) ? __('credits.failure_next_offline') : __('credits.failure_next') }}</p>
+            </div>
 
             <div class="flex flex-col sm:flex-row gap-2">
                 <x-z.btn :href="route('provider.credits.index')" variant="accent" size="lg" class="flex-1 justify-center">

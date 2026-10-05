@@ -18,7 +18,16 @@
         $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
         $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
         $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
-        $durationLeft = $lead->expires_at ? $lead->expires_at->diffForHumans(now(), ['parts' => 2, 'join' => true]) : __('Non défini');
+        // Two different deadlines: the request itself expires on a fixed date;
+        // the current round (if any) ends earlier, after which the request can
+        // be offered to more providers.
+        $expiryDate = $lead->expires_at ? $lead->expires_at->isoFormat('LL') : __('Non renseigné');
+        $roundDeadline = in_array($lead->status?->value, ['round1', 'round2', 'round3'], true) && $lead->round_started_at
+            ? $lead->round_started_at->copy()->addMinutes(\App\Services\Matching\RoundStateMachine::roundTimeoutMinutes())
+            : null;
+        if ($roundDeadline && $roundDeadline->isPast()) {
+            $roundDeadline = null;
+        }
         $cost = (int) config('zawaj.credits.unlock_cost', 1);
         $balance = (int) (auth()->user()?->providerProfile?->credit_balance ?? 0);
     @endphp
@@ -59,8 +68,15 @@
                 </div>
                 <div class="shrink-0">
                     <div class="bg-[#F7F4F0] rounded-xl px-5 py-4 text-center border border-[#D4CFC7]/50">
-                        <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.leads.duration_left') }}</p>
-                        <p class="text-lg font-serif font-bold text-[#1A1A1A]">{{ $durationLeft }}</p>
+                        <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.leads.expiry_label') }}</p>
+                        <p class="text-lg font-serif font-bold text-[#1A1A1A]">{{ $expiryDate }}</p>
+                        @if ($roundDeadline)
+                            <div class="mt-3 pt-3 border-t border-[#D4CFC7]/50">
+                                <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.leads.round_deadline_label') }}</p>
+                                <p class="text-sm font-bold text-[#1A1A1A]">{{ $roundDeadline->isoFormat('LL, HH:mm') }}</p>
+                                <p class="text-[11px] text-[#9A958D] mt-1 max-w-[15rem] mx-auto leading-snug">{{ __('provider.leads.round_deadline_note') }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -90,8 +106,7 @@
                 @endif
 
                 <p class="text-xs text-[#9A958D] pt-2">
-                    {{ __('provider.leads.created_on', ['date' => $lead->created_at->isoFormat('LL')]) }} ·
-                    {{ __('provider.leads.expires_on', ['date' => $lead->expires_at?->isoFormat('LL') ?? __('Non renseigné')]) }}
+                    {{ __('provider.leads.created_on', ['date' => $lead->created_at->isoFormat('LL')]) }}
                 </p>
             </div>
         </div>
@@ -125,15 +140,15 @@
                     <p class="text-sm text-[#6B665E] mb-7 max-w-sm leading-relaxed">{{ __('provider.leads.reveal_notice') }}</p>
                     <div class="flex flex-col sm:flex-row gap-2 w-full max-w-md">
                         <button type="button" @click="showAccept = true"
-                                class="flex-1 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-[#C8956C] text-white font-semibold text-base hover:bg-[#b8845b] shadow-sm hover:shadow-md transition-all active:scale-[0.97]">
-                            <x-z.icon name="lock_open" class="text-lg" /> {{ __('provider.leads.btn_accept') }} ({{ $cost }} {{ $cost > 1 ? trans_choice('crédits', $cost) : __('crédit') }})
+                                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-[#C8956C] text-white font-semibold text-sm hover:bg-[#b8845b] shadow-sm hover:shadow-md transition-all active:scale-[0.97]">
+                            <x-z.icon name="lock_open" class="text-lg shrink-0" /> <span>{{ trans_choice('provider.leads.btn_accept', $cost, ['count' => $cost]) }}</span>
                         </button>
                         <button type="button" @click="showRefuse = true"
                                 class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-white border border-[#D4CFC7] text-[#6B665E] font-semibold text-sm hover:border-[#A84936]/40 hover:text-[#A84936] transition-all">
                             <x-z.icon name="visibility_off" class="text-lg" /> {{ __('provider.leads.btn_refuse') }}
                         </button>
                     </div>
-                    <p class="text-xs text-[#9A958D] mt-3">{{ __('credits.balance_label') }} : {{ $balance }} {{ __('provider.nav.credits_available') }}</p>
+                    <p class="text-xs text-[#9A958D] mt-3">{{ __('provider.nav.balance_line', ['balance' => $balance]) }}</p>
                 </div>
             </div>
 
@@ -143,14 +158,14 @@
                  @keydown.escape.window="showAccept = false">
                 <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4" @click.outside="showAccept = false">
                     <h3 class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('provider.acceptance.confirm_title') }}</h3>
-                    <p class="text-sm text-[#6B665E]">{{ __('provider.acceptance.confirm_body', ['cost' => $cost]) }}</p>
+                    <p class="text-sm text-[#6B665E]">{{ trans_choice('provider.acceptance.confirm_body', $cost, ['count' => $cost]) }}</p>
                     <form method="POST" action="{{ route('provider.leads.accept', $lead->service_uid) }}" class="flex gap-2">
                         @csrf
                         <x-z.btn type="button" variant="outline" size="md" @click="showAccept = false" class="flex-1 justify-center">
                             {{ __('provider.acceptance.cancel_btn') }}
                         </x-z.btn>
                         <x-z.btn type="submit" variant="accent" size="md" class="flex-1 justify-center">
-                            {{ __('provider.acceptance.confirm_btn') }}
+                            {{ trans_choice('provider.acceptance.confirm_btn', $cost, ['count' => $cost]) }}
                         </x-z.btn>
                     </form>
                 </div>

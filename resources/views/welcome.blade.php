@@ -24,10 +24,10 @@
     ];
 
     $faqs = [
-        ['q' => __("Est-ce vraiment gratuit pour les couples ?"), 'a' => __("Oui, totalement. Notre mission est de vous aider à trouver les bons prestataires, sans aucuns frais. Les prestataires paient pour accéder à vos coordonnées, pas vous.")],
+        ['q' => __("Est-ce vraiment gratuit pour les couples ?"), 'a' => __("Oui. La mise en relation est gratuite pour les couples : ce sont les prestataires qui paient pour accéder à vos coordonnées. Vous convenez ensuite des prix directement avec eux.")],
         ['q' => __("Comment sont sélectionnés les prestataires ?"), 'a' => __("Notre équipe vérifie chaque prestataire avant qu'il ne reçoive la moindre demande. Notre système transmet ensuite la vôtre aux prestataires de votre wilaya qui proposent le service recherché.")],
-        ['q' => __("En combien de temps vais-je recevoir des réponses ?"), 'a' => __("Dès l'envoi de votre demande, nous prévenons jusqu'à :per_round prestataires vérifiés par service. Chacun a :hours heures pour répondre. Sans réponse, nous en sollicitons d'autres (:max_rounds tours au maximum), puis la demande est ouverte à tous les prestataires de votre wilaya. Elle reste active :days jours : si personne ne l'a acceptée d'ici là, c'est qu'aucun prestataire n'était disponible, et vos données sont supprimées. Vous suivez l'avancement sur votre page de confirmation.", ['per_round' => $perRound, 'hours' => \App\Support\LocaleCount::hours($roundHours), 'max_rounds' => \App\Support\LocaleCount::rounds($maxRounds), 'days' => \App\Support\LocaleCount::days($validityDays)])],
-        ['q' => __("Mes données sont-elles en sécurité ?"), 'a' => __("Votre numéro WhatsApp n'est transmis qu'au prestataire qui accepte votre demande. Vos données sont protégées conformément à la réglementation ANPDP algérienne et supprimées automatiquement après :days jours.", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))])],
+        ['q' => __("En combien de temps vais-je recevoir des réponses ?"), 'a' => __("Dès l'envoi de votre demande, nous prévenons jusqu'à :per_round prestataires vérifiés par service. Chacun a :hours heures pour répondre. Sans réponse, nous en sollicitons d'autres (:max_rounds tours au maximum), puis la demande est ouverte à tous les prestataires de votre wilaya. Elle reste active :days jours : si aucun prestataire ne l'a acceptée d'ici là, elle expire sans mise en relation. Vous suivez l'avancement sur votre page de confirmation.", ['per_round' => $perRound, 'hours' => \App\Support\LocaleCount::hours($roundHours), 'max_rounds' => \App\Support\LocaleCount::rounds($maxRounds), 'days' => \App\Support\LocaleCount::days($validityDays)])],
+        ['q' => __("Mes données sont-elles en sécurité ?"), 'a' => __("Pour chaque service, votre numéro WhatsApp n'est communiqué qu'au prestataire qui accepte votre demande. Votre demande expire :days jours après son envoi. Vos données personnelles sont effacées une fois la demande expirée et, si un prestataire l'a acceptée, une fois terminée sa période d'accès à vos coordonnées (:days jours après son acceptation). Les durées de conservation sont détaillées dans la politique de confidentialité.", ['days' => \App\Support\LocaleCount::days($validityDays)])],
         ['q' => __("Que se passe-t-il si je ne suis pas satisfait(e) ?"), 'a' => __("Vous n'avez aucun engagement. Si le prestataire qui vous contacte ne vous convient pas, vous êtes libre de refuser et d'envoyer une nouvelle demande, sans frais.")],
     ];
 
@@ -42,13 +42,13 @@
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative">
             <div>
                 <x-z.badge variant="accent" class="mb-7">
-                    <x-z.icon name="auto_awesome" class="text-sm" /> {{ __('IA + Expertise humaine') }}
+                    <x-z.icon name="auto_awesome" class="text-sm" /> {{ __('Une demande, plusieurs services') }}
                 </x-z.badge>
                 <h1 class="font-serif text-5xl md:text-6xl lg:text-[72px] text-[#1A1A1A] leading-[1.05] font-bold mb-7 text-balance">
-                    {{ __('Trouvez les meilleurs prestataires pour votre mariage') }}
+                    {{ __('Trouvez des prestataires vérifiés pour votre mariage') }}
                 </h1>
                 <p class="text-lg md:text-xl text-[#6B665E] leading-relaxed mb-10 max-w-xl">
-                    {{ __('Décrivez votre mariage en quelques minutes. Nous transmettons votre demande aux prestataires vérifiés de votre wilaya, qui vous contactent directement sur WhatsApp.') }}
+                    {{ __('Décrivez votre mariage et les services recherchés. Nous transmettons votre demande aux prestataires vérifiés de votre wilaya. Pour chaque service, le premier qui accepte vous contacte sur WhatsApp. La mise en relation est gratuite.') }}
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <x-z.btn :href="route('couple.request.create')" size="lg" class="shadow-xl shadow-black/10">
@@ -60,7 +60,7 @@
                     </x-z.btn>
                 </div>
                 <p class="text-xs text-[#9A958D] mt-5 flex items-center gap-2">
-                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> {{ __('Gratuit pour les couples · Prestataires vérifiés · Conforme ANPDP') }}
+                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> {{ __('Gratuit pour les couples · Prestataires vérifiés · Protection des données personnelles') }}
                 </p>
             </div>
 
@@ -121,7 +121,7 @@
     {{-- ── Trust bar ───────────────────────────────────────── --}}
     <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
         <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-10">
-            @foreach ([['0 ' . __('DA'), __('pour les couples')], [$openWilayas->count(), __('wilayas ouvertes : :wilayas', ['wilayas' => $openWilayasText])], [__(':hours h', ['hours' => \App\Support\LocaleCount::hours($roundHours)]), __('pour répondre, par prestataire')], [__(':days jours', ['days' => \App\Support\LocaleCount::days($validityDays)]), __('de validité par demande')]] as $stat)
+            @foreach ([['0 ' . __('DA'), __('pour les couples')], [$openWilayas->count(), __('wilayas ouvertes : :wilayas', ['wilayas' => $openWilayasText])], [__(':hours h', ['hours' => \App\Support\LocaleCount::hours($roundHours, standalone: true)]), __('pour répondre, par prestataire')], [__(':days jours', ['days' => \App\Support\LocaleCount::days($validityDays, standalone: true)]), __('de validité par demande')]] as $stat)
                 <div class="flex items-center gap-3">
                     <span class="font-serif text-2xl font-bold text-[#C8956C]">{{ $stat[0] }}</span>
                     <span class="text-sm text-[#6B665E] font-medium">{{ $stat[1] }}</span>
@@ -135,16 +135,16 @@
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 md:mb-20">
                 <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">{{ __('Comment ça marche') }}</p>
-                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-5">{{ __('Une organisation simplifiée') }}</h2>
-                <p class="text-[#6B665E] text-lg max-w-xl mx-auto">{{ __("Trois étapes, et on s'occupe du reste.") }}</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-5">{{ __('De votre demande au premier contact') }}</h2>
+                <p class="text-[#6B665E] text-lg max-w-xl mx-auto">{{ __("Vous envoyez votre demande, nous la transmettons aux prestataires vérifiés de votre wilaya, puis vous discutez directement avec celui qui accepte.") }}</p>
             </div>
             <div class="grid md:grid-cols-3 gap-6 md:gap-8 relative">
                 <div class="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px bg-gradient-to-r from-[#D4CFC7] via-[#C8956C] to-[#D4CFC7] z-0"></div>
                 @php
                     $steps = [
-                        ['n' => '01', 'icon' => 'edit_note', 'title' => __('Décrivez vos besoins'), 'body' => __('Date, budget, style, wilaya : en quelques minutes, votre profil mariage est complet.')],
-                        ['n' => '02', 'icon' => 'psychology', 'title' => __('Analyse intelligente'), 'body' => __("Notre système retient, parmi les prestataires vérifiés de votre région, ceux qui correspondent à votre demande.")],
-                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => __('Recevez sur WhatsApp'), 'body' => __('Pour chaque service, le premier prestataire vérifié qui accepte votre demande vous contacte directement sur WhatsApp.')],
+                        ['n' => '01', 'icon' => 'edit_note', 'title' => __('Décrivez votre mariage'), 'body' => __('Wilaya, date, budget, services recherchés : le formulaire se remplit en quelques minutes.')],
+                        ['n' => '02', 'icon' => 'send', 'title' => __('Nous transmettons votre demande'), 'body' => __("Pour chaque service, votre demande est envoyée à des prestataires vérifiés qui proposent ce service dans votre wilaya.")],
+                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => __('Échangez sur WhatsApp'), 'body' => __('Pour chaque service, le premier prestataire qui accepte votre demande vous contacte sur WhatsApp. Vous convenez du prix directement avec lui.')],
                     ];
                 @endphp
                 @foreach ($steps as $step)
@@ -175,7 +175,7 @@
                         <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('Recherche classique') }}</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach ([__("Des heures à scroller des groupes Facebook désorganisés"), __("Risque d'arnaques : pas de vérification"), __("Attendre des jours pour un simple devis"), __("Prestataires débordés, sans suivi")] as $t)
+                        @foreach ([__("Des heures à parcourir les groupes Facebook"), __("Aucune vérification des prestataires"), __("Contacter chaque prestataire un par un"), __("Aucun délai de réponse annoncé")] as $t)
                             <li class="flex items-start gap-3 text-sm text-[#6B665E]">
                                 <x-z.icon name="remove_circle_outline" class="text-[#D4CFC7] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -193,7 +193,7 @@
                         <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('Avec Zawaj Pro') }}</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach ([__('Notre système cherche pour vous, 24h/24'), __('Chaque prestataire est vérifié par notre équipe'), __('Chaque prestataire a :hours heures pour répondre', ['hours' => \App\Support\LocaleCount::hours($roundHours)]), __('Contact WhatsApp direct, simple et rapide')] as $t)
+                        @foreach ([__('Une seule demande, transmise aux prestataires de votre wilaya'), __('Chaque prestataire est vérifié par notre équipe'), __('Chaque prestataire sollicité a :hours heures pour répondre', ['hours' => \App\Support\LocaleCount::hours($roundHours)]), __('Contact direct sur WhatsApp avec le prestataire qui accepte')] as $t)
                             <li class="flex items-start gap-3 text-sm font-semibold text-[#1A1A1A]">
                                 <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -211,9 +211,9 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-12">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">{{ __('Nos catégories') }}</p>
-                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">{{ __('Tous les prestataires de votre mariage') }}</h2>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">{{ __('Les services de votre mariage') }}</h2>
                 </div>
-                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">{{ __('Des prestataires passionnés pour chaque détail de votre grand jour.') }}</p>
+                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">{{ __('Sélectionnez un ou plusieurs services dans la même demande.') }}</p>
             </div>
 
             {{-- Reusable card markup: render once per layout (desktop bento + mobile grid) --}}
@@ -280,16 +280,16 @@
             <div>
                 <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">{{ __('Notre mission') }}</p>
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] leading-[1.1] mb-6 text-balance">
-                    {{ __('Derrière chaque mariage, une équipe qui vous accompagne') }}
+                    {{ __('Vous mettre en relation avec des prestataires vérifiés') }}
                 </h2>
                 <p class="text-[#6B665E] leading-relaxed text-lg mb-8">
-                    {{ __("Zawaj Pro est né d'une conviction simple : trouver le bon photographe, le bon traiteur ou la bonne salle ne devrait pas prendre des semaines. Notre équipe algérienne connaît les prestataires de votre région, vérifie leur sérieux, et vous les présente directement.") }}
+                    {{ __("Zawaj Pro est né d'une conviction simple : trouver le bon photographe, le bon traiteur ou la bonne salle ne devrait pas prendre des semaines. Notre équipe vérifie chaque prestataire avant qu'il ne reçoive de demandes, et la plateforme transmet la vôtre à ceux de votre wilaya. Les prix se décident directement entre vous et le prestataire.") }}
                 </p>
                 <div class="space-y-5">
                     @php
                         $missionItems = [
-                            ['icon' => 'handshake', 'title' => __('Des prestataires que nous connaissons'), 'body' => __("Chaque prestataire est vérifié par notre équipe avant de recevoir la moindre demande.")],
-                            ['icon' => 'shield', 'title' => __('Vos données, votre vie privée'), 'body' => __("Votre numéro WhatsApp n'est transmis qu'aux prestataires qui acceptent votre demande. Jamais vendu, jamais exploité.")],
+                            ['icon' => 'handshake', 'title' => __('Des prestataires vérifiés'), 'body' => __("Chaque prestataire est vérifié par notre équipe avant de recevoir la moindre demande.")],
+                            ['icon' => 'shield', 'title' => __('Vos données, votre vie privée'), 'body' => __("Pour chaque service, votre numéro WhatsApp n'est communiqué qu'au prestataire qui accepte votre demande.")],
                             ['icon' => 'support_agent', 'title' => __('Une équipe disponible'), 'body' => __("Une question ? Un problème ? Écrivez-nous : notre équipe vous répond.")],
                         ];
                     @endphp
@@ -341,7 +341,7 @@
                 <div class="relative">
                     <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">{{ __('Commencez maintenant') }}</p>
                     <h2 class="font-serif text-4xl md:text-5xl text-white font-bold mb-6 leading-tight text-balance">
-                        {{ __('Prêt(e) à organiser le mariage de vos rêves ?') }}
+                        {{ __('Prêt(e) à trouver les prestataires de votre mariage ?') }}
                     </h2>
                     <p class="text-white/60 text-lg mb-10 max-w-xl mx-auto">
                         {{ __("Décrivez votre mariage en quelques minutes. C'est gratuit, et sans engagement.") }}

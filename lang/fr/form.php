@@ -9,7 +9,7 @@ return [
     'brand_tagline'     => 'Votre mariage, facilité.',
     'footer_copyright'  => '© :year Zawaj Pro · Algérie',
     'footer_legal'      => 'Mentions légales',
-    'footer_privacy'    => 'Confidentialité (ANPDP)',
+    'footer_privacy'    => 'Protection des données personnelles',
 
     // Public navigation
     'nav_provider_area'   => 'Espace prestataire',
@@ -26,14 +26,14 @@ return [
     // Step titles
     'step_1_title'      => 'Parlez-nous de vous',
     'step_2_title'      => 'Où se déroule le mariage ?',
-    'step_3_title'      => 'Budget et prestataires recherchés',
+    'step_3_title'      => 'Budget et services recherchés',
     'step_4_title'      => 'Détails du mariage',
     'step_5_title'      => 'Finalisez votre demande',
 
     // Step intros
     'step_1_intro'      => 'Quelques informations pour vous contacter.',
     'step_2_intro'      => 'Sélectionnez la wilaya (et la commune si vous la connaissez).',
-    'step_3_intro'      => 'Choisissez les prestataires dont vous avez besoin.',
+    'step_3_intro'      => 'Indiquez votre budget et choisissez les services dont vous avez besoin.',
     'step_4_intro'      => 'Précisez la date et les détails de votre mariage.',
     'step_5_intro'      => 'Vérifiez vos informations et envoyez votre demande.',
 
@@ -45,10 +45,11 @@ return [
     'label_wedding_date'   => 'Date du mariage',
     'label_wedding_season' => 'Saison du mariage',
     'label_guest_count'    => 'Nombre d\'invités',
-    'label_budget'         => 'Budget global',
-    'label_services'       => 'Prestataires recherchés',
+    'label_budget'         => 'Budget total du mariage (DA)',
+    'label_services'       => 'Services recherchés',
     'label_description'    => 'Précisions (facultatif)',
-    'label_accept_terms'   => 'J\'accepte que mes informations soient transmises aux prestataires sélectionnés et supprimées automatiquement après 14 jours, conformément à la loi 18-07 (ANPDP).',
+    'label_accept_terms'   => 'J\'accepte que Zawaj Pro transmette ma demande (wilaya, commune, date, budget, services et précisions) aux prestataires vérifiés qui couvrent ma wilaya. Pour chaque service, mon prénom et mon numéro WhatsApp ne sont communiqués qu\'au prestataire qui accepte ma demande. Les durées de conservation sont indiquées dans la :link.',
+    'accept_terms_link'    => 'politique de confidentialité',
 
     // Placeholders / helpers
     'placeholder_first_name'  => 'Ex. Amina',
@@ -56,12 +57,12 @@ return [
     'placeholder_wilaya'      => 'Choisir une wilaya…',
     'placeholder_commune'     => 'Choisir une commune…',
     'placeholder_guest_count' => 'Combien d\'invités attendus ?',
-    'placeholder_budget'      => 'Quel est votre budget global ?',
-    'placeholder_description' => 'Ex. mariage traditionnel kabyle, 2 salles, besoin d\'une pâtisserie orientale…',
+    'placeholder_budget'      => 'Quel est le budget total de votre mariage ?',
+    'placeholder_description' => 'Ex. : mariage traditionnel kabyle, photos naturelles, gâteaux algériens…',
 
-    'help_whatsapp'      => 'Format : +213 suivi de 9 chiffres, sans espaces. Les prestataires vous contacteront sur ce numéro WhatsApp.',
+    'help_whatsapp'      => 'Numéro de mobile algérien au format +213, sans le 0 initial et sans espaces. Exemple : +213661234567. Les prestataires qui acceptent votre demande vous contactent sur ce numéro WhatsApp.',
     'help_commune'       => 'Choisissez d\'abord une wilaya. La commune est facultative.',
-    'help_date_or_season' => 'Saisissez une date précise ou, à défaut, une saison approximative.',
+    'help_guest_count'   => 'Nous posons cette question parce que vous avez sélectionné le traiteur ou la salle des fêtes.',
     'help_char_count'    => ':count / :max caractères',
 
     // Buttons
@@ -70,8 +71,8 @@ return [
     'btn_next'          => 'Continuer',
     'btn_submit'        => 'Envoyer ma demande',
     'btn_home'          => 'Retour à l\'accueil',
-    'btn_copy'          => 'Copier',
-    'btn_copied'        => 'Copié !',
+    'btn_copy'          => 'Copier la référence',
+    'btn_copied'        => 'Référence copiée',
 
     // Seasons
     'season_printemps'  => 'Printemps',
@@ -86,15 +87,15 @@ return [
     'review_location'   => 'Localisation',
     'review_wedding'    => 'Mariage',
     'review_budget'     => 'Budget',
-    'review_services'   => 'Prestataires',
+    'review_services'   => 'Services recherchés',
     'review_notes'      => 'Précisions',
     'review_none'       => 'Non renseigné',
     'review_date_only'  => 'Date : :date',
     'review_season_only' => 'Saison : :season',
 
     // Landing
-    'landing_hero_title'    => 'Trouvez les meilleurs prestataires pour votre mariage',
-    'landing_hero_sub'      => 'Remplissez un formulaire rapide. Nous vous connectons gratuitement avec les meilleurs prestataires de votre région.',
+    'landing_hero_title'    => 'Trouvez des prestataires vérifiés pour votre mariage',
+    'landing_hero_sub'      => 'Décrivez votre mariage et les services recherchés. Nous transmettons votre demande aux prestataires vérifiés de votre wilaya. Pour chaque service, le premier qui accepte vous contacte sur WhatsApp. La mise en relation est gratuite.',
     'landing_trust_free'    => 'Gratuit pour les couples',
     'landing_trust_verified' => 'Prestataires vérifiés',
     'landing_trust_wilayas' => 'Alger, Blida et Médéa pour commencer',
@@ -107,14 +108,14 @@ return [
     'confirm_reference'   => 'Votre numéro de référence',
     'confirm_next_steps'  => 'Et maintenant ?',
     'confirm_step_1'      => 'Pour chaque service, nous prévenons jusqu\'à :per_round prestataires vérifiés de votre wilaya. Chacun a :hours heures pour répondre.',
-    'confirm_step_2'      => 'Le premier qui accepte votre demande vous contacte directement sur WhatsApp. Sans réponse, nous en sollicitons d\'autres, puis la demande est ouverte à tous les prestataires de votre wilaya.',
-    'confirm_step_3'      => 'Vous suivez l\'avancement sur cette page : gardez-en le lien. Si personne n\'a accepté avant la date d\'expiration, c\'est qu\'aucun prestataire n\'était disponible.',
-    'confirm_services'    => 'Prestataires demandés',
+    'confirm_step_2'      => 'Le premier qui accepte votre demande vous contacte directement sur WhatsApp ; vous convenez du prix avec lui. Sans réponse, nous en sollicitons d\'autres, puis la demande est ouverte à tous les prestataires de votre wilaya.',
+    'confirm_step_3'      => 'Vous suivez l\'avancement sur cette page : gardez-en le lien. Si aucun prestataire n\'a accepté avant la date d\'expiration, la demande expire sans mise en relation.',
+    'confirm_services'    => 'Services recherchés',
     'confirm_status_searching' => 'En recherche…',
     'confirm_status_found'     => 'Prestataire trouvé',
     'confirm_status_open'      => 'Ouverte à tous les prestataires',
-    'confirm_status_none'      => 'Aucun prestataire trouvé',
-    'confirm_expiry'      => 'Votre demande est valable jusqu\'au :date. Après cette date, vos informations sont automatiquement supprimées.',
+    'confirm_status_none'      => 'Expirée sans mise en relation',
+    'confirm_expiry'      => 'Votre demande expire le :date. Si un prestataire l\'accepte, il garde l\'accès à vos coordonnées pendant :days jours après son acceptation. Vos données personnelles sont effacées de la plateforme une fois la demande expirée et cette période terminée.',
 
     // Submission errors
     'rate_limit'          => 'Trop de demandes. Merci de réessayer dans :minutes minute(s).',

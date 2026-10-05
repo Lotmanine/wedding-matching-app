@@ -10,7 +10,7 @@
 
         <div class="mb-7">
             <h1 class="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">{{ __('Demandes acceptées') }}</h1>
-            <p class="text-sm text-[#6B665E] mt-1">{{ __("Les coordonnées des couples sont anonymisées :days jours après l'acceptation (conformité ANPDP).", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
+            <p class="text-sm text-[#6B665E] mt-1">{{ __("Les coordonnées d'un couple restent affichées :days jours après votre acceptation, puis elles sont masquées.", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
         </div>
 
         @if ($leads->isEmpty())
@@ -48,8 +48,8 @@
                                 </span>
                             @else
                                 <span class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-[#F0D9B5]/50 text-[#7A5530] border border-[#C8956C]/30"
-                                      title="{{ __('Anonymisation le :date', ['date' => $anonymizeAt?->isoFormat('LL')]) }}">
-                                    <x-z.icon name="schedule" class="text-xs" /> {{ __('Anonymisation :when', ['when' => $anonymizeAt?->diffForHumans()]) }}
+                                      title="{{ __("Coordonnées affichées jusqu'au :date", ['date' => $anonymizeAt?->isoFormat('LL')]) }}">
+                                    <x-z.icon name="schedule" class="text-xs" /> {{ __("Accès jusqu'au :date", ['date' => $anonymizeAt?->isoFormat('D MMM')]) }}
                                 </span>
                             @endif
                         </div>

@@ -82,7 +82,7 @@ class AcceptedLeadsTest extends TestCase
         $response->assertOk()
             ->assertSee('Khadidja')
             ->assertSee('+213661234567')
-            ->assertSee('sera anonymisée'); // upcoming-anonymization badge
+            ->assertSee('Coordonnées affichées jusqu'); // end-of-access notice
     }
 
     public function test_old_lead_is_anonymized(): void

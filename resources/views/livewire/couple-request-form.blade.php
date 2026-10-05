@@ -289,7 +289,7 @@
                                         <option value="{{ $g->value }}">{{ $g->label() }}</option>
                                     @endforeach
                                 </select>
-                                <p class="mt-2 text-xs text-[#9A958D]">{{ __('Requis pour le traiteur et la salle des fêtes.') }}</p>
+                                <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_guest_count') }}</p>
                                 @error('guest_count') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                             </div>
                         @endif
@@ -381,10 +381,10 @@
                             <h2 class="font-serif text-lg font-semibold text-[#7A5530]">{{ __('form.review_title') }}</h2>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }} :</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]" dir="ltr">({{ $couple_whatsapp ?: __('Non renseigné') }})</span></div>
-                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }} :</span> <strong class="text-[#1A1A1A]">{{ ($isAr ? $wilayaRow?->name_ar : $wilayaRow?->name_fr) ?? __('form.review_none') }}</strong>{{ $couple_commune ? __(', ') . $communeLabel : '' }}</div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]" dir="ltr">({{ $couple_whatsapp ?: __('Non renseigné') }})</span></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ ($isAr ? $wilayaRow?->name_ar : $wilayaRow?->name_fr) ?? __('form.review_none') }}</strong>{{ $couple_commune ? __(', ') . $communeLabel : '' }}</div>
                                 <div>
-                                    <span class="text-[#9A958D]">{{ __('form.review_wedding') }} :</span>
+                                    <span class="text-[#9A958D]">{{ __('form.review_wedding') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span>
                                     @if ($wedding_date)
                                         <strong class="text-[#1A1A1A]">{{ \Illuminate\Support\Carbon::parse($wedding_date)->isoFormat('LL') }}</strong>
                                     @elseif ($wedding_season)
@@ -394,10 +394,10 @@
                                     @endif
                                     <span class="text-[#6B665E]">· {{ $guestLabel }}</span>
                                 </div>
-                                <div><span class="text-[#9A958D]">{{ __('form.review_budget') }} :</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
-                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }} :</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_budget') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
+                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
                                 @if ($description)
-                                    <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }} :</span> <em class="text-[#6B665E]">« {{ $description }} »</em></div>
+                                    <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <em class="text-[#6B665E]">« {{ $description }} »</em></div>
                                 @endif
                             </div>
                         </section>
@@ -414,7 +414,8 @@
                                 class="mt-0.5 w-4 h-4 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/30 cursor-pointer"
                                 required
                             />
-                            <span class="text-xs sm:text-sm text-[#6B665E] leading-relaxed">{{ __('form.label_accept_terms') }}</span>
+                            {{-- The sentence is static copy from lang/; only the link label is escaped here. --}}
+                            <span class="text-xs sm:text-sm text-[#6B665E] leading-relaxed">{!! __('form.label_accept_terms', ['link' => '<a href="' . e(route('legal.privacy')) . '" target="_blank" rel="noopener" class="font-semibold text-[#1A1A1A]" style="text-decoration:underline">' . e(__('form.accept_terms_link')) . '</a>']) !!}</span>
                         </label>
                         @error('acceptTerms') <p class="text-xs text-[#A84936]">{{ $message }}</p> @enderror
                     </div>

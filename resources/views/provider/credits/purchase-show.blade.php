@@ -35,6 +35,7 @@
                         @php $badge = match ($purchase->status) {
                             'paid'      => ['success', __('Payé')],
                             'pending'   => ['warning', __('En attente')],
+                            'pending_verification' => ['warning', __('credits.offline.pending_status')],
                             'failed'    => ['danger', __('Échoué')],
                             'cancelled' => ['muted', __('Annulé')],
                             default     => ['default', $purchase->status],
@@ -43,13 +44,24 @@
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.gateway_ref') }}</dt>
-                    <dd class="mt-1 font-mono text-[#6B665E] text-xs">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Non renseigné') }}</dd>
+                    {{-- A versement has no Chargily reference: show the reference the provider declared --}}
+                    @if ($purchase->payment_method === \App\Services\Payments\PaymentSettings::METHOD_OFFLINE)
+                        <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.transfer_ref') }}</dt>
+                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span dir="ltr">{{ $purchase->payment_reference ?? __('Non renseigné') }}</span></dd>
+                    @else
+                        <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.gateway_ref') }}</dt>
+                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span dir="ltr">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Non renseigné') }}</span></dd>
+                    @endif
                 </div>
+                @if ($purchase->status === 'pending_verification')
+                    <div class="sm:col-span-2 p-3 rounded-lg bg-amber-50 border border-amber-100 text-amber-800 text-sm">
+                        {{ __('credits.offline.pending_note') }}
+                    </div>
+                @endif
                 <div class="sm:col-span-2 pt-5 border-t border-[#D4CFC7]/30">
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __((string) $purchase->unlockPack?->name) }}</dt>
                     <dd class="mt-2 flex items-baseline justify-between">
-                        <span class="font-serif text-lg font-semibold text-[#1A1A1A]">{{ trans_choice(':count crédits', (int) $purchase->unlocks_count, ['count' => $purchase->unlocks_count]) }}</span>
+                        <span class="font-serif text-lg font-semibold text-[#1A1A1A]">{{ trans_choice('credits.count', (int) $purchase->unlocks_count, ['count' => (int) $purchase->unlocks_count]) }}</span>
                         <span class="font-serif text-2xl font-bold text-[#1A1A1A]"><bdi>{{ number_format($purchase->amount_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</span>
                     </dd>
                 </div>

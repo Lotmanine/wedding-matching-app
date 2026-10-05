@@ -18,7 +18,7 @@ class LocaleSwitchTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('<html lang="fr" dir="ltr"', false)
-            ->assertSee('Trouvez les meilleurs prestataires pour votre mariage');
+            ->assertSee('Trouvez des prestataires vérifiés pour votre mariage');
     }
 
     public function test_switch_stores_the_language_and_returns_to_the_page(): void
@@ -47,7 +47,7 @@ class LocaleSwitchTest extends TestCase
 
         $this->withUnencryptedCookie(SetLocale::COOKIE, 'ar')
             ->get('/')
-            ->assertSee('اعثروا على أفضل مقدمي الخدمات لعرسكم');
+            ->assertSee('اعثروا على مقدمي خدمات موثقين لعرسكم');
     }
 
     public function test_error_pages_follow_the_language(): void
@@ -81,7 +81,7 @@ class LocaleSwitchTest extends TestCase
         app()->setLocale('ar');
         $this->assertSame('ساعتين', LocaleCount::hours(2));
         $this->assertSame('3 ساعات', LocaleCount::hours(3));
-        $this->assertSame('14 يومًا', LocaleCount::days(14));
+        $this->assertSame('14 يوما', LocaleCount::days(14));
 
         app()->setLocale('fr');
         $this->assertSame('2', LocaleCount::hours(2));

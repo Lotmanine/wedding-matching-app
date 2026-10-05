@@ -180,8 +180,30 @@ class CreditsController extends Controller
         $uid = (string) $request->query('purchase');
         $purchase = $uid !== '' ? Purchase::where('purchase_uid', $uid)->where('user_id', $request->user()->id)->first() : null;
 
+        // Stored reasons are technical codes (gateway_failed, user_cancelled,
+        // checkout_init_failed) or "offline_rejected: <reason typed by an admin>".
+        // The page shows a sentence in the reader's language, never the code.
+        $reason = trim((string) $purchase?->failure_reason);
+        $code = $reason === '' ? null : trim(explode(':', $reason, 2)[0]);
+        $known = ['gateway_failed', 'user_cancelled', 'checkout_init_failed', 'offline_rejected'];
+
+        $explanation = null;
+        if ($code !== null) {
+            $explanation = __('credits.failure_reasons.' . (in_array($code, $known, true) ? $code : 'unknown'));
+        }
+
+        // Free text typed by the team when rejecting a versement: shown as stored.
+        $teamNote = $code === 'offline_rejected' && str_contains($reason, ':')
+            ? trim(explode(':', $reason, 2)[1])
+            : '';
+
         return view('provider.credits.failure', [
-            'purchase' => $purchase,
+            'purchase'       => $purchase,
+            'explanation'    => $explanation,
+            'teamNote'       => $teamNote,
+            // Card-related causes only make sense for a card payment that failed.
+            'showCardCauses' => $code === null || $code === 'gateway_failed',
+            'offlineEnabled' => $this->paymentSettings->isMethodEnabled(PaymentSettings::METHOD_OFFLINE),
         ]);
     }
 
@@ -242,10 +264,10 @@ class CreditsController extends Controller
             foreach ($entries as $e) {
                 fputcsv($handle, [
                     $e->created_at?->toDateTimeString(),
-                    $e->type,
+                    $e->typeLabel(),
                     $e->delta,
                     $e->balance_after,
-                    $e->notes ?? '',
+                    $e->plainDescription(),
                 ]);
             }
             fclose($handle);

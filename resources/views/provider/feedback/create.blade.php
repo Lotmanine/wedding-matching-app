@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto">
-        <h1 class="font-serif text-3xl font-bold text-[#1A1A1A] mb-2">{{ __('Feedback') }}</h1>
+        <h1 class="font-serif text-3xl font-bold text-[#1A1A1A] mb-2">{{ __('provider.nav.feedback') }}</h1>
         <p class="text-[#6B665E] text-sm mb-8">{{ __('Un bug, une remarque, une idée ? Écrivez-nous : chaque message est lu par notre équipe.') }}</p>
 
         <form method="POST" action="{{ route('provider.feedback.store') }}" class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-5 sm:p-6 space-y-5">

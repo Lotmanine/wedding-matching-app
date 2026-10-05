@@ -23,11 +23,13 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.phone') }}</label>
                     <input type="tel" dir="ltr" wire:model="phone" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '<span dir="ltr">+213</span>', 'example' => '<span dir="ltr">+213661234567</span>']) !!}</p>
                     @error('phone') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.whatsapp') }}</label>
                     <input type="tel" dir="ltr" wire:model="whatsapp" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '<span dir="ltr">+213</span>', 'example' => '<span dir="ltr">+213661234567</span>']) !!}</p>
                     @error('whatsapp') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
@@ -93,6 +95,7 @@
                     <input type="number" wire:model="max_price" min="0" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                     @error('max_price') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
+                <p class="sm:col-span-2 -mt-2 text-xs text-[#9A958D]">{{ __('provider.registration.price_hint') }}</p>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.description') }}</label>
                     <textarea wire:model="business_description" rows="3" maxlength="500" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all resize-none"></textarea>
@@ -166,7 +169,7 @@
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.portfolio_urls_label') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.profile.portfolio_urls_label') }}</label>
                 <div class="space-y-2">
                     @foreach ($portfolio_urls as $i => $url)
                         <div wire:key="p-url-{{ $i }}" class="flex gap-2">

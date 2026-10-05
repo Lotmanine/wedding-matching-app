@@ -111,10 +111,10 @@ return [
 
     'custom' => [
         'couple_whatsapp' => [
-            'regex' => 'Le numéro WhatsApp doit être au format +213 suivi de 9 chiffres (ex. +213661234567).',
+            'regex' => 'Saisissez un numéro de mobile algérien au format +213, sans le 0 initial et sans espaces (exemple : +213661234567).',
         ],
         'acceptTerms' => [
-            'accepted' => 'Vous devez accepter les conditions de confidentialité (ANPDP) pour continuer.',
+            'accepted' => 'Vous devez accepter la transmission de votre demande aux prestataires pour l\'envoyer.',
         ],
     ],
 
@@ -127,8 +127,36 @@ return [
         'wedding_season'      => 'la saison du mariage',
         'guest_count'         => 'le nombre d\'invités',
         'budget_range'        => 'le budget',
-        'services_needed'     => 'les prestataires recherchés',
+        'services_needed'     => 'les services recherchés',
         'description'         => 'les précisions',
         'acceptTerms'         => 'les conditions',
+
+        // Provider area
+        'full_name'            => 'le nom complet',
+        'email'                => 'l\'adresse e-mail',
+        'password'             => 'le mot de passe',
+        'phone'                => 'le téléphone',
+        'whatsapp'             => 'le numéro WhatsApp',
+        'accept_terms'         => 'les conditions d\'utilisation',
+        'accept_anpdp'         => 'le traitement des données',
+        'business_name'        => 'le nom commercial',
+        'business_type'        => 'la forme juridique',
+        'business_description' => 'la description de l\'activité',
+        'trade_register'       => 'le numéro de registre de commerce',
+        'years_experience'     => 'les années d\'expérience',
+        'primary_wilaya_code'  => 'la wilaya principale',
+        'price_tier'           => 'le niveau tarifaire',
+        'min_price'            => 'le tarif indicatif minimum',
+        'max_price'            => 'le tarif indicatif maximum',
+        'languages'            => 'les langues',
+        'services'             => 'les services',
+        'coverage_wilayas'     => 'les wilayas d\'intervention',
+        'travel_fees.*'        => 'les frais de déplacement',
+        'portfolio_urls'       => 'les liens',
+        'portfolio_urls.*'     => 'le lien',
+        'portfolio_images.*'   => 'la photo',
+        'portfolio_images_new.*' => 'la photo',
+        'logo_upload'          => 'le logo',
+        'logo_new'             => 'le logo',
     ],
 ];

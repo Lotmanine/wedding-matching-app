@@ -23,16 +23,17 @@
         <div class="bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-6 mb-6 flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-1">{{ __($pack->name) }}</p>
-                <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ $pack->unlocks_count }} <span class="text-lg font-sans font-medium text-[#6B665E]">{{ trans_choice('crédits', (int) $pack->unlocks_count) }}</span></p>
+                <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ trans_choice('credits.count', (int) $pack->unlocks_count, ['count' => (int) $pack->unlocks_count]) }}</p>
             </div>
             <div class="text-end">
                 <p class="font-serif text-2xl font-bold text-[#1A1A1A]"><bdi>{{ number_format($pack->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
-                <p class="text-xs text-[#9A958D]"><bdi>{{ number_format($perUnlock, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA / crédit') }}</p>
+                <p class="text-xs text-[#9A958D]">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', "\u{00A0}")]) }}</p>
             </div>
         </div>
 
-        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-1">{{ __('Choisissez votre mode de paiement') }}</h1>
-        <p class="text-[#6B665E] text-sm mb-6">{{ __('Paiement 100 % sécurisé. Vos crédits sont ajoutés automatiquement (en ligne) ou après vérification (versement).') }}</p>
+        {{-- The intro names only the payment methods that are enabled, and says when credits are added for each --}}
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-1">{{ $hasOnline && $hasOffline ? __('credits.pay.title_choice') : __('credits.pay.title_single') }}</h1>
+        <p class="text-[#6B665E] text-sm mb-6">{{ $hasOnline && $hasOffline ? __('credits.pay.intro_both') : ($hasOnline ? __('credits.pay.intro_online') : __('credits.pay.intro_offline')) }}</p>
 
         {{-- Method tabs (only if both are enabled) --}}
         @if ($hasOnline && $hasOffline)
@@ -59,7 +60,7 @@
                     </div>
                     <div class="flex-1">
                         <h2 class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('Carte Edahabia / CIB') }}</h2>
-                        <p class="text-sm text-[#6B665E] mt-1 mb-5">{{ __('Paiement instantané et sécurisé via Chargily Pay. Vos crédits sont ajoutés immédiatement après confirmation.') }}</p>
+                        <p class="text-sm text-[#6B665E] mt-1 mb-5">{{ __('credits.pay.online_body') }}</p>
                         <form method="POST" action="{{ route('provider.credits.checkout', $pack->slug) }}">
                             @csrf
                             <x-z.btn type="submit" variant="primary" size="lg" class="w-full sm:w-auto justify-center">
@@ -80,7 +81,7 @@
                     </div>
                     <div>
                         <h2 class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('Versement bancaire ou CCP') }}</h2>
-                        <p class="text-sm text-[#6B665E] mt-1">{{ __('Effectuez le versement puis déclarez-le ci-dessous. Vos crédits seront ajoutés dès validation par notre équipe.') }}</p>
+                        <p class="text-sm text-[#6B665E] mt-1">{{ __('credits.pay.offline_body') }}</p>
                     </div>
                 </div>
 
@@ -101,8 +102,9 @@
                     @empty
                         <p class="text-[#9A958D]">{{ __('Les coordonnées de paiement seront communiquées par notre équipe.') }}</p>
                     @endforelse
+                    {{-- Free text saved by the admin at /admin/payments (setting payments.offline.instructions): shown as stored, never translated --}}
                     @if (! empty($offlineDetails['instructions']))
-                        <p class="text-xs text-[#6B665E] pt-2 border-t border-[#D4CFC7]/40 mt-2">{{ $offlineDetails['instructions'] }}</p>
+                        <p class="text-xs text-[#6B665E] pt-2 border-t border-[#D4CFC7]/40 mt-2" dir="auto">{{ $offlineDetails['instructions'] }}</p>
                     @endif
                     <p class="flex items-center justify-between gap-4 pt-2 border-t border-[#D4CFC7]/40 mt-2">
                         <span class="text-[#9A958D]">{{ __('Montant à verser') }}</span>

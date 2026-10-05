@@ -19,12 +19,11 @@
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __((string) $purchase->unlockPack?->name) }}</p>
                         <p class="font-serif text-3xl font-bold text-[#1A1A1A]">+{{ $purchase->unlocks_count }}</p>
-                        <p class="text-xs text-[#9A958D]">{{ trans_choice('crédits', (int) $purchase->unlocks_count) }}</p>
+                        <p class="text-xs text-[#9A958D]">{{ __('credits.added_label') }}</p>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('Solde total') }}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.balance_label') }}</p>
                         <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ $profile?->credit_balance ?? 0 }}</p>
-                        <p class="text-xs text-[#9A958D]">{{ trans_choice('crédits', (int) ($profile?->credit_balance ?? 0)) }}</p>
                     </div>
                 </div>
 

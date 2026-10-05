@@ -50,9 +50,19 @@
                                 <tr class="hover:bg-[#F7F4F0]/50 transition-colors">
                                     <td class="px-5 py-4 text-xs text-[#9A958D] whitespace-nowrap">{{ $e->created_at?->isoFormat('DD/MM/YYYY HH:mm') }}</td>
                                     <td class="px-5 py-4">
-                                        <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F4F0] text-[#6B665E] border border-[#D4CFC7] font-bold uppercase tracking-wider">{{ __('credits.type.' . $e->type) }}</span>
+                                        <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F4F0] text-[#6B665E] border border-[#D4CFC7] font-bold uppercase tracking-wider">{{ $e->typeLabel() }}</span>
                                     </td>
-                                    <td class="px-5 py-4 text-[#6B665E] max-w-xs truncate">{{ $e->notes ?? __('Non renseigné') }}</td>
+                                    {{-- Platform-written entries are described in the reader's language; a note typed by a person is shown as stored. --}}
+                                    @php $entryDescription = $e->systemDescription(); @endphp
+                                    <td class="px-5 py-4 text-[#6B665E] max-w-xs truncate">
+                                        @if ($entryDescription !== null)
+                                            {{ $entryDescription }}
+                                        @elseif (filled($e->notes))
+                                            <span dir="auto">{{ $e->notes }}</span>
+                                        @else
+                                            {{ __('Non renseigné') }}
+                                        @endif
+                                    </td>
                                     <td @class([
                                         'px-5 py-4 text-end font-bold font-serif whitespace-nowrap',
                                         'text-green-600' => $e->delta > 0,

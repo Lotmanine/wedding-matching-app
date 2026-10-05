@@ -91,7 +91,7 @@
         <div class="flex gap-3 px-4 py-3 bg-[#F7F4F0] rounded-xl border border-[#D4CFC7]/40">
             <x-z.icon name="shield" :filled="true" class="text-[#9A958D] text-lg shrink-0 mt-0.5" />
             <p class="text-xs text-[#9A958D] leading-relaxed">
-                {{ __('form.confirm_expiry', ['date' => $wedRequest->expires_at->isoFormat('LL')]) }}
+                {{ __('form.confirm_expiry', ['date' => $wedRequest->expires_at->isoFormat('LL'), 'days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}
             </p>
         </div>
 

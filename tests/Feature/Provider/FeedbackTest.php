@@ -51,7 +51,7 @@ class FeedbackTest extends TestCase
         $this->actingAs($this->userWithRole('provider'))
             ->get(route('provider.feedback.create'))
             ->assertOk()
-            ->assertSee('Feedback');
+            ->assertSee('Remarques et suggestions');
     }
 
     public function test_provider_can_send_feedback_and_the_alert_address_is_emailed(): void

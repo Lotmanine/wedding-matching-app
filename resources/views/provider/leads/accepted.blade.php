@@ -23,14 +23,18 @@
             </a>
         </div>
 
-        {{-- Success banner --}}
-        <div class="mb-3 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
-            <x-z.icon name="check_circle" :filled="true" class="text-green-600 text-2xl shrink-0" />
+        {{-- Status banner: the heading follows the real state of the contact details --}}
+        <div @class([
+            'mb-3 border rounded-xl p-4 flex items-center gap-3',
+            'bg-green-50 border-green-200' => ! $anonymized,
+            'bg-[#F7F4F0] border-[#D4CFC7]/60' => $anonymized,
+        ])>
+            <x-z.icon name="check_circle" :filled="true" class="text-2xl shrink-0 {{ $anonymized ? 'text-[#9A958D]' : 'text-green-600' }}" />
             <div>
-                <p class="text-sm font-bold text-green-800">{{ __('provider.unlocked.header') }}</p>
-                <p class="text-xs text-green-600">
+                <p @class(['text-sm font-bold', 'text-green-800' => ! $anonymized, 'text-[#1A1A1A]' => $anonymized])>{{ $anonymized ? __('provider.unlocked.header_expired') : __('provider.unlocked.header') }}</p>
+                <p @class(['text-xs', 'text-green-600' => ! $anonymized, 'text-[#6B665E]' => $anonymized])>
                     {{ __('provider.unlocked.accepted_on', ['when' => $lead->unlocked_at?->diffForHumans() ?? __('Non renseigné')]) }}
-                    · {{ __('provider.unlocked.credits_charged', ['count' => $lead->credits_charged]) }}
+                    · {{ trans_choice('provider.unlocked.credits_charged', (int) $lead->credits_charged, ['count' => (int) $lead->credits_charged]) }}
                 </p>
             </div>
         </div>
@@ -41,15 +45,15 @@
                 <x-z.icon name="visibility_off" class="text-[#9A958D] text-2xl shrink-0" />
                 <div>
                     <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Coordonnées anonymisées') }}</p>
-                    <p class="text-xs text-[#6B665E]">{{ __("Conformité ANPDP : les données de contact du couple ne sont plus affichées (:days jours après l'acceptation).", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
+                    <p class="text-xs text-[#6B665E]">{{ __("Protection des données personnelles : les coordonnées du couple ne sont plus affichées (:days jours après l'acceptation).", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
                 </div>
             </div>
         @elseif ($anonymizeAt)
             <div class="mb-6 bg-[#F0D9B5]/30 border border-[#C8956C]/30 rounded-xl p-4 flex items-center gap-3">
                 <x-z.icon name="schedule" class="text-[#C8956C] text-2xl shrink-0" />
                 <div>
-                    <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Cette demande sera anonymisée :when', ['when' => $anonymizeAt->diffForHumans()]) }}</p>
-                    <p class="text-xs text-[#6B665E]">{{ __('Le :date, les coordonnées du couple seront masquées (conformité ANPDP). Notez les informations dont vous avez besoin.', ['date' => $anonymizeAt->isoFormat('LL')]) }}</p>
+                    <p class="text-sm font-bold text-[#1A1A1A]">{{ __("Coordonnées affichées jusqu'au :date", ['date' => $anonymizeAt->isoFormat('LL')]) }}</p>
+                    <p class="text-xs text-[#6B665E]">{{ __('Après cette date, les coordonnées du couple ne sont plus affichées (protection des données personnelles). Contactez le couple avant cette date.') }}</p>
                 </div>
             </div>
         @endif
@@ -87,10 +91,13 @@
                     </div>
                 @endif
 
-                <div class="p-4 rounded-xl bg-[#F0D9B5]/30 border border-[#C8956C]/20 text-sm">
-                    <p class="font-bold text-[#1A1A1A] flex items-center gap-2"><x-z.icon name="lightbulb" :filled="true" class="text-[#C8956C] text-lg" />{{ __('provider.unlocked.tip_title') }}</p>
-                    <p class="mt-1 text-[#6B665E] leading-relaxed">{{ __('provider.unlocked.tip_body') }}</p>
-                </div>
+                {{-- Contact advice is pointless once the contact details are no longer shown --}}
+                @unless ($anonymized)
+                    <div class="p-4 rounded-xl bg-[#F0D9B5]/30 border border-[#C8956C]/20 text-sm">
+                        <p class="font-bold text-[#1A1A1A] flex items-center gap-2"><x-z.icon name="lightbulb" :filled="true" class="text-[#C8956C] text-lg" />{{ __('provider.unlocked.tip_title') }}</p>
+                        <p class="mt-1 text-[#6B665E] leading-relaxed">{{ __('provider.unlocked.tip_body') }}</p>
+                    </div>
+                @endunless
             </section>
 
             {{-- Contact card (revealed) --}}
@@ -156,7 +163,7 @@
                                 <p class="text-xs mt-0.5">{{ $dispute->decided_at?->diffForHumans() }}</p>
                             @else
                                 <p class="font-semibold">{{ __('Signalement refusé') }}</p>
-                                @if ($dispute->admin_note)<p class="text-xs mt-0.5">{{ $dispute->admin_note }}</p>@endif
+                                @if ($dispute->admin_note)<p class="text-xs mt-0.5" dir="auto">{{ $dispute->admin_note }}</p>@endif
                             @endif
                         </div>
                     @else

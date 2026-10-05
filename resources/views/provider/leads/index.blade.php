@@ -9,7 +9,7 @@
                 </h1>
                 @if ($canReceive)
                     <p class="text-sm text-[#6B665E] mt-1">
-                        {{ __('provider.leads.count', ['count' => $leads->total()]) }}
+                        {{ trans_choice('provider.leads.count', $leads->total(), ['count' => $leads->total()]) }}
                     </p>
                 @endif
             </div>

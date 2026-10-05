@@ -20,13 +20,14 @@
         $initials = \Illuminate\Support\Str::of($profile?->business_name ?? $user?->name ?? 'PR')
             ->explode(' ')->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
         $nav = [
-            ['route' => 'provider.dashboard',       'pattern' => 'provider.dashboard',    'icon' => 'dashboard',       'label' => __('provider.nav.dashboard')],
+            // 'short' is the label of the mobile bottom bar when the full label is too long for it.
+            ['route' => 'provider.dashboard',       'pattern' => 'provider.dashboard',    'icon' => 'dashboard',       'label' => __('provider.nav.dashboard'), 'short' => __('provider.nav.dashboard_short')],
             ['route' => 'provider.leads.index',     'pattern' => 'provider.leads.index',  'icon' => 'inbox',           'label' => __('provider.nav.leads')],
             ['route' => 'provider.leads.accepted',  'pattern' => 'provider.leads.accepted','icon' => 'workspace_premium','label' => __('Acceptées')],
             ['route' => 'provider.credits.index',   'pattern' => 'provider.credits.index','icon' => 'toll',            'label' => __('provider.nav.credits')],
             ['route' => 'provider.credits.history', 'pattern' => 'provider.credits.history','icon' => 'history',       'label' => __('provider.nav.history')],
-            ['route' => 'provider.profile.edit',    'pattern' => 'provider.profile.*',    'icon' => 'manage_accounts','label' => __('provider.nav.profile')],
-            ['route' => 'provider.feedback.create', 'pattern' => 'provider.feedback.*',   'icon' => 'feedback',        'label' => __('Feedback')],
+            ['route' => 'provider.profile.edit',    'pattern' => 'provider.profile.*',    'icon' => 'manage_accounts','label' => __('provider.nav.profile'), 'short' => __('provider.nav.profile_short')],
+            ['route' => 'provider.feedback.create', 'pattern' => 'provider.feedback.*',   'icon' => 'feedback',        'label' => __('provider.nav.feedback'), 'short' => __('provider.nav.feedback_short')],
         ];
     @endphp
 
@@ -52,8 +53,7 @@
             <div class="px-4 pb-4">
                 <div class="bg-gradient-to-br from-[#F0D9B5]/60 to-[#FDFAF6] rounded-xl p-4 border border-[#C8956C]/20 mb-4">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1">{{ __('provider.nav.credit_balance') }}</p>
-                    <p class="text-3xl font-serif font-bold text-[#1A1A1A]">{{ $creditBalance }}</p>
-                    <p class="text-xs text-[#6B665E] mb-3">{{ __('provider.nav.credits_available') }}</p>
+                    <p class="text-3xl font-serif font-bold text-[#1A1A1A] mb-3">{{ $creditBalance }}</p>
                     <x-z.btn :href="route('provider.credits.index')" size="xs" variant="outline" class="w-full justify-center">{{ __('provider.nav.recharge') }}</x-z.btn>
                 </div>
                 <form method="POST" action="{{ route('provider.logout') }}">
@@ -75,7 +75,7 @@
                 <a href="{{ route('home') }}" class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('provider.brand') }}</a>
                 <div class="flex items-center gap-3">
                     @include('partials.lang-switch')
-                    <a href="{{ route('provider.credits.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F0D9B5] rounded-full text-xs font-bold text-[#1A1A1A]">
+                    <a href="{{ route('provider.credits.index') }}" aria-label="{{ __('provider.nav.balance_line', ['balance' => $creditBalance]) }}" title="{{ __('provider.nav.balance_line', ['balance' => $creditBalance]) }}" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F0D9B5] rounded-full text-xs font-bold text-[#1A1A1A]">
                         <x-z.icon name="toll" class="text-sm" /> {{ $creditBalance }}
                     </a>
                     <div class="w-8 h-8 rounded-full bg-[#F0D9B5] flex items-center justify-center text-xs font-bold text-[#1A1A1A] uppercase">{{ $initials }}</div>
@@ -98,7 +98,7 @@
                     @php $active = request()->routeIs($item['pattern']); @endphp
                     <a href="{{ route($item['route']) }}" class="flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-colors {{ $active ? 'text-[#C8956C]' : 'text-[#9A958D]' }}">
                         <x-z.icon :name="$item['icon']" :filled="$active" class="text-[22px]" />
-                        <span class="text-[9px] font-bold uppercase tracking-wide">{{ \Illuminate\Support\Str::of($item['label'])->explode(' ')->first() }}</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wide">{{ $item['short'] ?? $item['label'] }}</span>
                     </a>
                 @endforeach
             </nav>

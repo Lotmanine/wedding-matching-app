@@ -10,7 +10,7 @@
         <h1 class="font-serif text-3xl font-bold text-[#1A1A1A] mb-2">
             {{ __('credits.title') }}
         </h1>
-        <p class="text-[#6B665E] text-sm mb-8">{{ __('credits.balance_tooltip') }}</p>
+        <p class="text-[#6B665E] text-sm mb-8">{{ trans_choice('credits.unlock_cost_line', $unlockCost, ['count' => $unlockCost]) }}</p>
 
         @if (session('error'))
             <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-[#A84936] text-sm flex items-center gap-3">
@@ -22,7 +22,7 @@
         <section class="bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-6 flex items-center justify-between mb-8">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-1">{{ __('credits.balance_label') }}</p>
-                <p class="font-serif text-4xl font-bold text-[#1A1A1A]">{{ $balance }} <span class="text-xl text-[#9A958D] font-sans">{{ __('credits.balance_unit', ['count' => $balance]) }}</span></p>
+                <p class="font-serif text-4xl font-bold text-[#1A1A1A]">{{ $balance }}</p>
                 @if ($balance < $unlockCost)
                     <div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 text-amber-800 text-sm">
                         <x-z.icon name="warning" class="text-base" />{{ __('credits.low_balance_warning') }}
@@ -59,15 +59,10 @@
                         'from-[#F0D9B5]/50 to-white border-[#C8956C] shadow-lg shadow-[#C8956C]/10' => $pack->is_popular,
                         'from-[#F7F4F0] to-white border-[#D4CFC7]' => ! $pack->is_popular,
                     ])>
-                        @if ($pack->is_popular)
-                            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-                                <x-z.badge variant="accent">{{ __('credits.pack_popular') }}</x-z.badge>
-                            </div>
-                        @endif
 
                         <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ __($pack->name) }}</p>
                         <div class="font-serif text-5xl font-bold text-[#1A1A1A] mb-1">{{ $pack->unlocks_count }}</div>
-                        <p class="text-sm text-[#6B665E] mb-1">{{ trans_choice('crédits', (int) $pack->unlocks_count) }}</p>
+                        <p class="text-sm text-[#6B665E] mb-1">{{ trans_choice('credits.unit', (int) $pack->unlocks_count) }}</p>
                         <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1"><bdi>{{ number_format($pack->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
                         <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', "\u{00A0}")]) }}</p>
 
@@ -101,9 +96,18 @@
                 <div class="divide-y divide-[#D4CFC7]/20">
                     @foreach ($recent as $entry)
                         <div class="flex items-center justify-between gap-4 px-6 py-4">
+                            {{-- Platform-written entries are described in the reader's language; a note typed by a person is shown as stored. --}}
+                            @php $entryDescription = $entry->systemDescription(); @endphp
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-[#1A1A1A] truncate">{{ __('credits.type.' . $entry->type) }}</p>
-                                <p class="text-xs text-[#9A958D] truncate">{{ $entry->notes ?? __('Non renseigné') }} · {{ $entry->created_at->diffForHumans() }}</p>
+                                <p class="text-sm font-medium text-[#1A1A1A] truncate">{{ $entry->typeLabel() }}</p>
+                                <p class="text-xs text-[#9A958D] truncate">
+                                    @if ($entryDescription !== null)
+                                        {{ $entryDescription }} ·
+                                    @elseif (filled($entry->notes))
+                                        <span dir="auto">{{ $entry->notes }}</span> ·
+                                    @endif
+                                    {{ $entry->created_at->diffForHumans() }}
+                                </p>
                             </div>
                             <div class="text-end shrink-0">
                                 <p @class([
