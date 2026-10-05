@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1;
 
+use App\Events\RoundStarted;
+use App\Events\WedRequestSubmitted;
 use App\Jobs\DeliverWebhookJob;
+use App\Listeners\Whatsapp\DispatchRoundStartedWebhook;
+use App\Models\ServiceRequest;
 use App\Models\WebhookDelivery;
 use App\Models\WebhookEndpoint;
+use App\Models\WedRequest;
 use App\Services\Webhooks\WebhookDispatcher;
+use Database\Seeders\WilayaSeeder;
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class WebhookDeliveryTest extends TestCase
@@ -42,6 +50,48 @@ class WebhookDeliveryTest extends TestCase
             $job->endpointId === $endpoint->id && $job->eventType === 'service_request.accepted'
         );
         Bus::assertDispatchedTimes(DeliverWebhookJob::class, 1);
+    }
+
+    public function test_domain_event_queues_exactly_one_delivery_per_endpoint(): void
+    {
+        Bus::fake([DeliverWebhookJob::class]);
+        $this->seed(WilayaSeeder::class);
+
+        WebhookEndpoint::create([
+            'name'   => 'n8n Core',
+            'url'    => 'https://n8n.example.com/webhook/zawaj-core',
+            'secret' => 'sekret',
+            'events' => ['wed_request.submitted'],
+            'active' => true,
+        ]);
+
+        WedRequestSubmitted::dispatch(WedRequest::factory()->create(['couple_wilaya_code' => '16']));
+
+        // Regression: listeners used to be registered twice (explicitly + by
+        // auto-discovery), so every webhook went out in duplicate.
+        Bus::assertDispatchedTimes(DeliverWebhookJob::class, 1);
+    }
+
+    public function test_round_started_queues_the_enriched_whatsapp_listener_once(): void
+    {
+        Queue::fake();
+        $this->seed(WilayaSeeder::class);
+
+        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16']);
+        $sr = ServiceRequest::create([
+            'wed_request_id' => $wr->id,
+            'service_type'   => 'photo',
+            'status'         => 'round1',
+            'current_round'  => 1,
+        ]);
+
+        RoundStarted::dispatch($sr, 1, [1]);
+
+        $queued = Queue::pushed(
+            CallQueuedListener::class,
+            fn ($job) => $job->class === DispatchRoundStartedWebhook::class,
+        );
+        $this->assertCount(1, $queued);
     }
 
     public function test_successful_delivery_signs_body_and_marks_delivered(): void

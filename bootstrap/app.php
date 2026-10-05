@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    // Listeners are registered explicitly in AppServiceProvider. Laravel's
+    // automatic discovery would register each of them a second time, so every
+    // outbound webhook (and every WhatsApp message behind it) was sent twice.
+    ->withEvents(discover: false)
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role'       => RoleMiddleware::class,
