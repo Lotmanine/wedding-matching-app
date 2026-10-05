@@ -21,7 +21,10 @@ php artisan storage:link 2>/dev/null || true
     echo "[entrypoint] (bg) waiting for database…"
     i=1
     while [ "$i" -le 150 ]; do
-        if php artisan db:show >/dev/null 2>&1; then
+        # --json is required: the table output of db:show formats numbers with
+        # the intl extension, which this image does not ship. Without it the
+        # check failed on every try, so migrations never ran on deploy.
+        if php artisan db:show --json >/dev/null 2>&1; then
             echo "[entrypoint] (bg) database reachable — running migrations"
             php artisan migrate --force || echo "[entrypoint] (bg) migrate failed"
             php artisan queue:restart || true
