@@ -37,7 +37,16 @@
         {{-- Next steps --}}
         <div class="bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-6">
             <p class="text-[11px] font-bold uppercase tracking-widest text-[#9A958D] mb-6">{{ __('form.confirm_next_steps') }}</p>
-            @php $steps = [__('form.confirm_step_1'), __('form.confirm_step_2'), __('form.confirm_step_3')]; @endphp
+            @php
+                $steps = [
+                    __('form.confirm_step_1', [
+                        'per_round' => (int) config('zawaj.matching.providers_per_round', 3),
+                        'hours'     => max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60)),
+                    ]),
+                    __('form.confirm_step_2'),
+                    __('form.confirm_step_3'),
+                ];
+            @endphp
             <div class="space-y-5">
                 @foreach ($steps as $i => $line)
                     <div class="flex gap-4">
@@ -60,10 +69,19 @@
                 @foreach ($wedRequest->serviceRequests as $sr)
                     <div class="flex items-center justify-between p-3 bg-[#F7F4F0] rounded-xl">
                         <span class="text-sm font-semibold text-[#1A1A1A]">{{ $sr->service_type?->label() ?? $sr->service_type }}</span>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#C8956C] animate-pulse"></span>
-                            <span class="text-xs font-bold text-[#C8956C]">{{ __('form.confirm_status_searching') }}</span>
-                        </div>
+                        @php $state = $sr->status?->value ?? (string) $sr->status; @endphp
+                        @if ($state === 'accepted')
+                            <span class="text-xs font-bold text-green-700 flex items-center gap-1.5">
+                                <x-z.icon name="check_circle" :filled="true" class="text-sm" /> {{ __('form.confirm_status_found') }}
+                            </span>
+                        @elseif ($state === 'expired')
+                            <span class="text-xs font-bold text-[#9A958D]">{{ __('form.confirm_status_none') }}</span>
+                        @else
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#C8956C] animate-pulse"></span>
+                                <span class="text-xs font-bold text-[#C8956C]">{{ $state === 'open_marketplace' ? __('form.confirm_status_open') : __('form.confirm_status_searching') }}</span>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>

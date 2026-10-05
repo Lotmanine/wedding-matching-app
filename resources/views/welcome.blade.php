@@ -2,30 +2,34 @@
 
 @section('content')
 @php
+    // Figures shown on this page come from the real configuration, never from
+    // marketing estimates: what we print here is what the platform does.
+    $roundHours   = max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60));
+    $perRound     = (int) config('zawaj.matching.providers_per_round', 3);
+    $maxRounds    = (int) config('zawaj.matching.max_rounds', 3);
+    $validityDays = (int) config('zawaj.anpdp.retention_days', 14);
+    $openWilayas  = \App\Models\Wilaya::active()->pluck('name_fr');
+    $openWilayasText = $openWilayas->join(', ', ' et ');
+
     // ─── Catégories (bento) — adaptées de claude-design/Landing.jsx ───
     $categories = [
-        ['label' => 'Photographe',     'count' => '840',   'icon' => 'camera_alt',             'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => asset('images/categories/photographe.jpg'), 'span' => false],
-        ['label' => 'Vidéaste',        'count' => '310',   'icon' => 'videocam',               'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => asset('images/categories/videaste.jpg'), 'span' => false],
-        ['label' => 'Traiteur',        'count' => '1 200', 'icon' => 'restaurant',             'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => asset('images/categories/traiteur.jpg'), 'span' => false],
-        ['label' => 'Salle des fêtes', 'count' => '190',   'icon' => 'villa',                  'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => asset('images/categories/salle.jpg'), 'span' => true],
-        ['label' => 'Décoration',      'count' => '650',   'icon' => 'local_florist',          'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => asset('images/categories/decoration.jpg'), 'span' => false],
-        ['label' => 'Pâtisserie',      'count' => '420',   'icon' => 'cake',                   'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => asset('images/categories/patisserie.jpg'), 'span' => false],
-        ['label' => 'Machta',          'count' => '510',   'icon' => 'face_retouching_natural','gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => asset('images/categories/machta.jpg'), 'span' => false],
+        ['label' => 'Photographe',     'icon' => 'camera_alt',             'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => asset('images/categories/photographe.jpg'), 'span' => false],
+        ['label' => 'Vidéaste',        'icon' => 'videocam',               'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => asset('images/categories/videaste.jpg'), 'span' => false],
+        ['label' => 'Traiteur',        'icon' => 'restaurant',             'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => asset('images/categories/traiteur.jpg'), 'span' => false],
+        ['label' => 'Salle des fêtes', 'icon' => 'villa',                  'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => asset('images/categories/salle.jpg'), 'span' => true],
+        ['label' => 'Décoration',      'icon' => 'local_florist',          'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => asset('images/categories/decoration.jpg'), 'span' => false],
+        ['label' => 'Pâtisserie',      'icon' => 'cake',                   'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => asset('images/categories/patisserie.jpg'), 'span' => false],
+        ['label' => 'Machta',          'icon' => 'face_retouching_natural','gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => asset('images/categories/machta.jpg'), 'span' => false],
     ];
 
     $faqs = [
         ['q' => "Est-ce vraiment gratuit pour les couples ?", 'a' => "Oui, totalement. Notre mission est de vous aider à trouver les bons prestataires, sans aucuns frais. Les prestataires paient pour accéder à vos coordonnées, pas vous."],
-        ['q' => "Comment sont sélectionnés les prestataires ?", 'a' => "Notre équipe vérifie manuellement chaque prestataire : identité, portfolio, avis clients, et disponibilité. Notre système associe ensuite votre demande aux prestataires disponibles qui y correspondent le mieux."],
-        ['q' => "En combien de temps vais-je recevoir des réponses ?", 'a' => "Dès validation de votre demande, les prestataires sont alertés. Vous recevrez les premiers contacts WhatsApp en général dans les 24 heures."],
-        ['q' => "Mes données sont-elles en sécurité ?", 'a' => "Votre numéro WhatsApp n'est partagé qu'avec les prestataires sélectionnés. Vos données sont protégées conformément à la réglementation ANPDP algérienne et supprimées automatiquement après " . (int) config('zawaj.anpdp.retention_days', 14) . " jours."],
-        ['q' => "Que se passe-t-il si je ne suis pas satisfait(e) ?", 'a' => "Vous n'avez aucun engagement. Si les propositions ne vous conviennent pas, vous êtes libre de recommencer votre recherche ou de trouver d'autres prestataires sans frais."],
+        ['q' => "Comment sont sélectionnés les prestataires ?", 'a' => "Notre équipe vérifie chaque prestataire avant qu'il ne reçoive la moindre demande. Notre système transmet ensuite la vôtre aux prestataires de votre wilaya qui proposent le service recherché."],
+        ['q' => "En combien de temps vais-je recevoir des réponses ?", 'a' => "Dès l'envoi de votre demande, nous prévenons jusqu'à {$perRound} prestataires vérifiés par service. Chacun a {$roundHours} heures pour répondre. Sans réponse, nous en sollicitons d'autres ({$maxRounds} tours au maximum), puis la demande est ouverte à tous les prestataires de votre wilaya. Elle reste active {$validityDays} jours : si personne ne l'a acceptée d'ici là, c'est qu'aucun prestataire n'était disponible, et vos données sont supprimées. Vous suivez l'avancement sur votre page de confirmation."],
+        ['q' => "Mes données sont-elles en sécurité ?", 'a' => "Votre numéro WhatsApp n'est transmis qu'au prestataire qui accepte votre demande. Vos données sont protégées conformément à la réglementation ANPDP algérienne et supprimées automatiquement après " . (int) config('zawaj.anpdp.retention_days', 14) . " jours."],
+        ['q' => "Que se passe-t-il si je ne suis pas satisfait(e) ?", 'a' => "Vous n'avez aucun engagement. Si le prestataire qui vous contacte ne vous convient pas, vous êtes libre de refuser et d'envoyer une nouvelle demande, sans frais."],
     ];
 
-    $testimonials = [
-        ['quote' => "En 20 minutes j'ai décrit mon mariage, et le lendemain matin j'avais déjà 3 photographes qui me proposaient des portfolios sublimes. Zawaj Pro a changé la donne.", 'name' => 'Amira B.', 'city' => 'Alger', 'date' => 'Juillet 2025'],
-        ['quote' => "Le traiteur qu'on a trouvé via Zawaj Pro était exactement ce qu'on voulait. Transparent sur les prix, disponible, et le jour J, parfait. Merci infiniment.", 'name' => 'Youcef K.', 'city' => 'Oran', 'date' => 'Septembre 2025'],
-        ['quote' => "Ce qui m'a convaincue, c'est la vérification. Je savais que les prestataires étaient sérieux avant même de les contacter. Zéro arnaque, zéro stress.", 'name' => 'Nadia M.', 'city' => 'Constantine', 'date' => 'Octobre 2025'],
-    ];
 @endphp
 
 {{-- The layout's <main> applies px/py padding; this landing wants full-bleed sections, so neutralise it. --}}
@@ -50,12 +54,12 @@
                         Décrire mon mariage
                         <x-z.icon name="arrow_forward" class="text-lg" />
                     </x-z.btn>
-                    <x-z.btn :href="route('couple.request.create')" size="lg" variant="whatsapp">
-                        <x-z.icon name="chat" :filled="true" class="text-lg" /> Via WhatsApp
+                    <x-z.btn href="#comment" size="lg" variant="outline">
+                        Comment ça marche
                     </x-z.btn>
                 </div>
                 <p class="text-xs text-[#9A958D] mt-5 flex items-center gap-2">
-                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> Gratuit pour les couples · Résultats sous 24h · Conforme ANPDP
+                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> Gratuit pour les couples · Prestataires vérifiés · Conforme ANPDP
                 </p>
             </div>
 
@@ -71,7 +75,7 @@
                                 <div class="w-9 h-9 rounded-full bg-[#C8956C] flex items-center justify-center text-white text-xs font-bold shrink-0">ZP</div>
                                 <div>
                                     <p class="text-white text-sm font-bold leading-none">Zawaj Pro</p>
-                                    <p class="text-[#C8956C] text-[10px] mt-0.5">En ligne · IA active</p>
+                                    <p class="text-[#C8956C] text-[10px] mt-0.5">En ligne</p>
                                 </div>
                             </div>
                             {{-- WA chat --}}
@@ -81,12 +85,12 @@
                                     <p class="text-[9px] text-right text-[#9A958D] mt-1">10:14</p>
                                 </div>
                                 <div class="bg-[#F0D9B5] rounded-2xl rounded-tr-sm p-3 shadow-sm max-w-[85%] ml-auto text-[11px] leading-relaxed text-[#1A1A1A]">
-                                    Félicitations 🎉 Notre système analyse <b>42 photographes vérifiés</b> à Alger pour le 15 juillet...
+                                    Félicitations 🎉 Nous transmettons votre demande aux <b>photographes vérifiés</b> d'Alger.
                                     <p class="text-[9px] text-right text-[#7A5530]/60 mt-1">10:14</p>
                                 </div>
                                 <div class="flex items-center gap-1.5 ml-auto max-w-[85%]">
                                     <div class="bg-[#F0D9B5] rounded-full px-3 py-1.5 text-[10px] font-bold text-[#1A1A1A] flex items-center gap-1">
-                                        <x-z.icon name="auto_awesome" :filled="true" class="text-xs" /> Analyse en cours
+                                        <x-z.icon name="auto_awesome" :filled="true" class="text-xs" /> Recherche en cours
                                     </div>
                                     <div class="flex gap-0.5">
                                         @for ($i = 0; $i < 3; $i++)
@@ -95,7 +99,7 @@
                                     </div>
                                 </div>
                                 <div class="bg-[#F0D9B5] rounded-2xl rounded-tr-sm p-3 shadow-sm max-w-[90%] ml-auto text-[11px] leading-relaxed text-[#1A1A1A]">
-                                    ✅ <b>3 photographes</b> correspondent parfaitement à votre vision. Disponibles le 15/07. Voulez-vous voir leurs portfolios ?
+                                    ✅ <b>Un photographe</b> a accepté votre demande. Il vous contacte directement sur WhatsApp.
                                     <p class="text-[9px] text-right text-[#7A5530]/60 mt-1">10:15</p>
                                 </div>
                             </div>
@@ -116,7 +120,7 @@
     {{-- ── Trust bar ───────────────────────────────────────── --}}
     <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
         <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-10">
-            @foreach ([['2 000+', 'couples servis'], ['500+', 'prestataires vérifiés'], ['69', 'wilayas couvertes'], ['< 24h', 'délai moyen']] as $stat)
+            @foreach ([['0 DA', 'pour les couples'], [$openWilayas->count(), 'wilayas ouvertes : ' . $openWilayasText], [$roundHours . ' h', 'pour répondre, par prestataire'], [$validityDays . ' jours', 'de validité par demande']] as $stat)
                 <div class="flex items-center gap-3">
                     <span class="font-serif text-2xl font-bold text-[#C8956C]">{{ $stat[0] }}</span>
                     <span class="text-sm text-[#6B665E] font-medium">{{ $stat[1] }}</span>
@@ -139,7 +143,7 @@
                     $steps = [
                         ['n' => '01', 'icon' => 'edit_note', 'title' => 'Décrivez vos besoins', 'body' => 'Date, budget, style, wilaya : en quelques minutes, votre profil mariage est complet.'],
                         ['n' => '02', 'icon' => 'psychology', 'title' => 'Analyse intelligente', 'body' => "Notre système retient, parmi les prestataires vérifiés de votre région, ceux qui correspondent à votre demande."],
-                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => 'Recevez sur WhatsApp', 'body' => '3 prestataires sélectionnés vous contactent avec tarifs et portfolios. Choisissez en toute sérénité.'],
+                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => 'Recevez sur WhatsApp', 'body' => 'Pour chaque service, le premier prestataire vérifié qui accepte votre demande vous contacte directement sur WhatsApp.'],
                     ];
                 @endphp
                 @foreach ($steps as $step)
@@ -188,7 +192,7 @@
                         <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">Avec Zawaj Pro</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach (['Notre système cherche pour vous, 24h/24', 'Chaque prestataire est vérifié et noté', 'Devis et disponibilités en moins de 24h', 'Contact WhatsApp direct, simple et rapide'] as $t)
+                        @foreach (['Notre système cherche pour vous, 24h/24', 'Chaque prestataire est vérifié par notre équipe', 'Chaque prestataire a ' . $roundHours . ' heures pour répondre', 'Contact WhatsApp direct, simple et rapide'] as $t)
                             <li class="flex items-start gap-3 text-sm font-semibold text-[#1A1A1A]">
                                 <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -223,8 +227,7 @@
                             <span class="material-symbols-outlined text-white text-lg" aria-hidden="true"><?php echo $c['icon']; ?></span>
                         </div>
                         <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                            <p class="font-serif text-white text-xl font-bold mb-1 group-hover:-translate-y-0.5 transition-transform duration-300"><?php echo e($c['label']); ?></p>
-                            <p class="text-white/55 text-[11px] font-bold uppercase tracking-widest"><?php echo e($c['count']); ?> prestataires</p>
+                            <p class="font-serif text-white text-xl font-bold mb-1 group-hover:-translate-y-0.5 transition-transform duration-300"><?php echo e($c['label']); ?></p>
                         </div>
                     </div>
                     <?php return ob_get_clean();
@@ -266,8 +269,8 @@
                             <x-z.icon name="favorite" :filled="true" class="text-[#C8956C] text-xl" />
                         </div>
                         <div>
-                            <p class="font-serif text-2xl font-bold text-[#1A1A1A] leading-none">2 000+</p>
-                            <p class="text-xs text-[#9A958D] mt-0.5">mariages organisés</p>
+                            <p class="font-serif text-2xl font-bold text-[#1A1A1A] leading-none">0 DA</p>
+                            <p class="text-xs text-[#9A958D] mt-0.5">pour les couples</p>
                         </div>
                     </div>
                 </div>
@@ -284,9 +287,9 @@
                 <div class="space-y-5">
                     @php
                         $missionItems = [
-                            ['icon' => 'handshake', 'title' => 'Des prestataires que nous connaissons', 'body' => "Chaque prestataire est rencontré et vérifié par notre équipe avant d'apparaître sur la plateforme."],
+                            ['icon' => 'handshake', 'title' => 'Des prestataires que nous connaissons', 'body' => "Chaque prestataire est vérifié par notre équipe avant de recevoir la moindre demande."],
                             ['icon' => 'shield', 'title' => 'Vos données, votre vie privée', 'body' => "Votre numéro WhatsApp n'est transmis qu'aux prestataires qui acceptent votre demande. Jamais vendu, jamais exploité."],
-                            ['icon' => 'support_agent', 'title' => 'Une équipe disponible', 'body' => "Une question ? Un problème ? Nous répondons via WhatsApp en moins de 2 heures."],
+                            ['icon' => 'support_agent', 'title' => 'Une équipe disponible', 'body' => "Une question ? Un problème ? Écrivez-nous : notre équipe vous répond."],
                         ];
                     @endphp
                     @foreach ($missionItems as $item)
@@ -301,37 +304,6 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ── Testimonials ────────────────────────────────────── --}}
-    <section class="py-24 md:py-32 px-5 md:px-8 bg-[#F7F4F0]">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-14">
-                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Témoignages</p>
-                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">Ce que disent les couples</h2>
-            </div>
-            <div class="grid md:grid-cols-3 gap-6">
-                @foreach ($testimonials as $tm)
-                    <div class="bg-white rounded-2xl p-7 border border-[#D4CFC7]/50 shadow-sm flex flex-col gap-5">
-                        <div class="flex gap-0.5">
-                            @for ($i = 0; $i < 5; $i++)
-                                <x-z.icon name="star" :filled="true" class="text-[#C8956C] text-lg" />
-                            @endfor
-                        </div>
-                        <blockquote class="font-serif text-lg text-[#1A1A1A] leading-relaxed flex-1">"{{ $tm['quote'] }}"</blockquote>
-                        <div class="flex items-center gap-3 pt-1 border-t border-[#D4CFC7]/30">
-                            <div class="w-9 h-9 rounded-full bg-[#F0D9B5] flex items-center justify-center font-bold text-[#1A1A1A] text-sm shrink-0">
-                                {{ \Illuminate\Support\Str::substr($tm['name'], 0, 1) }}
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-[#1A1A1A]">{{ $tm['name'] }}</p>
-                                <p class="text-xs text-[#9A958D]">{{ $tm['city'] }} · {{ $tm['date'] }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
             </div>
         </div>
     </section>
@@ -371,7 +343,7 @@
                         Prêt(e) à organiser le mariage de vos rêves ?
                     </h2>
                     <p class="text-white/60 text-lg mb-10 max-w-xl mx-auto">
-                        Rejoignez des milliers de couples algériens qui font confiance à Zawaj Pro.
+                        Décrivez votre mariage en quelques minutes. C'est gratuit, et sans engagement.
                     </p>
                     <div class="flex flex-col sm:flex-row justify-center gap-4">
                         <x-z.btn :href="route('couple.request.create')" size="lg" variant="accent">

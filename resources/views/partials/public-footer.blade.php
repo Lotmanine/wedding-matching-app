@@ -61,7 +61,7 @@
                 <span class="text-xs text-white/25 flex items-center gap-1.5">
                     <x-z.icon name="verified_user" class="text-[#C8956C] text-sm" /> Conforme ANPDP 18-07
                 </span>
-                <span class="text-xs text-white/25">🇩🇿 69 wilayas</span>
+                <span class="text-xs text-white/25">🇩🇿 {{ \App\Models\Wilaya::active()->pluck('name_fr')->join(', ', ' et ') }} · autres wilayas bientôt</span>
             </div>
         </div>
     </div>

@@ -97,20 +97,23 @@ return [
     'landing_hero_sub'      => 'Remplissez un formulaire rapide. Nous vous connectons gratuitement avec les meilleurs prestataires de votre région.',
     'landing_trust_free'    => 'Gratuit pour les couples',
     'landing_trust_verified' => 'Prestataires vérifiés',
-    'landing_trust_wilayas' => '69 wilayas couvertes',
+    'landing_trust_wilayas' => 'Alger, Blida et Médéa pour commencer',
     'landing_secondary_cta' => 'Je suis un prestataire',
     'landing_secondary_notice' => 'L\'espace prestataires arrive très prochainement, restez à l\'écoute !',
 
     // Confirmation
     'confirm_title'       => 'Merci :name ! Votre demande est bien reçue 🎉',
-    'confirm_subtitle'    => 'Nous cherchons les meilleurs prestataires pour vous.',
+    'confirm_subtitle'    => 'Nous transmettons votre demande aux prestataires vérifiés de votre wilaya.',
     'confirm_reference'   => 'Votre numéro de référence',
     'confirm_next_steps'  => 'Et maintenant ?',
-    'confirm_step_1'      => 'Nous contactons les prestataires de votre région.',
-    'confirm_step_2'      => 'Ils vous envoient un message WhatsApp directement.',
-    'confirm_step_3'      => 'Vous discutez avec eux et choisissez ceux qui vous conviennent.',
+    'confirm_step_1'      => 'Pour chaque service, nous prévenons jusqu\'à :per_round prestataires vérifiés de votre wilaya. Chacun a :hours heures pour répondre.',
+    'confirm_step_2'      => 'Le premier qui accepte votre demande vous contacte directement sur WhatsApp. Sans réponse, nous en sollicitons d\'autres, puis la demande est ouverte à tous les prestataires de votre wilaya.',
+    'confirm_step_3'      => 'Vous suivez l\'avancement sur cette page : gardez-en le lien. Si personne n\'a accepté avant la date d\'expiration, c\'est qu\'aucun prestataire n\'était disponible.',
     'confirm_services'    => 'Prestataires demandés',
     'confirm_status_searching' => 'En recherche…',
+    'confirm_status_found'     => 'Prestataire trouvé',
+    'confirm_status_open'      => 'Ouverte à tous les prestataires',
+    'confirm_status_none'      => 'Aucun prestataire trouvé',
     'confirm_expiry'      => 'Votre demande est valable jusqu\'au :date. Après cette date, vos informations sont automatiquement supprimées.',
 
     // Submission errors

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\IpUtils;
 
 class CoupleRequestForm extends Component
 {
@@ -226,7 +227,9 @@ class CoupleRequestForm extends Component
                     'description'        => $this->description !== '' ? $this->description : null,
                     'services_needed'    => array_values($this->services_needed),
                     'source'             => 'form',
-                    'ip_address'         => request()->ip(),
+                    // Stored anonymised (last IPv4 byte / last 80 IPv6 bits zeroed),
+                    // as the privacy policy states: enough to spot abuse, not a person.
+                    'ip_address'         => request()->ip() ? IpUtils::anonymize((string) request()->ip()) : null,
                     'user_agent'         => substr((string) request()->userAgent(), 0, 1000) ?: null,
                 ]);
 

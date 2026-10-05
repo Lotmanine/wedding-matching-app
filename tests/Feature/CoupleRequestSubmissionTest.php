@@ -44,6 +44,50 @@ class CoupleRequestSubmissionTest extends TestCase
         $response->assertSee(route('couple.request.create'), false);
     }
 
+    public function test_submission_stores_the_ip_address_anonymised(): void
+    {
+        Livewire::test(CoupleRequestForm::class)
+            ->set('couple_first_name', 'Amina')
+            ->set('couple_whatsapp', '+213661234567')
+            ->set('couple_wilaya_code', '16')
+            ->set('wedding_date', now()->addMonths(6)->toDateString())
+            ->set('budget_range', 'from_1m_to_2m')
+            ->set('services_needed', ['photo'])
+            ->set('acceptTerms', true)
+            ->set('step', 5)
+            ->call('submit');
+
+        // The test client connects from 127.0.0.1: the last byte must be masked.
+        $this->assertSame('127.0.0.0', WedRequest::firstOrFail()->ip_address);
+    }
+
+    public function test_confirmation_page_tells_the_couple_what_really_happens(): void
+    {
+        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16']);
+        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'photo', 'status' => 'accepted', 'current_round' => 1]);
+        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'traiteur', 'status' => 'round1', 'current_round' => 1]);
+        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'machta', 'status' => 'open_marketplace', 'current_round' => 3]);
+
+        $this->get(route('couple.request.confirmation', ['wedUid' => $wr->wed_uid]))
+            ->assertOk()
+            ->assertSee('Prestataire trouvé')
+            ->assertSee('En recherche…')
+            ->assertSee('Ouverte à tous les prestataires')
+            ->assertSee('Chacun a 2 heures pour répondre', false);
+    }
+
+    public function test_public_pages_render_without_invented_figures(): void
+    {
+        foreach (['/', '/devenir-prestataire', '/conditions-utilisation', '/confidentialite'] as $url) {
+            $this->get($url)->assertOk()
+                ->assertDontSee('2 000+')
+                ->assertDontSee('69 wilayas')
+                ->assertDontSee('Témoignages');
+        }
+
+        $this->get('/')->assertSee('wilayas ouvertes');
+    }
+
     public function test_successful_submission_creates_wed_request_with_service_requests(): void
     {
         $this->assertSame(0, WedRequest::count());

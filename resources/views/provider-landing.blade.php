@@ -12,6 +12,15 @@
 
 @section('content')
 @php
+    // Figures shown on this page come from the real configuration, never from
+    // marketing estimates: what we print here is what the platform does.
+    $roundHours   = max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60));
+    $perRound     = (int) config('zawaj.matching.providers_per_round', 3);
+    $maxRounds    = (int) config('zawaj.matching.max_rounds', 3);
+    $validityDays = (int) config('zawaj.anpdp.retention_days', 14);
+    $openWilayas  = \App\Models\Wilaya::active()->pluck('name_fr');
+    $openWilayasText = $openWilayas->join(', ', ' et ');
+
     $services = [
         ['icon' => 'camera_alt',              'label' => 'Photographe'],
         ['icon' => 'videocam',                'label' => 'Vidéaste'],
@@ -36,11 +45,6 @@
         ['q' => "Y a-t-il un abonnement mensuel ?", 'a' => "Non. Vous achetez des crédits selon vos besoins, sans engagement ni frais récurrents. Vous maîtrisez entièrement votre budget."],
     ];
 
-    $testimonials = [
-        ['quote' => "En un mois j'ai débloqué 8 demandes et signé 3 contrats. C'est bien plus rentable que n'importe quelle pub Instagram.", 'name' => "Karim A.", 'role' => "Photographe · Alger"],
-        ['quote' => "Les demandes sont sérieuses. Les couples ont déjà un budget précis et une date. C'est exactement ce que je cherchais.", 'name' => "Fatima O.", 'role' => "Traiteur · Oran"],
-        ['quote' => "J'apprécie le fait de voir les infos avant de débloquer. Je ne gaspille pas mes crédits sur des demandes hors budget.", 'name' => "Samir B.", 'role' => "Décorateur · Constantine"],
-    ];
 @endphp
 
 <div class="-mx-4 sm:-mx-6 -my-8 sm:-my-12 bg-[#FDFAF6]">
@@ -52,7 +56,7 @@
             {{-- Left: text --}}
             <div>
                 <x-z.badge variant="dark" class="mb-6">
-                    <x-z.icon name="storefront" class="text-sm" /> +500 prestataires actifs
+                    <x-z.icon name="storefront" class="text-sm" /> Ouvert à {{ $openWilayasText }}
                 </x-z.badge>
                 <h1 class="font-serif text-5xl md:text-6xl lg:text-[68px] text-[#1A1A1A] font-bold leading-[1.05] mb-6 text-balance">
                     Vos prochains clients vous cherchent
@@ -69,7 +73,7 @@
                     </x-z.btn>
                 </div>
                 <p class="text-xs text-[#9A958D] mt-5 flex items-center gap-2">
-                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> Inscription gratuite · Vérification sous 48h · Sans abonnement
+                    <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base" /> Inscription gratuite · Profil vérifié par notre équipe · Sans abonnement
                 </p>
             </div>
 
@@ -202,7 +206,7 @@
     {{-- ── Trust bar ─────────────────────────────────────── --}}
     <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
         <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-12">
-            @foreach ([['2 000+','couples actifs'],['69','wilayas couvertes'],['< 24h','délai de mise en relation'],['0 DA','inscription']] as $stat)
+            @foreach ([['0 DA', 'inscription'], ['1 crédit', '= 1 demande débloquée'], [$openWilayas->count(), 'wilayas ouvertes, les autres arrivent bientôt'], [$roundHours . ' h', 'pour accepter une demande']] as $stat)
                 <div class="flex items-center gap-3">
                     <span class="font-serif text-2xl font-bold text-[#C8956C]">{{ $stat[0] }}</span>
                     <span class="text-sm text-[#6B665E] font-medium">{{ $stat[1] }}</span>
@@ -331,35 +335,6 @@
         </div>
     </section>
 
-    {{-- ── Testimonials ──────────────────────────────────── --}}
-    <section class="py-24 px-5 md:px-8 bg-[#F7F4F0]">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-14">
-                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Témoignages</p>
-                <h2 class="font-serif text-4xl font-bold text-[#1A1A1A]">Ce que disent nos prestataires</h2>
-            </div>
-            <div class="grid md:grid-cols-3 gap-6">
-                @foreach ($testimonials as $t)
-                    <div class="bg-white rounded-2xl p-7 border border-[#D4CFC7]/50 shadow-sm flex flex-col gap-5">
-                        <div class="flex gap-0.5">
-                            @for ($j = 0; $j < 5; $j++)
-                                <x-z.icon name="star" :filled="true" class="text-[#C8956C] text-lg" />
-                            @endfor
-                        </div>
-                        <blockquote class="font-serif text-lg text-[#1A1A1A] leading-relaxed flex-1">"{{ $t['quote'] }}"</blockquote>
-                        <div class="flex items-center gap-3 pt-1 border-t border-[#D4CFC7]/30">
-                            <div class="w-9 h-9 rounded-full bg-[#F0D9B5] flex items-center justify-center font-bold text-[#1A1A1A] text-sm shrink-0">{{ mb_substr($t['name'], 0, 1) }}</div>
-                            <div>
-                                <p class="text-sm font-semibold text-[#1A1A1A]">{{ $t['name'] }}</p>
-                                <p class="text-xs text-[#9A958D]">{{ $t['role'] }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
     {{-- ── FAQ ───────────────────────────────────────────── --}}
     <section class="py-24 px-5 md:px-8">
         <div class="max-w-2xl mx-auto">
@@ -392,7 +367,7 @@
                 <h2 class="font-serif text-4xl md:text-5xl text-white font-bold mb-5 text-balance">
                     Prêt(e) à développer votre activité ?
                 </h2>
-                <p class="text-white/60 text-lg mb-10 max-w-lg mx-auto">Inscription gratuite. Vérification sous 48h. Premières demandes dès la validation de votre profil.</p>
+                <p class="text-white/60 text-lg mb-10 max-w-lg mx-auto">Inscription gratuite. Notre équipe vérifie votre profil, puis vous recevez les demandes de votre wilaya.</p>
                 <x-z.btn :href="route('provider.register')" size="lg" variant="accent">
                     Créer mon compte prestataire <x-z.icon name="arrow_forward" class="text-lg" />
                 </x-z.btn>

@@ -1,7 +1,7 @@
 @extends('layouts.couple')
 
 @section('content')
-<x-legal-page title="Politique de confidentialité" subtitle="Zawaj Pro" updated="21 avril 2026">
+<x-legal-page title="Politique de confidentialité" subtitle="Zawaj Pro" updated="5 octobre 2026">
 
     <x-legal-section title="1. Identité du responsable de traitement">
         <p>Zawaj Pro (ci-après « la Société ») est responsable du traitement des données personnelles collectées via la plateforme zawajpro.dz. La Société est domiciliée à Alger, Algérie, et opère conformément à la loi n° 18-07 du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel (loi ANPDP).</p>
@@ -11,15 +11,15 @@
     <x-legal-section title="2. Données collectées">
         <div class="mt-2">
             <h3 class="font-semibold text-[#1A1A1A] mb-2">2.1 Données des couples</h3>
-            <p>Lors de la soumission d'une demande, nous collectons : prénom(s), numéro de téléphone WhatsApp, adresse e-mail (optionnel), wilaya et commune, date approximative du mariage, nombre d'invités estimé, budget indicatif, services recherchés, description libre du mariage.</p>
+            <p>Lors de la soumission d'une demande, nous collectons : votre prénom, votre numéro WhatsApp (seul moyen de contact demandé : aucune adresse e-mail n'est collectée), la wilaya et, si vous l'indiquez, la commune, la date du mariage, le budget indicatif, les services recherchés et, selon le cas, le nombre d'invités et une description libre.</p>
         </div>
         <div class="mt-4">
             <h3 class="font-semibold text-[#1A1A1A] mb-2">2.2 Données des prestataires</h3>
-            <p>Lors de l'inscription, nous collectons : nom et raison sociale, numéro de téléphone professionnel, adresse e-mail, wilaya(s) d'intervention, spécialité(s), liens vers portfolio ou réseaux sociaux, numéro de registre de commerce (optionnel), informations de facturation.</p>
+            <p>Lors de l'inscription, nous collectons : nom et raison sociale, numéro de téléphone professionnel, adresse e-mail, wilaya(s) d'intervention, spécialité(s), liens vers portfolio ou réseaux sociaux, numéro de registre de commerce (facultatif), informations liées à vos achats de crédits.</p>
         </div>
         <div class="mt-4">
-            <h3 class="font-semibold text-[#1A1A1A] mb-2">2.3 Données de navigation</h3>
-            <p>Nous collectons automatiquement : adresse IP (anonymisée), type de navigateur, pages consultées, durée des sessions. Ces données sont utilisées à des fins statistiques uniquement.</p>
+            <h3 class="font-semibold text-[#1A1A1A] mb-2">2.3 Données techniques</h3>
+            <p>Lors de l'envoi d'une demande, nous enregistrons votre adresse IP sous forme anonymisée (sa dernière partie est masquée) et le type de navigateur, uniquement pour prévenir les abus. Nous n'utilisons aucun outil de mesure d'audience ni de suivi publicitaire. Les actions effectuées dans l'espace prestataire et dans l'administration sont journalisées, avec l'adresse IP, à des fins de sécurité.</p>
         </div>
     </x-legal-section>
 
@@ -28,13 +28,13 @@
     </x-legal-section>
 
     <x-legal-section title="4. Durée de conservation">
-        <p><strong>Données des couples :</strong> vos données personnelles sont supprimées automatiquement après le délai de rétention défini dans nos engagements ANPDP, à compter de la soumission de votre demande.</p>
+        <p><strong>Données des couples :</strong> votre demande et vos données personnelles sont supprimées automatiquement {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après l'envoi de la demande. Le prestataire qui a accepté votre demande ne voit plus vos coordonnées {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après son acceptation.</p>
         <p><strong>Données des prestataires :</strong> conservées pendant la durée du compte, puis 3 ans après sa clôture à des fins comptables.</p>
-        <p><strong>Données de navigation :</strong> conservées 13 mois maximum.</p>
+        <p><strong>Données techniques :</strong> l'adresse IP anonymisée est supprimée avec la demande ; les journaux de sécurité sont conservés aussi longtemps que la sécurité de la plateforme l'exige.</p>
     </x-legal-section>
 
     <x-legal-section title="5. Partage des données">
-        <p>Votre numéro WhatsApp n'est communiqué qu'aux prestataires ayant débloqué votre demande. Zawaj Pro ne vend jamais vos données à des tiers. Nous pouvons partager des données avec des sous-traitants techniques (hébergement, messagerie) dans le strict cadre de nos services.</p>
+        <p>Votre numéro WhatsApp n'est communiqué qu'au prestataire qui accepte votre demande, pour le service concerné. Zawaj Pro ne vend jamais vos données à des tiers. Nous pouvons partager des données avec des sous-traitants techniques (hébergement, messagerie) dans le strict cadre de nos services : hébergement, envoi des messages WhatsApp (Meta) et, pour classer les prestataires à solliciter, un service d'intelligence artificielle qui reçoit le service demandé, la wilaya, la commune, la date, le budget et le nombre d'invités, sans votre prénom ni votre numéro, ainsi que le profil professionnel des prestataires candidats.</p>
     </x-legal-section>
 
     <x-legal-section title="6. Vos droits">
