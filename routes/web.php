@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Admin\AdminCatalogController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDisputesController;
+use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Admin\AdminLogsController;
 use App\Http\Controllers\Admin\AdminPacksController;
@@ -16,8 +17,10 @@ use App\Http\Controllers\Admin\AdminServiceRequestsController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Admin\AdminWebhooksController;
+use App\Http\Controllers\Admin\AdminWhatsappController;
 use App\Http\Controllers\Couple\CoupleRequestController;
 use App\Http\Controllers\Provider\CreditsController;
+use App\Http\Controllers\Provider\FeedbackController;
 use App\Http\Controllers\Provider\ProviderDashboardController;
 use App\Http\Controllers\Provider\ProviderLeadsController;
 use App\Http\Controllers\Provider\ProviderLoginController;
@@ -97,6 +100,11 @@ Route::prefix('provider')->name('provider.')->group(function () {
         Route::post('/credits/offline/{packSlug}', [CreditsController::class, 'offlineSubmit'])
             ->middleware('throttle:5,1')
             ->name('credits.offline');
+
+        Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
+        Route::post('/feedback', [FeedbackController::class, 'store'])
+            ->middleware('throttle:5,1')
+            ->name('feedback.store');
     });
 });
 
@@ -152,6 +160,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/disputes', [AdminDisputesController::class, 'index'])->name('disputes.index');
         Route::post('/disputes/{id}/approve', [AdminDisputesController::class, 'approve'])->whereNumber('id')->name('disputes.approve');
         Route::post('/disputes/{id}/reject', [AdminDisputesController::class, 'reject'])->whereNumber('id')->name('disputes.reject');
+
+        Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
+        Route::post('/feedback/{id}/handle', [AdminFeedbackController::class, 'handle'])->whereNumber('id')->name('feedback.handle');
     });
 
     // ── Admin-only back-office ───────────────────────────────────────
@@ -170,6 +181,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/payments', [AdminPaymentsController::class, 'edit'])->name('payments.edit');
         Route::put('/payments', [AdminPaymentsController::class, 'update'])->name('payments.update');
+
+        Route::get('/whatsapp', [AdminWhatsappController::class, 'edit'])->name('whatsapp.edit');
+        Route::put('/whatsapp', [AdminWhatsappController::class, 'update'])->name('whatsapp.update');
 
         Route::get('/users', [AdminUsersController::class, 'index'])->name('users.index');
         Route::get('/users/create', [AdminUsersController::class, 'create'])->name('users.create');

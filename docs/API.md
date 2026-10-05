@@ -113,6 +113,16 @@ Ordered by `acceptance_rate DESC, rating_avg DESC, leads_accepted DESC`. Respons
 
 ### GET /providers/{id}
 
+### GET /n8n/whatsapp-config
+
+Meta WhatsApp Cloud API credentials configured in `/admin/whatsapp`, fetched by the n8n `zawaj-whatsapp` workflow on every run. Throttle: 600/min. Sent with `Cache-Control: no-store`.
+
+```json
+{ "data": { "enabled": true, "phone_number_id": "123456789012345", "access_token": "EAAG...", "verify_token": "...", "app_secret": "..." } }
+```
+
+`enabled` is the effective state: the admin switch is on **and** `phone_number_id` + `access_token` are set. Unset values come back as empty strings. This is the only endpoint that returns decrypted secrets; it requires the `n8n-service` ability like the rest.
+
 ## Sensitive fields policy
 
 Never exposed via API: `users.password`, `users.remember_token`, `wed_requests.ip_address`, `wed_requests.user_agent`, provider `email`/`phone` in public provider resources (admin-only via admin panel).

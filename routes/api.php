@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\HealthSnapshotController;
 use App\Http\Controllers\Api\V1\Admin\N8nHeartbeatController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\N8n\ReceiptStreamController;
+use App\Http\Controllers\Api\V1\N8n\WhatsappConfigController;
 use App\Http\Controllers\Api\V1\ProviderController;
 use App\Http\Controllers\Api\V1\ServiceRequestController;
 use App\Http\Controllers\Api\V1\WedRequestController;
@@ -63,6 +64,13 @@ Route::prefix('v1')->group(function () {
                 ->name('api.v1.n8n.receipts.show');
             Route::patch('/n8n/receipts/{purchaseUid}/mark-emailed', [ReceiptStreamController::class, 'markEmailed'])
                 ->name('api.v1.n8n.receipts.mark_emailed');
+        });
+
+        // Meta WhatsApp credentials configured in /admin/whatsapp, fetched by
+        // the n8n zawaj-whatsapp workflow on every outbound + inbound run.
+        Route::middleware('throttle:600,1')->group(function () {
+            Route::get('/n8n/whatsapp-config', WhatsappConfigController::class)
+                ->name('api.v1.n8n.whatsapp_config');
         });
     });
 });

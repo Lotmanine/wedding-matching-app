@@ -26,6 +26,7 @@
             ['route' => 'provider.credits.index',   'pattern' => 'provider.credits.index','icon' => 'toll',            'label' => __('provider.nav.credits')],
             ['route' => 'provider.credits.history', 'pattern' => 'provider.credits.history','icon' => 'history',       'label' => __('provider.nav.history')],
             ['route' => 'provider.profile.edit',    'pattern' => 'provider.profile.*',    'icon' => 'manage_accounts','label' => __('provider.nav.profile')],
+            ['route' => 'provider.feedback.create', 'pattern' => 'provider.feedback.*',   'icon' => 'feedback',        'label' => 'Feedback'],
         ];
     @endphp
 
