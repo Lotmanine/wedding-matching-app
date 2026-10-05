@@ -57,7 +57,7 @@
                     </div>
                     <table class="w-full text-xs">
                         <thead>
-                            <tr class="text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/30"><th class="text-left py-2">Wilaya</th><th class="text-right py-2">Frais DZD</th></tr>
+                            <tr class="text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/30"><th class="text-left py-2">Wilaya</th><th class="text-right py-2">Frais DA</th></tr>
                         </thead>
                         <tbody class="divide-y divide-[#D4CFC7]/20">
                             @foreach ($user->providerCoverage as $cov)
@@ -76,7 +76,7 @@
                                     <tr>
                                         <td class="py-2 font-mono text-[#6B665E]">{{ $p->purchase_uid }}</td>
                                         <td class="py-2 text-[#1A1A1A]">{{ $p->unlockPack?->name ?? 'Non renseigné' }}</td>
-                                        <td class="py-2 text-[#1A1A1A]">{{ number_format($p->amount_dzd, 0, ',', ' ') }} DZD</td>
+                                        <td class="py-2 text-[#1A1A1A]">{{ number_format($p->amount_dzd, 0, ',', ' ') }} DA</td>
                                         <td class="py-2"><x-z.badge variant="default">{{ $p->status }}</x-z.badge></td>
                                         <td class="py-2 text-[#9A958D] text-right">{{ $p->created_at?->diffForHumans() }}</td>
                                     </tr>

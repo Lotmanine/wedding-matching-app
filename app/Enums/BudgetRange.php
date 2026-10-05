@@ -16,12 +16,12 @@ enum BudgetRange: string
     public function label(): string
     {
         return match($this) {
-            self::Under500k    => 'Moins de 500 000 DZD',
-            self::From500kTo1m => '500 000 – 1 000 000 DZD',
-            self::From1mTo2m   => '1 000 000 – 2 000 000 DZD',
-            self::From2mTo3m   => '2 000 000 – 3 000 000 DZD',
-            self::From3mTo5m   => '3 000 000 – 5 000 000 DZD',
-            self::Over5m       => 'Plus de 5 000 000 DZD',
+            self::Under500k    => 'Moins de 500 000 DA',
+            self::From500kTo1m => '500 000 – 1 000 000 DA',
+            self::From1mTo2m   => '1 000 000 – 2 000 000 DA',
+            self::From2mTo3m   => '2 000 000 – 3 000 000 DA',
+            self::From3mTo5m   => '3 000 000 – 5 000 000 DA',
+            self::Over5m       => 'Plus de 5 000 000 DA',
         };
     }
 }

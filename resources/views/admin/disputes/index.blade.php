@@ -76,7 +76,7 @@
                                         <summary class="cursor-pointer text-xs text-[#9A958D] hover:text-[#A84936] text-center transition-colors">Rejeter…</summary>
                                         <form method="POST" action="{{ route('admin.disputes.reject', $d->id) }}" class="mt-2 space-y-2">
                                             @csrf
-                                            <input type="text" name="admin_note" required maxlength="500" placeholder="Motif du rejet (visible prestataire)"
+                                            <input type="text" name="admin_note" required maxlength="500" placeholder="Motif du rejet (visible par le prestataire)"
                                                    class="w-full px-3 py-2 bg-white border border-[#D4CFC7] rounded-lg text-xs outline-none focus:border-[#A84936] focus:ring-2 focus:ring-[#A84936]/15" />
                                             <x-z.btn type="submit" variant="danger" size="sm" class="w-full justify-center">Confirmer le rejet</x-z.btn>
                                         </form>

@@ -56,7 +56,9 @@ class RecipientPayloadBuilder
         return [
             'first_name'         => (string) ($wr->couple_first_name ?? ''),
             'phone_e164'         => self::normalizeE164($wr->couple_whatsapp ?? ''),
-            'city'               => (string) ($wr->couple_commune ?? ''),
+            // Commune is optional on the couple form: fall back to the wilaya so the
+            // provider's message never reads "cherche un prestataire à -".
+            'city'               => (string) ($wr->couple_commune ?: (\App\Models\Wilaya::where('code', $wr->couple_wilaya_code)->value('name_fr') ?? '')),
             'preferred_language' => 'fr', // couple form only collects French copy for now
         ];
     }
@@ -102,11 +104,13 @@ class RecipientPayloadBuilder
 
     private static function budgetHintMidpoint(?string $range): ?int
     {
+        // Keys must follow App\Enums\BudgetRange: a range missing here reaches
+        // the provider's WhatsApp message as an empty budget.
         return match ($range) {
-            'under_300k'      => 200_000,
-            'from_300k_to_1m' => 650_000,
-            'from_1m_to_3m'   => 2_000_000,
+            'under_500k'      => 250_000,
+            'from_500k_to_1m' => 750_000,
             'from_1m_to_2m'   => 1_500_000,
+            'from_2m_to_3m'   => 2_500_000,
             'from_3m_to_5m'   => 4_000_000,
             'over_5m'         => 7_000_000,
             default           => null,

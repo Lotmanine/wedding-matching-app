@@ -25,20 +25,20 @@
     $steps = [
         ['n' => '01', 'icon' => 'inbox',      'title' => 'Recevez des demandes qualifiées', 'body' => "Notre système analyse chaque demande et vous envoie uniquement celles qui correspondent à votre service, votre wilaya et vos disponibilités."],
         ['n' => '02', 'icon' => 'visibility', 'title' => 'Choisissez votre prochain client', 'body' => "Consultez le profil du couple en aperçu : date, ville, nombre d'invités, budget. Débloquez uniquement les demandes qui vous intéressent."],
-        ['n' => '03', 'icon' => 'chat',       'title' => 'Contactez directement sur WhatsApp', 'body' => "Après déblocage, vous accédez au numéro WhatsApp du couple. Discutez, proposez un devis, signez. Tout se passe en direct."],
+        ['n' => '03', 'icon' => 'chat',       'title' => 'Contactez le couple sur WhatsApp', 'body' => "Après déblocage, vous accédez au numéro WhatsApp du couple. Discutez, proposez un devis, signez. Tout se passe en direct."],
     ];
 
     $faqs = [
-        ['q' => "Comment reçois-je les demandes ?", 'a' => "Notre système détecte automatiquement les demandes correspondant à votre profil (service, wilaya, disponibilité) et vous les présente sur votre tableau de bord. Vous pouvez en consulter l'aperçu sans dépenser de crédit."],
+        ['q' => "Comment vais-je recevoir les demandes ?", 'a' => "Notre système détecte automatiquement les demandes correspondant à votre profil (service, wilaya, disponibilité) et vous les présente sur votre tableau de bord. Vous pouvez en consulter l'aperçu sans dépenser de crédit."],
         ['q' => "Qu'est-ce qu'un crédit ?", 'a' => "Un crédit permet de débloquer les coordonnées complètes d'un couple (numéro WhatsApp + description du mariage). Sans déblocage, vous ne voyez que le profil anonymisé."],
         ['q' => "Puis-je choisir mes demandes ?", 'a' => "Oui, totalement. Vous ne payez que pour les demandes qui vous intéressent. L'aperçu gratuit vous montre la wilaya, la date, le budget estimé et le nombre d'invités."],
-        ['q' => "Comment est vérifiée mon identité ?", 'a' => "Lors de l'inscription, notre équipe vérifie votre identité et votre activité professionnelle. Ce badge de vérification augmente significativement votre visibilité auprès des couples."],
-        ['q' => "Y a-t-il un abonnement mensuel ?", 'a' => "Non. Vous achetez des crédits selon vos besoins, sans engagement ni frais récurrents. Vous contrôlez entièrement votre budget d'acquisition."],
+        ['q' => "Comment est vérifiée mon identité ?", 'a' => "Lors de l'inscription, notre équipe vérifie votre identité et votre activité professionnelle. Seuls les prestataires vérifiés reçoivent des demandes : c'est ce qui rassure les couples."],
+        ['q' => "Y a-t-il un abonnement mensuel ?", 'a' => "Non. Vous achetez des crédits selon vos besoins, sans engagement ni frais récurrents. Vous maîtrisez entièrement votre budget."],
     ];
 
     $testimonials = [
-        ['quote' => "En un mois j'ai débloqué 8 demandes et signé 3 contrats. Le ROI est bien meilleur que n'importe quelle pub Instagram.", 'name' => "Karim A.", 'role' => "Photographe · Alger"],
-        ['quote' => "La qualité des leads est excellente. Les couples ont déjà un budget précis et une date. C'est exactement ce que je cherchais.", 'name' => "Fatima O.", 'role' => "Traiteur · Oran"],
+        ['quote' => "En un mois j'ai débloqué 8 demandes et signé 3 contrats. C'est bien plus rentable que n'importe quelle pub Instagram.", 'name' => "Karim A.", 'role' => "Photographe · Alger"],
+        ['quote' => "Les demandes sont sérieuses. Les couples ont déjà un budget précis et une date. C'est exactement ce que je cherchais.", 'name' => "Fatima O.", 'role' => "Traiteur · Oran"],
         ['quote' => "J'apprécie le fait de voir les infos avant de débloquer. Je ne gaspille pas mes crédits sur des demandes hors budget.", 'name' => "Samir B.", 'role' => "Décorateur · Constantine"],
     ];
 @endphp
@@ -85,7 +85,7 @@
                     <button type="button" @click="heroTab = 'dashboard'"
                         class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                         :class="heroTab === 'dashboard' ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#9A958D] hover:text-[#6B665E]'">
-                        <x-z.icon name="dashboard" class="text-base" /> Dashboard
+                        <x-z.icon name="dashboard" class="text-base" /> Tableau de bord
                     </button>
                 </div>
 
@@ -118,7 +118,7 @@
                                         </div>
                                         <p class="text-xs font-bold text-[#1A1A1A]">📍 Alger, El Biar</p>
                                         <div class="grid grid-cols-2 gap-1">
-                                            @foreach ([['Date','Sept 2026'],['Invités','400 pers.'],['Budget','350–500K DA'],['Service','Photo']] as $kv)
+                                            @foreach ([['Date','Sept. 2026'],['Invités','400 pers.'],['Budget','350–500K DA'],['Service','Photo']] as $kv)
                                                 <div class="bg-[#F7F4F0] rounded p-1.5">
                                                     <p class="text-[8px] text-[#9A958D]">{{ $kv[0] }}</p>
                                                     <p class="text-[9px] font-bold text-[#1A1A1A]">{{ $kv[1] }}</p>
@@ -130,7 +130,7 @@
                                     </div>
                                     <div class="space-y-1.5">
                                         <div class="w-full bg-[#25D366] text-white rounded-xl rounded-tl-sm py-2 px-3 text-[10px] font-bold flex items-center justify-center gap-1.5">
-                                            <x-z.icon name="lock_open" :filled="true" class="text-xs" /> Débloquer, 1 crédit
+                                            <x-z.icon name="lock_open" :filled="true" class="text-xs" /> Débloquer · 1 crédit
                                         </div>
                                         <div class="w-full bg-white text-[#6B665E] border border-[#D4CFC7] rounded-xl rounded-tl-sm py-2 px-3 text-[10px] font-semibold flex items-center justify-center gap-1.5">
                                             <x-z.icon name="visibility_off" class="text-xs" /> Passer cette demande
@@ -173,14 +173,14 @@
                                 <div class="bg-white border-l-4 border-[#A84936] rounded-lg p-3 flex items-center justify-between">
                                     <div>
                                         <p class="font-bold text-sm text-[#1A1A1A]">Alger, El Biar</p>
-                                        <p class="text-xs text-[#6B665E]">Sept 2026 · 400 invités · 350–500K DA</p>
+                                        <p class="text-xs text-[#6B665E]">Sept. 2026 · 400 invités · 350–500K DA</p>
                                     </div>
                                     <div class="bg-[#1A1A1A] text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
                                         <x-z.icon name="lock" class="text-xs" /> 1 cr
                                     </div>
                                 </div>
                             </div>
-                            @foreach ([['Alger, Hydra','Août 2026','250 inv.'],['Oran, Akid Lotfi','Juin 2026','180 inv.'],['Constantine, Centre','Sept 2026','320 inv.']] as $row)
+                            @foreach ([['Alger, Hydra','Août 2026','250 inv.'],['Oran, Akid Lotfi','Juin 2026','180 inv.'],['Constantine, Centre','Sept. 2026','320 inv.']] as $row)
                                 <div class="px-5 py-3 border-b border-[#D4CFC7]/10 flex items-center justify-between hover:bg-[#F7F4F0]/50">
                                     <div>
                                         <p class="text-sm font-semibold text-[#1A1A1A]">{{ $row[0] }}</p>
@@ -217,7 +217,7 @@
             <div class="text-center mb-16">
                 <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Comment ça marche</p>
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">Simple. Direct. Efficace.</h2>
-                <p class="text-[#6B665E] text-lg max-w-lg mx-auto">Vous contrôlez entièrement votre acquisition client.</p>
+                <p class="text-[#6B665E] text-lg max-w-lg mx-auto">Vous choisissez vos clients, sans démarchage.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
                 @foreach ($steps as $i => $s)
@@ -267,22 +267,22 @@
                 <div class="bg-white rounded-2xl p-7 border border-[#D4CFC7]/50 shadow-sm flex flex-col gap-4">
                     <x-z.icon name="lock_open" :filled="true" class="text-[#C8956C] text-2xl" />
                     <div>
-                        <h3 class="font-semibold text-[#1A1A1A] mb-1">Payez par résultat</h3>
+                        <h3 class="font-semibold text-[#1A1A1A] mb-1">Payez au contact</h3>
                         <p class="text-[#6B665E] text-xs leading-relaxed">Un crédit par contact. Pas d'abonnement, pas de frais cachés.</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl p-7 border border-[#D4CFC7]/50 shadow-sm flex flex-col gap-4">
                     <x-z.icon name="schedule" :filled="true" class="text-[#C8956C] text-2xl" />
                     <div>
-                        <h3 class="font-semibold text-[#1A1A1A] mb-1">Leads exclusifs</h3>
-                        <p class="text-[#6B665E] text-xs leading-relaxed">Certaines demandes vous sont réservées avant d'être ouvertes aux autres.</p>
+                        <h3 class="font-semibold text-[#1A1A1A] mb-1">Demandes en priorité</h3>
+                        <p class="text-[#6B665E] text-xs leading-relaxed">Certaines demandes vous sont proposées en priorité, avant d'être ouvertes aux autres prestataires.</p>
                     </div>
                 </div>
                 <div class="col-span-2 md:col-span-1 bg-[#F0D9B5]/40 rounded-2xl p-7 border border-[#C8956C]/20 flex flex-col gap-4">
                     <x-z.icon name="support_agent" :filled="true" class="text-[#C8956C] text-2xl" />
                     <div>
-                        <h3 class="font-semibold text-[#1A1A1A] mb-1">Support dédié</h3>
-                        <p class="text-[#6B665E] text-xs leading-relaxed">Une équipe disponible pour vous accompagner dans votre développement.</p>
+                        <h3 class="font-semibold text-[#1A1A1A] mb-1">Une équipe à votre écoute</h3>
+                        <p class="text-[#6B665E] text-xs leading-relaxed">Une question, un souci ? Notre équipe vous répond et vous accompagne.</p>
                     </div>
                 </div>
                 <div class="col-span-2 bg-white rounded-2xl p-7 border border-[#D4CFC7]/50 shadow-sm">
@@ -305,7 +305,7 @@
             <div class="text-center mb-14">
                 <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Tarifs</p>
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">Achetez des crédits. C'est tout.</h2>
-                <p class="text-[#6B665E] text-lg max-w-md mx-auto">Pas d'abonnement, pas de frais cachés. Vous payez uniquement pour les leads qui vous intéressent.</p>
+                <p class="text-[#6B665E] text-lg max-w-md mx-auto">Pas d'abonnement, pas de frais cachés. Vous payez uniquement pour les demandes qui vous intéressent.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-5">
                 @foreach ($packs as $p)
@@ -318,9 +318,9 @@
                         @endif
                         <p class="text-xs font-bold uppercase tracking-widest mb-4 {{ $p->is_popular ? 'text-white/50' : 'text-[#9A958D]' }}">{{ $p->name }}</p>
                         <p class="font-serif text-5xl font-bold mb-1 {{ $p->is_popular ? 'text-white' : 'text-[#1A1A1A]' }}">{{ $p->unlocks_count }}</p>
-                        <p class="text-sm mb-1 {{ $p->is_popular ? 'text-white/60' : 'text-[#6B665E]' }}">crédits (leads)</p>
+                        <p class="text-sm mb-1 {{ $p->is_popular ? 'text-white/60' : 'text-[#6B665E]' }}">crédits · 1 crédit = 1 demande</p>
                         <p class="font-serif text-2xl font-bold mt-4 mb-0.5 {{ $p->is_popular ? 'text-[#C8956C]' : 'text-[#1A1A1A]' }}">{{ number_format($p->price_dzd, 0, ',', ' ') }} DA</p>
-                        <p class="text-xs mb-8 {{ $p->is_popular ? 'text-white/40' : 'text-[#9A958D]' }}">{{ number_format($perLead, 0, ',', ' ') }} DA / lead</p>
+                        <p class="text-xs mb-8 {{ $p->is_popular ? 'text-white/40' : 'text-[#9A958D]' }}">{{ number_format($perLead, 0, ',', ' ') }} DA par demande</p>
                         <x-z.btn :href="route('provider.register')" :variant="$p->is_popular ? 'accent' : 'outline'" class="w-full justify-center mt-auto">
                             Commencer
                         </x-z.btn>
@@ -392,7 +392,7 @@
                 <h2 class="font-serif text-4xl md:text-5xl text-white font-bold mb-5 text-balance">
                     Prêt(e) à développer votre activité ?
                 </h2>
-                <p class="text-white/60 text-lg mb-10 max-w-lg mx-auto">Inscription gratuite. Vérification sous 48h. Premiers leads dès le lendemain.</p>
+                <p class="text-white/60 text-lg mb-10 max-w-lg mx-auto">Inscription gratuite. Vérification sous 48h. Premières demandes dès la validation de votre profil.</p>
                 <x-z.btn :href="route('provider.register')" size="lg" variant="accent">
                     Créer mon compte prestataire <x-z.icon name="arrow_forward" class="text-lg" />
                 </x-z.btn>

@@ -35,7 +35,7 @@
                                 <td class="px-5 py-4"><code class="text-xs font-bold text-[#C8956C] bg-[#F0D9B5]/40 px-2 py-1 rounded">{{ $p->purchase_uid }}</code></td>
                                 <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $p->user?->email }}</td>
                                 <td class="px-5 py-4 text-xs text-[#1A1A1A]">{{ $p->unlockPack?->name }}</td>
-                                <td class="px-5 py-4 text-right font-bold text-[#1A1A1A]">{{ number_format($p->amount_dzd, 0, ',', ' ') }} DZD</td>
+                                <td class="px-5 py-4 text-right font-bold text-[#1A1A1A]">{{ number_format($p->amount_dzd, 0, ',', ' ') }} DA</td>
                                 <td class="px-5 py-4">
                                     @php
                                         $pvariant = match ($p->status) {

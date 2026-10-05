@@ -41,7 +41,7 @@
                                 <th class="text-left px-5 py-4">Date</th>
                                 <th class="text-left px-5 py-4">Type</th>
                                 <th class="text-left px-5 py-4">Description</th>
-                                <th class="text-right px-5 py-4">Delta</th>
+                                <th class="text-right px-5 py-4">Mouvement</th>
                                 <th class="text-right px-5 py-4">Solde</th>
                             </tr>
                         </thead>

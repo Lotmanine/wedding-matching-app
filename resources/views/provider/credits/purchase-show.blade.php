@@ -50,7 +50,7 @@
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ $purchase->unlockPack?->name }}</dt>
                     <dd class="mt-2 flex items-baseline justify-between">
                         <span class="font-serif text-lg font-semibold text-[#1A1A1A]">{{ $purchase->unlocks_count }} crédits</span>
-                        <span class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ number_format($purchase->amount_dzd, 0, ',', ' ') }} DZD</span>
+                        <span class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ number_format($purchase->amount_dzd, 0, ',', ' ') }} DA</span>
                     </dd>
                 </div>
             </dl>

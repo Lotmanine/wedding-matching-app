@@ -9,7 +9,7 @@ return [
     'balance_unit'    => ':count crédit(s) disponible(s)',
     'balance_tooltip' => '1 crédit = 1 déblocage de demande',
     'packs_title'     => 'Recharger mon compte',
-    'pack_per_unlock' => ':price DZD / déblocage',
+    'pack_per_unlock' => ':price DA par crédit',
     'pack_popular'    => 'Populaire',
     'pack_cta'        => 'Acheter',
 
@@ -18,7 +18,7 @@ return [
     'no_transactions' => 'Aucune transaction pour le moment.',
 
     'history_title'   => 'Historique des transactions',
-    'history_export'  => 'Exporter CSV',
+    'history_export'  => 'Exporter en CSV',
     'history_filter'  => 'Type',
     'history_all'     => 'Toutes',
 
@@ -46,7 +46,7 @@ return [
         'funds'  => 'Solde insuffisant sur votre carte.',
         'limit'  => 'Plafond de paiement atteint.',
         'refuse' => 'Votre banque a refusé la transaction.',
-        'retry'  => 'Essayez avec une autre carte ou un portefeuille mobile.',
+        'retry'  => 'Essayez avec une autre carte, ou choisissez le versement.',
     ],
 
     'checkout' => [

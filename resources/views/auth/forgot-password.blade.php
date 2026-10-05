@@ -2,7 +2,7 @@
     <div class="mb-6">
         <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('Mot de passe oublié') }}</h1>
         <p class="mt-2 text-sm text-[#6B665E] leading-relaxed">
-            {{ __('Pas de souci. Indiquez-nous votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.') }}
+            {{ __('Pas de souci. Indiquez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.') }}
         </p>
     </div>
 
@@ -14,7 +14,7 @@
 
         <!-- Email Address -->
         <div class="space-y-1.5">
-            <label for="email" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Email') }}</label>
+            <label for="email" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Adresse e-mail') }}</label>
             <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
                    class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none transition-all duration-200 focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15" />
             <x-input-error :messages="$errors->get('email')" class="text-xs text-[#A84936]" />

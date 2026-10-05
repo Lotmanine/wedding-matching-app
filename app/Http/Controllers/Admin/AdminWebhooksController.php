@@ -142,7 +142,7 @@ class AdminWebhooksController extends Controller
 
         $this->audit->log('webhook_delivery.replay', $delivery);
 
-        return back()->with('status', 'Livraison re-mise en file.');
+        return back()->with('status', 'Livraison remise en file.');
     }
 
     private function validateForm(Request $request): array

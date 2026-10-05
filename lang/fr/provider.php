@@ -15,7 +15,7 @@ return [
         'history'   => 'Historique',
         'logout'    => 'Déconnexion',
         'area'              => 'Espace prestataire',
-        'credit_balance'    => 'Solde crédits',
+        'credit_balance'    => 'Solde de crédits',
         'credits_available' => 'crédits disponibles',
         'recharge'          => 'Recharger',
     ],
@@ -53,7 +53,7 @@ return [
         'couple_first'    => 'Prénom',
         'couple_wilaya'   => 'Wilaya',
         'couple_whatsapp' => 'WhatsApp',
-        'reveal_notice'   => 'Les coordonnées complètes seront révélées après acceptation (fonctionnalité à venir).',
+        'reveal_notice'   => 'Les coordonnées complètes du couple s\'affichent dès que vous acceptez la demande.',
         'all_services'    => 'Services demandés',
         'duration_left'   => 'Durée restante',
         'description'     => 'Description',
@@ -65,7 +65,7 @@ return [
     ],
 
     'acceptance' => [
-        'success'              => 'Félicitations ! Les coordonnées du couple vous sont maintenant disponibles.',
+        'success'              => 'Félicitations ! Vous avez maintenant accès aux coordonnées du couple.',
         'already_taken'        => 'Désolé, cette demande a été prise par un autre prestataire.',
         'expired'              => 'Cette demande a expiré et ne peut plus être acceptée.',
         'not_eligible'         => 'Vous n\'êtes plus éligible à cette demande.',
@@ -86,7 +86,7 @@ return [
     ],
 
     'unlocked' => [
-        'header'            => 'Demande débitée · Coordonnées révélées',
+        'header'            => 'Demande acceptée · Coordonnées débloquées',
         'accepted_on'       => 'Vous avez accepté cette demande :when.',
         'contact_title'     => 'Coordonnées du couple',
         'couple_name'       => 'Prénom',
@@ -96,8 +96,8 @@ return [
         'couple_whatsapp'   => 'WhatsApp',
         'open_whatsapp'     => 'Ouvrir WhatsApp',
         'call'              => 'Appeler',
-        'tip_title'         => 'Astuce pour maximiser vos chances',
-        'tip_body'          => 'Contactez le couple dans les 24 heures. Les réponses rapides convertissent mieux.',
+        'tip_title'         => 'Un conseil pour décrocher ce mariage',
+        'tip_body'          => 'Contactez le couple dans les 24 heures : les prestataires qui répondent vite sont le plus souvent retenus.',
         'credits_charged'   => ':count crédit(s) débité(s)',
         'back_to_leads'     => 'Retour aux demandes',
     ],
@@ -149,7 +149,7 @@ return [
             'eurl'              => 'EURL',
             'particulier'       => 'Particulier',
         ],
-        'trade_register'   => 'Numéro de registre de commerce (optionnel)',
+        'trade_register'   => 'Numéro de registre de commerce (facultatif)',
         'years_experience' => 'Années d\'expérience',
         'description'      => 'Description de l\'activité',
         'primary_wilaya'   => 'Wilaya principale',
@@ -160,8 +160,8 @@ return [
             'premium' => 'Premium',
             'luxury'  => 'Luxe',
         ],
-        'min_price'        => 'Prix min (DZD)',
-        'max_price'        => 'Prix max (DZD)',
+        'min_price'        => 'Prix min (DA)',
+        'max_price'        => 'Prix max (DA)',
         'languages'        => 'Langues parlées',
         'languages_options' => [
             'fr'  => 'Français',
@@ -174,12 +174,12 @@ return [
 
         'coverage_hint'     => 'Les wilayas que vous desservez. Votre wilaya principale est incluse automatiquement (sans frais de déplacement).',
         'coverage_primary_badge' => 'Principale (sans frais)',
-        'coverage_travel_fee' => 'Frais de déplacement (DZD)',
+        'coverage_travel_fee' => 'Frais de déplacement (DA)',
 
-        'portfolio_urls_label' => 'Liens vers vos réseaux / portfolio (min 1, max 5)',
+        'portfolio_urls_label' => 'Liens vers vos réseaux sociaux ou votre portfolio (1 à 5 liens)',
         'portfolio_url_placeholder' => 'https://instagram.com/votre-compte',
-        'portfolio_images' => 'Photos (max 10, 3 Mo chacune)',
-        'logo'             => 'Logo (optionnel)',
+        'portfolio_images' => 'Photos (10 au maximum, 3 Mo chacune)',
+        'logo'             => 'Logo (facultatif)',
         'add_url'          => '+ Ajouter un lien',
         'remove_url'       => 'Supprimer',
 

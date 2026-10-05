@@ -24,7 +24,7 @@
                         <tr class="bg-[#F7F4F0] text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/40">
                             <th class="text-left px-5 py-4">ID</th>
                             <th class="text-left px-5 py-4">Événement</th>
-                            <th class="text-left px-5 py-4">Status</th>
+                            <th class="text-left px-5 py-4">Statut</th>
                             <th class="text-right px-5 py-4">Tent.</th>
                             <th class="text-left px-5 py-4">Créé</th>
                             <th class="text-left px-5 py-4">Livré</th>

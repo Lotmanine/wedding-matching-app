@@ -12,7 +12,7 @@
                 <dl class="grid grid-cols-2 gap-4 text-sm">
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Statut</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->status }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Pack</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->unlockPack?->name }}</dd></div>
-                    <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Montant</dt><dd class="text-[#1A1A1A] mt-0.5">{{ number_format($purchase->amount_dzd, 0, ',', ' ') }} DZD</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Montant</dt><dd class="text-[#1A1A1A] mt-0.5">{{ number_format($purchase->amount_dzd, 0, ',', ' ') }} DA</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Crédits</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->unlocks_count }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Checkout ID</dt><dd class="font-mono text-xs text-[#6B665E] mt-0.5">{{ $purchase->gateway_checkout_id ?? 'Non renseigné' }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Payment ID</dt><dd class="font-mono text-xs text-[#6B665E] mt-0.5">{{ $purchase->gateway_payment_id ?? 'Non renseigné' }}</dd></div>
@@ -27,7 +27,7 @@
 
                 @if ($purchase->gateway_metadata)
                     <details class="mt-5 text-xs">
-                        <summary class="cursor-pointer text-[#9A958D] hover:text-[#C8956C] transition-colors font-medium">Gateway metadata</summary>
+                        <summary class="cursor-pointer text-[#9A958D] hover:text-[#C8956C] transition-colors font-medium">Données techniques du paiement</summary>
                         <pre class="mt-2 p-3 rounded-lg bg-[#F7F4F0] border border-[#D4CFC7]/50 overflow-x-auto text-[#6B665E]">{{ json_encode($purchase->gateway_metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                     </details>
                 @endif

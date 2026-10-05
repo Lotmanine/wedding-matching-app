@@ -68,7 +68,7 @@
                         <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ $pack->name }}</p>
                         <div class="font-serif text-5xl font-bold text-[#1A1A1A] mb-1">{{ $pack->unlocks_count }}</div>
                         <p class="text-sm text-[#6B665E] mb-1">crédits</p>
-                        <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DZD</p>
+                        <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DA</p>
                         <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', ' ')]) }}</p>
 
                         @if ($canBuy)

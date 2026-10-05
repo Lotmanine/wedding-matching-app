@@ -16,7 +16,7 @@ return [
     'nav_for_couples'     => 'Pour les couples',
     'nav_submit_request'  => 'Soumettre une demande',
     'nav_become_provider' => 'Devenez prestataire',
-    'nav_cta'             => 'Décrivez mon mariage',
+    'nav_cta'             => 'Décrire mon mariage',
 
     // Progress
     'step_of'           => 'Étape :current sur :total',
@@ -24,7 +24,7 @@ return [
     'services_count'    => '{1} :count service sélectionné|[2,*] :count services sélectionnés',
 
     // Step titles
-    'step_1_title'      => 'Parlez-nous du couple',
+    'step_1_title'      => 'Parlez-nous de vous',
     'step_2_title'      => 'Où se déroule le mariage ?',
     'step_3_title'      => 'Budget et prestataires recherchés',
     'step_4_title'      => 'Détails du mariage',
@@ -52,14 +52,14 @@ return [
 
     // Placeholders / helpers
     'placeholder_first_name'  => 'Ex. Amina',
-    'placeholder_whatsapp'    => '+213 6XX XXX XXX',
+    'placeholder_whatsapp'    => '+213661234567',
     'placeholder_wilaya'      => 'Choisir une wilaya…',
     'placeholder_commune'     => 'Choisir une commune…',
     'placeholder_guest_count' => 'Combien d\'invités attendus ?',
     'placeholder_budget'      => 'Quel est votre budget global ?',
     'placeholder_description' => 'Ex. mariage traditionnel kabyle, 2 salles, besoin d\'une pâtisserie orientale…',
 
-    'help_whatsapp'      => 'Nous utiliserons WhatsApp pour vous connecter aux prestataires.',
+    'help_whatsapp'      => 'Format : +213 suivi de 9 chiffres, sans espaces. Les prestataires vous contacteront sur ce numéro WhatsApp.',
     'help_commune'       => 'Choisissez d\'abord une wilaya. La commune est facultative.',
     'help_date_or_season' => 'Saisissez une date précise ou, à défaut, une saison approximative.',
     'help_char_count'    => ':count / :max caractères',

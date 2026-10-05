@@ -8,7 +8,7 @@
 
         <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
             <input type="text" name="action" value="{{ $action }}" placeholder="{{ __('admin.logs.filter_action') }}" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
-            <input type="number" name="user_id" value="{{ $userId }}" placeholder="User ID" class="w-28 px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
+            <input type="number" name="user_id" value="{{ $userId }}" placeholder="ID utilisateur" class="w-28 px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
             <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">Filtrer</x-z.btn>
         </form>
 

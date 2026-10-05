@@ -26,8 +26,8 @@
                 <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ $pack->unlocks_count }} <span class="text-lg font-sans font-medium text-[#6B665E]">crédits</span></p>
             </div>
             <div class="text-right">
-                <p class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DZD</p>
-                <p class="text-xs text-[#9A958D]">{{ number_format($perUnlock, 0, ',', ' ') }} DZD / crédit</p>
+                <p class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DA</p>
+                <p class="text-xs text-[#9A958D]">{{ number_format($perUnlock, 0, ',', ' ') }} DA / crédit</p>
             </div>
         </div>
 
@@ -63,7 +63,7 @@
                         <form method="POST" action="{{ route('provider.credits.checkout', $pack->slug) }}">
                             @csrf
                             <x-z.btn type="submit" variant="primary" size="lg" class="w-full sm:w-auto justify-center">
-                                Payer {{ number_format($pack->price_dzd, 0, ',', ' ') }} DZD <x-z.icon name="arrow_forward" class="text-lg" />
+                                Payer {{ number_format($pack->price_dzd, 0, ',', ' ') }} DA <x-z.icon name="arrow_forward" class="text-lg" />
                             </x-z.btn>
                         </form>
                     </div>
@@ -106,7 +106,7 @@
                     @endif
                     <p class="flex items-center justify-between gap-4 pt-2 border-t border-[#D4CFC7]/40 mt-2">
                         <span class="text-[#9A958D]">Montant à verser</span>
-                        <span class="font-serif text-lg font-bold text-[#C8956C]">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DZD</span>
+                        <span class="font-serif text-lg font-bold text-[#C8956C]">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DA</span>
                     </p>
                 </div>
 

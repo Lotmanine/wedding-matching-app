@@ -14,17 +14,17 @@
     ];
 
     $faqs = [
-        ['q' => "Est-ce vraiment gratuit pour les couples ?", 'a' => "Oui, totalement. Notre mission est de vous aider à trouver l'excellence sans aucuns frais. Les prestataires paient pour accéder à vos coordonnées, pas vous."],
-        ['q' => "Comment sont sélectionnés les prestataires ?", 'a' => "Notre équipe vérifie manuellement chaque prestataire : identité, portfolio, avis clients, et disponibilité. Notre système matche ensuite votre profil avec les meilleurs candidats disponibles."],
+        ['q' => "Est-ce vraiment gratuit pour les couples ?", 'a' => "Oui, totalement. Notre mission est de vous aider à trouver les bons prestataires, sans aucuns frais. Les prestataires paient pour accéder à vos coordonnées, pas vous."],
+        ['q' => "Comment sont sélectionnés les prestataires ?", 'a' => "Notre équipe vérifie manuellement chaque prestataire : identité, portfolio, avis clients, et disponibilité. Notre système associe ensuite votre demande aux prestataires disponibles qui y correspondent le mieux."],
         ['q' => "En combien de temps vais-je recevoir des réponses ?", 'a' => "Dès validation de votre demande, les prestataires sont alertés. Vous recevrez les premiers contacts WhatsApp en général dans les 24 heures."],
-        ['q' => "Mes données sont-elles en sécurité ?", 'a' => "Votre numéro WhatsApp n'est partagé qu'avec les prestataires sélectionnés. Vos données sont protégées conformément à la réglementation ANPDP algérienne et supprimées après 90 jours."],
+        ['q' => "Mes données sont-elles en sécurité ?", 'a' => "Votre numéro WhatsApp n'est partagé qu'avec les prestataires sélectionnés. Vos données sont protégées conformément à la réglementation ANPDP algérienne et supprimées automatiquement après " . (int) config('zawaj.anpdp.retention_days', 14) . " jours."],
         ['q' => "Que se passe-t-il si je ne suis pas satisfait(e) ?", 'a' => "Vous n'avez aucun engagement. Si les propositions ne vous conviennent pas, vous êtes libre de recommencer votre recherche ou de trouver d'autres prestataires sans frais."],
     ];
 
     $testimonials = [
         ['quote' => "En 20 minutes j'ai décrit mon mariage, et le lendemain matin j'avais déjà 3 photographes qui me proposaient des portfolios sublimes. Zawaj Pro a changé la donne.", 'name' => 'Amira B.', 'city' => 'Alger', 'date' => 'Juillet 2025'],
         ['quote' => "Le traiteur qu'on a trouvé via Zawaj Pro était exactement ce qu'on voulait. Transparent sur les prix, disponible, et le jour J, parfait. Merci infiniment.", 'name' => 'Youcef K.', 'city' => 'Oran', 'date' => 'Septembre 2025'],
-        ['quote' => "Ce qui m'a convaincu c'est la vérification. Je savais que les prestataires étaient sérieux avant même de les contacter. Zéro arnaque, zéro stress.", 'name' => 'Nadia M.', 'city' => 'Constantine', 'date' => 'Octobre 2025'],
+        ['quote' => "Ce qui m'a convaincue, c'est la vérification. Je savais que les prestataires étaient sérieux avant même de les contacter. Zéro arnaque, zéro stress.", 'name' => 'Nadia M.', 'city' => 'Constantine', 'date' => 'Octobre 2025'],
     ];
 @endphp
 
@@ -40,10 +40,10 @@
                     <x-z.icon name="auto_awesome" class="text-sm" /> IA + Expertise humaine
                 </x-z.badge>
                 <h1 class="font-serif text-5xl md:text-6xl lg:text-[72px] text-[#1A1A1A] leading-[1.05] font-bold mb-7 text-balance">
-                    Trouvez l'excellence pour votre mariage
+                    Trouvez les meilleurs prestataires pour votre mariage
                 </h1>
                 <p class="text-lg md:text-xl text-[#6B665E] leading-relaxed mb-10 max-w-xl">
-                    Décrivez votre vision. Notre système identifie les meilleurs artisans algériens, vérifie leurs disponibilités et vous met en contact en moins de 24h.
+                    Décrivez votre mariage en quelques minutes. Nous transmettons votre demande aux prestataires vérifiés de votre wilaya, qui vous contactent directement sur WhatsApp.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <x-z.btn :href="route('couple.request.create')" size="lg" class="shadow-xl shadow-black/10">
@@ -131,14 +131,14 @@
             <div class="text-center mb-16 md:mb-20">
                 <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Comment ça marche</p>
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-5">Une organisation simplifiée</h2>
-                <p class="text-[#6B665E] text-lg max-w-xl mx-auto">Trois étapes pensées pour transformer votre stress en une célébration mémorable.</p>
+                <p class="text-[#6B665E] text-lg max-w-xl mx-auto">Trois étapes, et on s'occupe du reste.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-6 md:gap-8 relative">
                 <div class="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px bg-gradient-to-r from-[#D4CFC7] via-[#C8956C] to-[#D4CFC7] z-0"></div>
                 @php
                     $steps = [
                         ['n' => '01', 'icon' => 'edit_note', 'title' => 'Décrivez vos besoins', 'body' => 'Date, budget, style, wilaya : en quelques minutes, votre profil mariage est complet.'],
-                        ['n' => '02', 'icon' => 'psychology', 'title' => 'Analyse intelligente', 'body' => "Parmi des milliers d'artisans vérifiés, notre système retient uniquement ceux qui correspondent à votre profil."],
+                        ['n' => '02', 'icon' => 'psychology', 'title' => 'Analyse intelligente', 'body' => "Notre système retient, parmi les prestataires vérifiés de votre région, ceux qui correspondent à votre demande."],
                         ['n' => '03', 'icon' => 'chat_bubble', 'title' => 'Recevez sur WhatsApp', 'body' => '3 prestataires sélectionnés vous contactent avec tarifs et portfolios. Choisissez en toute sérénité.'],
                     ];
                 @endphp
@@ -206,9 +206,9 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-12">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">Nos catégories</p>
-                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">Explorez nos univers</h2>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">Tous les prestataires de votre mariage</h2>
                 </div>
-                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">Des artisans passionnés pour chaque détail de votre journée.</p>
+                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">Des prestataires passionnés pour chaque détail de votre grand jour.</p>
             </div>
 
             {{-- Reusable card markup: render once per layout (desktop bento + mobile grid) --}}
@@ -279,13 +279,13 @@
                     Derrière chaque mariage, une équipe qui vous accompagne
                 </h2>
                 <p class="text-[#6B665E] leading-relaxed text-lg mb-8">
-                    Zawaj Pro est né d'une conviction simple : trouver le bon photographe, le bon traiteur ou la bonne salle ne devrait pas prendre des semaines. Notre équipe algérienne connaît les artisans de votre région, vérifie leur sérieux, et vous les présente directement.
+                    Zawaj Pro est né d'une conviction simple : trouver le bon photographe, le bon traiteur ou la bonne salle ne devrait pas prendre des semaines. Notre équipe algérienne connaît les prestataires de votre région, vérifie leur sérieux, et vous les présente directement.
                 </p>
                 <div class="space-y-5">
                     @php
                         $missionItems = [
                             ['icon' => 'handshake', 'title' => 'Des prestataires que nous connaissons', 'body' => "Chaque prestataire est rencontré et vérifié par notre équipe avant d'apparaître sur la plateforme."],
-                            ['icon' => 'shield', 'title' => 'Vos données, votre vie privée', 'body' => "Votre numéro WhatsApp n'est partagé qu'avec les prestataires que vous avez acceptés. Jamais vendu, jamais exploité."],
+                            ['icon' => 'shield', 'title' => 'Vos données, votre vie privée', 'body' => "Votre numéro WhatsApp n'est transmis qu'aux prestataires qui acceptent votre demande. Jamais vendu, jamais exploité."],
                             ['icon' => 'support_agent', 'title' => 'Une équipe disponible', 'body' => "Une question ? Un problème ? Nous répondons via WhatsApp en moins de 2 heures."],
                         ];
                     @endphp

@@ -13,7 +13,7 @@
     <body class="font-sans text-[#1A1A1A] antialiased">
         <div class="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-[#FDFAF6]">
             <a href="{{ route('home') }}" class="font-serif text-2xl font-bold text-[#1A1A1A] hover:text-[#C8956C] transition-colors mb-1">{{ config('app.name', 'Zawaj Pro') }}</a>
-            <p class="text-xs font-bold uppercase tracking-widest text-[#9A958D] mb-6">L'excellence pour votre mariage</p>
+            <p class="text-xs font-bold uppercase tracking-widest text-[#9A958D] mb-6">Votre mariage, facilité.</p>
 
             <div class="w-full sm:max-w-md px-6 py-7 bg-white border border-[#D4CFC7]/60 shadow-sm sm:rounded-2xl">
                 {{ $slot }}

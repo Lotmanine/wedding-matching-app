@@ -22,12 +22,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.phone') }}</label>
-                    <input type="tel" wire:model="phone" placeholder="+213 6XX XXX XXX" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <input type="tel" wire:model="phone" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                     @error('phone') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.whatsapp') }}</label>
-                    <input type="tel" wire:model="whatsapp" placeholder="+213 6XX XXX XXX" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <input type="tel" wire:model="whatsapp" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                     @error('whatsapp') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
@@ -151,7 +151,7 @@
                             @endif
                         </label>
                         @if ($isSelected && ! $isPrimary)
-                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="DZD" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
+                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="DA" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
                         @endif
                     </div>
                 @endforeach
