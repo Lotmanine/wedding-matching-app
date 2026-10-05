@@ -18,14 +18,14 @@ enum ServiceType: string
     public function label(): string
     {
         return match($this) {
-            self::Photo      => 'Photographe',
-            self::Video      => 'Vidéaste',
-            self::Traiteur   => 'Traiteur',
-            self::Decoration => 'Décoration',
-            self::Patisserie => 'Pâtisserie',
-            self::Salle      => 'Salle des fêtes',
-            self::Musique    => 'Musiciens / DJ',
-            self::Machta     => 'Machta / Coiffure',
+            self::Photo      => __('Photographe'),
+            self::Video      => __('Vidéaste'),
+            self::Traiteur   => __('Traiteur'),
+            self::Decoration => __('Décoration'),
+            self::Patisserie => __('Pâtisserie'),
+            self::Salle      => __('Salle des fêtes'),
+            self::Musique    => __('Musiciens / DJ'),
+            self::Machta     => __('Machta / Coiffure'),
         };
     }
 

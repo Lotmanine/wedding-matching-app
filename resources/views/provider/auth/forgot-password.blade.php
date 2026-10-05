@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased text-[#1A1A1A] min-h-screen flex items-center justify-center px-4 bg-[#FDFAF6]">
+    <div class="absolute top-4 end-4">@include('partials.lang-switch')</div>
     <div class="w-full max-w-md bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-8 md:p-10">
         <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('provider.auth.forgot_title') }}</h1>
         <p class="mt-1 text-sm text-[#6B665E]">{{ __('provider.auth.forgot_sub') }}</p>
@@ -30,7 +31,7 @@
         </form>
 
         <p class="mt-6 text-center text-sm">
-            <a href="{{ route('provider.login') }}" class="inline-flex items-center gap-1 text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('provider.auth.btn_login') }}</a>
+            <a href="{{ route('provider.login') }}" class="inline-flex items-center gap-1 text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base rtl:-scale-x-100" /> {{ __('provider.auth.btn_login') }}</a>
         </p>
     </div>
 </body>

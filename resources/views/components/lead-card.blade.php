@@ -25,15 +25,15 @@
     };
 
     $serviceLabel = $lead->service_type?->label() ?? (string) $lead->service_type;
-    $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value('name_fr') ?? $wr->couple_wilaya_code;
-    $locationLine = $wilayaLabel . ($wr->couple_commune ? " · {$wr->couple_commune}" : '');
+    $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
+    $locationLine = $wilayaLabel . ($wr->couple_commune ? ' · ' . $wr->communeLabel() : '');
 
     $dateLine = $wr->wedding_date
         ? $wr->wedding_date->isoFormat('LL')
-        : ($wr->wedding_season ? $wr->wedding_season . ' ' . $wr->created_at->year : 'Date flexible');
+        : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
 
-    $guestLabel = $wr->guest_count?->label() ?? 'Non renseigné';
-    $budgetLabel = $wr->budget_range?->label() ?? 'Non renseigné';
+    $guestLabel = $wr->guest_count?->label() ?? __('Non renseigné');
+    $budgetLabel = $wr->budget_range?->label() ?? __('Non renseigné');
 
     $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
     $excerpt = $wr->description ? \Illuminate\Support\Str::limit($wr->description, 120) : '';
@@ -73,7 +73,7 @@
 
     <div class="flex items-center justify-between pt-3 border-t border-[#D4CFC7]/30 text-xs text-[#9A958D]">
         <span>{{ __('provider.leads.card_couple_initial', ['initial' => $initial, 'wilaya' => $wilayaLabel]) }}</span>
-        <span class="text-[#1A1A1A] font-bold flex items-center gap-1 group-hover:text-[#C8956C] transition-colors">{{ __('provider.leads.card_see_details') }} <x-z.icon name="arrow_forward" class="text-sm" /></span>
+        <span class="text-[#1A1A1A] font-bold flex items-center gap-1 group-hover:text-[#C8956C] transition-colors">{{ __('provider.leads.card_see_details') }} <x-z.icon name="arrow_forward" class="text-sm rtl:-scale-x-100" /></span>
     </div>
 
     <p class="text-[11px] text-[#9A958D]">{{ __('provider.leads.card_time_ago', ['when' => $lead->created_at->diffForHumans()]) }}</p>

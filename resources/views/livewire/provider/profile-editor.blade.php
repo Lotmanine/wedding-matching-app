@@ -22,17 +22,17 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.phone') }}</label>
-                    <input type="tel" wire:model="phone" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <input type="tel" dir="ltr" wire:model="phone" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                     @error('phone') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.whatsapp') }}</label>
-                    <input type="tel" wire:model="whatsapp" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <input type="tel" dir="ltr" wire:model="whatsapp" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                     @error('whatsapp') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-[#9A958D] mb-1.5">{{ __('provider.auth.email') }}</label>
-                    <input type="email" value="{{ $email }}" disabled class="w-full px-4 py-3.5 bg-[#F7F4F0] border border-[#D4CFC7]/60 rounded-lg text-sm text-[#9A958D]" />
+                    <input type="email" dir="ltr" value="{{ $email }}" disabled class="w-full px-4 py-3.5 bg-[#F7F4F0] border border-[#D4CFC7]/60 rounded-lg text-sm text-[#9A958D]" />
                 </div>
             </div>
         </section>
@@ -52,7 +52,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.business_type') }}</label>
                     <select wire:model="business_type" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">Sélectionner…</option>
+                        <option value="">{{ __('Sélectionner…') }}</option>
                         @foreach (__('provider.registration.business_type_options') as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
@@ -69,16 +69,16 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.primary_wilaya') }}</label>
                     <select wire:model.live="primary_wilaya_code" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">Sélectionner…</option>
+                        <option value="">{{ __('Sélectionner…') }}</option>
                         @foreach ($this->wilayas as $w)
-                            <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name_fr }}</option>
+                            <option value="{{ $w->code }}">{{ $w->code }} · {{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.price_tier') }}</label>
                     <select wire:model="price_tier" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">Sélectionner…</option>
+                        <option value="">{{ __('Sélectionner…') }}</option>
                         @foreach (__('provider.registration.price_tier_options') as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
@@ -145,13 +145,13 @@
                                    @checked($isSelected || $isPrimary)
                                    @disabled($isPrimary)
                                    class="w-5 h-5 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-[#C8956C]/30" />
-                            <span class="text-sm font-medium text-[#1A1A1A]">{{ $w->code }} · {{ $w->name_fr }}</span>
+                            <span class="text-sm font-medium text-[#1A1A1A]">{{ $w->code }} · {{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</span>
                             @if ($isPrimary)
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-[#7A5530] bg-[#F0D9B5] px-2 py-0.5 rounded-full">{{ __('provider.registration.coverage_primary_badge') }}</span>
                             @endif
                         </label>
                         @if ($isSelected && ! $isPrimary)
-                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="DA" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
+                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="{{ __('DA') }}" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
                         @endif
                     </div>
                 @endforeach
@@ -172,7 +172,7 @@
                         <div wire:key="p-url-{{ $i }}" class="flex gap-2">
                             <div class="flex-1 relative">
                                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#9A958D] text-lg pointer-events-none" aria-hidden="true">link</span>
-                                <input type="url" wire:model="portfolio_urls.{{ $i }}" placeholder="{{ __('provider.registration.portfolio_url_placeholder') }}"
+                                <input type="url" dir="ltr" wire:model="portfolio_urls.{{ $i }}" placeholder="{{ __('provider.registration.portfolio_url_placeholder') }}"
                                        class="w-full pl-10 pr-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                             </div>
                             <button type="button" wire:click="removePortfolioUrl({{ $i }})" class="w-10 h-[46px] rounded-lg flex items-center justify-center shrink-0 text-[#9A958D] hover:text-[#A84936] hover:bg-red-50 transition-colors">
@@ -200,7 +200,7 @@
 
             <div class="mb-6">
                 <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.logo') }}</label>
-                <input type="file" wire:model="logo_new" accept="image/*" class="w-full text-sm text-[#6B665E] file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
+                <input type="file" wire:model="logo_new" accept="image/*" class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
                 @error('logo_new') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
             </div>
 
@@ -211,7 +211,7 @@
                         @foreach ($portfolio_images_existing as $i => $img)
                             <div class="relative group" wire:key="exist-img-{{ $i }}">
                                 <img src="{{ $img }}" class="w-full h-24 object-cover rounded-lg border border-[#D4CFC7]/60" />
-                                <button type="button" wire:click="deleteExistingImage({{ $i }})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-[#A84936] text-white text-xs opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <button type="button" wire:click="deleteExistingImage({{ $i }})" class="absolute top-1 end-1 w-6 h-6 rounded-full bg-[#A84936] text-white text-xs opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                                     <span class="material-symbols-outlined text-sm" aria-hidden="true">close</span>
                                 </button>
                             </div>
@@ -222,7 +222,7 @@
 
             <div>
                 <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.profile.new_images') }}</label>
-                <input type="file" wire:model="portfolio_images_new" multiple accept="image/*" class="w-full text-sm text-[#6B665E] file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
+                <input type="file" wire:model="portfolio_images_new" multiple accept="image/*" class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
                 @error('portfolio_images_new.*') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
             </div>
         </section>

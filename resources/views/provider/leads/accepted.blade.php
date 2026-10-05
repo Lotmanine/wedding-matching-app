@@ -3,7 +3,7 @@
 @section('content')
     @php
         $wr = $wedRequest;
-        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value('name_fr') ?? $wr->couple_wilaya_code;
+        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
         $whatsappDigits = preg_replace('/\D+/', '', (string) $wr->couple_whatsapp);
         $whatsappLink = config('zawaj.whatsapp.link_prefix') . $whatsappDigits;
         $phoneLink = 'tel:' . preg_replace('/\s+/', '', (string) $wr->couple_whatsapp);
@@ -19,7 +19,7 @@
     <div class="max-w-5xl mx-auto">
         <div class="flex items-center gap-3 mb-6">
             <a href="{{ route('provider.leads.index') }}" class="flex items-center gap-2 text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors font-medium">
-                <x-z.icon name="arrow_back" class="text-lg" /> {{ __('provider.unlocked.back_to_leads') }}
+                <x-z.icon name="arrow_back" class="text-lg rtl:-scale-x-100" /> {{ __('provider.unlocked.back_to_leads') }}
             </a>
         </div>
 
@@ -29,7 +29,7 @@
             <div>
                 <p class="text-sm font-bold text-green-800">{{ __('provider.unlocked.header') }}</p>
                 <p class="text-xs text-green-600">
-                    {{ __('provider.unlocked.accepted_on', ['when' => $lead->unlocked_at?->diffForHumans() ?? 'Non renseigné']) }}
+                    {{ __('provider.unlocked.accepted_on', ['when' => $lead->unlocked_at?->diffForHumans() ?? __('Non renseigné')]) }}
                     · {{ __('provider.unlocked.credits_charged', ['count' => $lead->credits_charged]) }}
                 </p>
             </div>
@@ -40,16 +40,16 @@
             <div class="mb-6 bg-[#F7F4F0] border border-[#D4CFC7]/60 rounded-xl p-4 flex items-center gap-3">
                 <x-z.icon name="visibility_off" class="text-[#9A958D] text-2xl shrink-0" />
                 <div>
-                    <p class="text-sm font-bold text-[#1A1A1A]">Coordonnées anonymisées</p>
-                    <p class="text-xs text-[#6B665E]">Conformité ANPDP : les données de contact du couple ne sont plus affichées ({{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après l'acceptation).</p>
+                    <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Coordonnées anonymisées') }}</p>
+                    <p class="text-xs text-[#6B665E]">{{ __("Conformité ANPDP : les données de contact du couple ne sont plus affichées (:days jours après l'acceptation).", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
                 </div>
             </div>
         @elseif ($anonymizeAt)
             <div class="mb-6 bg-[#F0D9B5]/30 border border-[#C8956C]/30 rounded-xl p-4 flex items-center gap-3">
                 <x-z.icon name="schedule" class="text-[#C8956C] text-2xl shrink-0" />
                 <div>
-                    <p class="text-sm font-bold text-[#1A1A1A]">Cette demande sera anonymisée {{ $anonymizeAt->diffForHumans() }}</p>
-                    <p class="text-xs text-[#6B665E]">Le {{ $anonymizeAt->isoFormat('LL') }}, les coordonnées du couple seront masquées (conformité ANPDP). Notez les informations dont vous avez besoin.</p>
+                    <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Cette demande sera anonymisée :when', ['when' => $anonymizeAt->diffForHumans()]) }}</p>
+                    <p class="text-xs text-[#6B665E]">{{ __('Le :date, les coordonnées du couple seront masquées (conformité ANPDP). Notez les informations dont vous avez besoin.', ['date' => $anonymizeAt->isoFormat('LL')]) }}</p>
                 </div>
             </div>
         @endif
@@ -67,22 +67,22 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                        <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->couple_commune : '' }}
+                        <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->communeLabel() : '' }}
                     </div>
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                        <x-z.icon name="calendar_month" class="text-[#C8956C] text-base shrink-0" />{{ $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ?? 'Non renseigné') }}
+                        <x-z.icon name="calendar_month" class="text-[#C8956C] text-base shrink-0" />{{ $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->seasonLabel() ?? __('Non renseigné')) }}
                     </div>
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                        <x-z.icon name="group" class="text-[#C8956C] text-base shrink-0" />{{ $wr->guest_count?->label() ?? 'Non renseigné' }}
+                        <x-z.icon name="group" class="text-[#C8956C] text-base shrink-0" />{{ $wr->guest_count?->label() ?? __('Non renseigné') }}
                     </div>
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                        <x-z.icon name="payments" class="text-[#C8956C] text-base shrink-0" />{{ $wr->budget_range?->label() ?? 'Non renseigné' }}
+                        <x-z.icon name="payments" class="text-[#C8956C] text-base shrink-0" />{{ $wr->budget_range?->label() ?? __('Non renseigné') }}
                     </div>
                 </div>
 
                 @if ($wr->description)
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-2">Description</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-2">{{ __('Description') }}</p>
                         <p class="text-[#1A1A1A] italic leading-relaxed">« {{ $wr->description }} »</p>
                     </div>
                 @endif
@@ -101,7 +101,7 @@
                     <div class="space-y-3">
                         <div class="p-4 bg-[#F0D9B5]/30 rounded-xl border border-[#C8956C]/20">
                             <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.unlocked.couple_name') }}</p>
-                            <p class="font-bold text-[#1A1A1A] text-base">{{ $anonymized ? 'Anonymisé' : $wr->couple_first_name }}</p>
+                            <p class="font-bold text-[#1A1A1A] text-base">{{ $anonymized ? __('Anonymisé') : $wr->couple_first_name }}</p>
                         </div>
                         <div class="flex items-start gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm">
                             <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />
@@ -115,13 +115,13 @@
                                 <x-z.icon name="pin_drop" class="text-[#C8956C] text-base shrink-0" />
                                 <div>
                                     <span class="text-xs text-[#9A958D] block">{{ __('provider.unlocked.couple_commune') }}</span>
-                                    <span class="font-medium text-[#1A1A1A]">{{ $wr->couple_commune }}</span>
+                                    <span class="font-medium text-[#1A1A1A]">{{ $wr->communeLabel() }}</span>
                                 </div>
                             </div>
                         @endif
                         <div class="p-4 bg-[#25D366]/10 rounded-xl border border-[#25D366]/30">
                             <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.unlocked.couple_whatsapp') }}</p>
-                            <p class="font-mono font-bold text-[#1A1A1A] select-all">{{ $anonymized ? 'Anonymisé' : $wr->couple_whatsapp }}</p>
+                            <p class="font-mono font-bold text-[#1A1A1A] select-all"><span dir="ltr">{{ $anonymized ? __('Anonymisé') : $wr->couple_whatsapp }}</span></p>
                         </div>
                     </div>
 
@@ -139,7 +139,7 @@
 
                 {{-- Litige / crédit-back : signaler une demande morte --}}
                 <div class="bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-6">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">Un problème avec cette demande ?</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('Un problème avec cette demande ?') }}</p>
 
                     @if (($dispute ?? null) !== null)
                         <div @class([
@@ -149,36 +149,36 @@
                             'bg-red-50 border-red-100 text-[#A84936]'            => $dispute->status === 'rejected',
                         ])>
                             @if ($dispute->status === 'pending')
-                                <p class="font-semibold">Signalement en cours d'examen</p>
-                                <p class="text-xs mt-0.5">Motif : {{ $dispute->reasonLabel() }} · envoyé {{ $dispute->created_at->diffForHumans() }}</p>
+                                <p class="font-semibold">{{ __("Signalement en cours d'examen") }}</p>
+                                <p class="text-xs mt-0.5">{{ __('Motif : :reason · envoyé :when', ['reason' => $dispute->reasonLabel(), 'when' => $dispute->created_at->diffForHumans()]) }}</p>
                             @elseif ($dispute->status === 'approved')
-                                <p class="font-semibold">Signalement accepté : crédits remboursés</p>
+                                <p class="font-semibold">{{ __('Signalement accepté : crédits remboursés') }}</p>
                                 <p class="text-xs mt-0.5">{{ $dispute->decided_at?->diffForHumans() }}</p>
                             @else
-                                <p class="font-semibold">Signalement refusé</p>
+                                <p class="font-semibold">{{ __('Signalement refusé') }}</p>
                                 @if ($dispute->admin_note)<p class="text-xs mt-0.5">{{ $dispute->admin_note }}</p>@endif
                             @endif
                         </div>
                     @else
                         <details class="group">
                             <summary class="cursor-pointer text-sm font-semibold text-[#6B665E] hover:text-[#A84936] transition-colors list-none flex items-center gap-1.5">
-                                <x-z.icon name="flag" class="text-base" /> Signaler cette demande
+                                <x-z.icon name="flag" class="text-base" /> {{ __('Signaler cette demande') }}
                             </summary>
                             <form method="POST" action="{{ route('provider.leads.dispute', $lead->service_uid) }}" class="mt-3 space-y-2.5">
                                 @csrf
                                 <select name="reason" required class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15">
-                                    <option value="">Motif du signalement…</option>
-                                    <option value="wrong_number">Numéro erroné / injoignable</option>
-                                    <option value="no_response">Aucune réponse du couple</option>
-                                    <option value="fake">Demande factice / spam</option>
-                                    <option value="other">Autre</option>
+                                    <option value="">{{ __('Motif du signalement…') }}</option>
+                                    <option value="wrong_number">{{ __('Numéro erroné / injoignable') }}</option>
+                                    <option value="no_response">{{ __('Aucune réponse du couple') }}</option>
+                                    <option value="fake">{{ __('Demande factice / spam') }}</option>
+                                    <option value="other">{{ __('Autre') }}</option>
                                 </select>
-                                <textarea name="details" rows="2" maxlength="500" placeholder="Précisions (facultatif)"
+                                <textarea name="details" rows="2" maxlength="500" placeholder="{{ __('Précisions (facultatif)') }}"
                                           class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 resize-none"></textarea>
                                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white border border-[#A84936]/40 text-[#A84936] font-semibold text-sm hover:bg-red-50 transition-colors">
-                                    Envoyer le signalement
+                                    {{ __('Envoyer le signalement') }}
                                 </button>
-                                <p class="text-[11px] text-[#9A958D]">Si le problème est confirmé par notre équipe, vos crédits vous sont remboursés.</p>
+                                <p class="text-[11px] text-[#9A958D]">{{ __('Si le problème est confirmé par notre équipe, vos crédits vous sont remboursés.') }}</p>
                             </form>
                         </details>
                     @endif

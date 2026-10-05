@@ -15,16 +15,16 @@
                     <p class="mt-2 text-[#6B665E]">{{ __('credits.success_sub') }}</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 p-5 rounded-xl bg-[#F0D9B5]/30 border border-[#C8956C]/20 text-left">
+                <div class="grid grid-cols-2 gap-4 p-5 rounded-xl bg-[#F0D9B5]/30 border border-[#C8956C]/20 text-start">
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ $purchase->unlockPack?->name }}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __((string) $purchase->unlockPack?->name) }}</p>
                         <p class="font-serif text-3xl font-bold text-[#1A1A1A]">+{{ $purchase->unlocks_count }}</p>
-                        <p class="text-xs text-[#9A958D]">crédits</p>
+                        <p class="text-xs text-[#9A958D]">{{ trans_choice('crédits', (int) $purchase->unlocks_count) }}</p>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">Solde total</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('Solde total') }}</p>
                         <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ $profile?->credit_balance ?? 0 }}</p>
-                        <p class="text-xs text-[#9A958D]">crédits</p>
+                        <p class="text-xs text-[#9A958D]">{{ trans_choice('crédits', (int) ($profile?->credit_balance ?? 0)) }}</p>
                     </div>
                 </div>
 

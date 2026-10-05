@@ -39,7 +39,7 @@
                         type="button"
                         @if ($i < $step) wire:click="goToStep({{ $i }})" @endif
                         @class([
-                            'w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
+                            'w-full text-start flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
                             'bg-[#F0D9B5]/50 border border-[#C8956C]/30' => $active,
                             'opacity-60 hover:opacity-100 cursor-pointer' => $done,
                             'opacity-40 cursor-default' => $i > $step,
@@ -77,7 +77,7 @@
                             <p class="text-[#1A1A1A] font-medium">{{ $couple_first_name }}</p>
                         @endif
                         @if ($wilayaSummary)
-                            <p class="text-[#6B665E] flex items-center gap-1"><x-z.icon name="location_on" class="text-sm text-[#C8956C]" />{{ $wilayaSummary->name_fr }}</p>
+                            <p class="text-[#6B665E] flex items-center gap-1"><x-z.icon name="location_on" class="text-sm text-[#C8956C]" />{{ app()->getLocale() === 'ar' ? $wilayaSummary->name_ar : $wilayaSummary->name_fr }}</p>
                         @endif
                         @if (count($services_needed))
                             <p class="text-[#6B665E] flex items-center gap-1"><x-z.icon name="checklist" class="text-sm text-[#C8956C]" />{{ trans_choice('form.services_count', count($services_needed), ['count' => count($services_needed)]) }}</p>
@@ -183,7 +183,8 @@
                                 wire:model="couple_whatsapp"
                                 placeholder="{{ __('form.placeholder_whatsapp') }}"
                                 autocomplete="tel"
-                                class="{{ $inputClass }}"
+                                dir="ltr"
+                                class="{{ $inputClass }} rtl:text-right"
                                 required
                             />
                             <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_whatsapp') }}</p>
@@ -202,12 +203,12 @@
                             <select
                                 id="couple_wilaya_code"
                                 wire:model.live="couple_wilaya_code"
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pr-11"
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11"
                                 required
                             >
                                 <option value="">{{ __('form.placeholder_wilaya') }}</option>
                                 @foreach ($this->wilayas as $w)
-                                    <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name_fr }}</option>
+                                    <option value="{{ $w->code }}">{{ $w->code }} · {{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</option>
                                 @endforeach
                             </select>
                             @error('couple_wilaya_code') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
@@ -215,17 +216,17 @@
 
                         <div>
                             <label for="couple_commune" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_commune') }} <span class="text-[#9A958D] font-normal">(facultatif)</span>
+                                {{ __('form.label_commune') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif)') }}</span>
                             </label>
                             <select
                                 id="couple_commune"
                                 wire:model="couple_commune"
                                 @disabled($couple_wilaya_code === '')
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pr-11 disabled:bg-[#F7F4F0] disabled:text-[#9A958D] disabled:cursor-not-allowed"
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11 disabled:bg-[#F7F4F0] disabled:text-[#9A958D] disabled:cursor-not-allowed"
                             >
                                 <option value="">{{ __('form.placeholder_commune') }}</option>
                                 @foreach ($this->availableCommunes as $c)
-                                    <option value="{{ $c->name_fr }}">{{ $c->name_fr }}</option>
+                                    <option value="{{ $c->name_fr }}">{{ app()->getLocale() === 'ar' ? $c->name_ar : $c->name_fr }}</option>
                                 @endforeach
                             </select>
                             <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_commune') }}</p>
@@ -255,12 +256,12 @@
 
                         <div>
                             <label for="wedding_season" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_wedding_season') }} <span class="text-[#9A958D] font-normal">(facultatif)</span>
+                                {{ __('form.label_wedding_season') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif)') }}</span>
                             </label>
                             <select
                                 id="wedding_season"
                                 wire:model="wedding_season"
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pr-11"
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11"
                             >
                                 <option value="">{{ __('form.season_placeholder') }}</option>
                                 <option value="Printemps">{{ __('form.season_printemps') }}</option>
@@ -280,7 +281,7 @@
                                 <select
                                     id="guest_count"
                                     wire:model="guest_count"
-                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pr-11"
+                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11"
                                     required
                                 >
                                     <option value="">{{ __('form.placeholder_guest_count') }}</option>
@@ -288,7 +289,7 @@
                                         <option value="{{ $g->value }}">{{ $g->label() }}</option>
                                     @endforeach
                                 </select>
-                                <p class="mt-2 text-xs text-[#9A958D]">Requis pour le traiteur et la salle des fêtes.</p>
+                                <p class="mt-2 text-xs text-[#9A958D]">{{ __('Requis pour le traiteur et la salle des fêtes.') }}</p>
                                 @error('guest_count') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                             </div>
                         @endif
@@ -308,7 +309,7 @@
                                          unchecks the previous one immediately); the inner dot/check use a
                                          named group-has variant because peer-checked can't reach elements
                                          nested inside a sibling wrapper. --}}
-                                    <label class="group/budget relative block text-left p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98] border-[#D4CFC7] bg-white hover:border-[#C8956C]/50 has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/40 has-[:checked]:shadow-sm">
+                                    <label class="group/budget relative block text-start p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98] border-[#D4CFC7] bg-white hover:border-[#C8956C]/50 has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/40 has-[:checked]:shadow-sm">
                                         <input type="radio" name="budget_range" wire:model.live="budget_range" value="{{ $b->value }}" class="sr-only" />
                                         <div class="flex items-start justify-between gap-2">
                                             <p class="font-semibold text-sm text-[#6B665E] group-has-[:checked]/budget:text-[#1A1A1A]">{{ $b->label() }}</p>
@@ -332,7 +333,7 @@
                                     <label class="flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 text-sm font-semibold cursor-pointer transition-all duration-200 active:scale-[0.97] border-[#D4CFC7] bg-white text-[#6B665E] hover:border-[#C8956C]/50 hover:bg-[#F7F4F0] has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/50 has-[:checked]:text-[#1A1A1A] has-[:checked]:shadow-sm">
                                         <input type="checkbox" value="{{ $svc->value }}" wire:model.live="services_needed" class="peer sr-only" />
                                         <span>{{ $svc->label() }}</span>
-                                        <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-base ml-auto opacity-0 peer-checked:opacity-100" />
+                                        <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-base ms-auto opacity-0 peer-checked:opacity-100" />
                                     </label>
                                 @endforeach
                             </div>
@@ -359,7 +360,7 @@
                                 placeholder="{{ __('form.placeholder_description') }}"
                                 class="{{ $inputClass }} resize-none"
                             ></textarea>
-                            <p class="mt-2 text-xs text-[#9A958D] text-right">
+                            <p class="mt-2 text-xs text-[#9A958D] text-end">
                                 {{ __('form.help_char_count', ['count' => mb_strlen($description), 'max' => 500]) }}
                             </p>
                             @error('description') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
@@ -371,26 +372,30 @@
                             $budgetLabel = $budget_range ? \App\Enums\BudgetRange::from($budget_range)->label() : __('form.review_none');
                             $serviceLabels = collect($services_needed)->map(fn ($v) => \App\Enums\ServiceType::from($v)->label())->all();
                             $wilayaRow = \App\Models\Wilaya::where('code', $couple_wilaya_code)->first();
+                            $isAr = app()->getLocale() === 'ar';
+                            $communeLabel = $isAr && $couple_commune
+                                ? ($this->availableCommunes->firstWhere('name_fr', $couple_commune)?->name_ar ?: $couple_commune)
+                                : $couple_commune;
                         @endphp
                         <section class="rounded-xl bg-[#F7F4F0] border border-[#D4CFC7]/50 p-5 space-y-3 text-sm">
                             <h2 class="font-serif text-lg font-semibold text-[#7A5530]">{{ __('form.review_title') }}</h2>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }} :</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]">({{ $couple_whatsapp ?: 'Non renseigné' }})</span></div>
-                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }} :</span> <strong class="text-[#1A1A1A]">{{ $wilayaRow?->name_fr ?? __('form.review_none') }}</strong>{{ $couple_commune ? ', ' . $couple_commune : '' }}</div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }} :</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]" dir="ltr">({{ $couple_whatsapp ?: __('Non renseigné') }})</span></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }} :</span> <strong class="text-[#1A1A1A]">{{ ($isAr ? $wilayaRow?->name_ar : $wilayaRow?->name_fr) ?? __('form.review_none') }}</strong>{{ $couple_commune ? __(', ') . $communeLabel : '' }}</div>
                                 <div>
                                     <span class="text-[#9A958D]">{{ __('form.review_wedding') }} :</span>
                                     @if ($wedding_date)
                                         <strong class="text-[#1A1A1A]">{{ \Illuminate\Support\Carbon::parse($wedding_date)->isoFormat('LL') }}</strong>
                                     @elseif ($wedding_season)
-                                        <strong class="text-[#1A1A1A]">{{ $wedding_season }}</strong>
+                                        <strong class="text-[#1A1A1A]">{{ __($wedding_season) }}</strong>
                                     @else
                                         <strong class="text-[#1A1A1A]">{{ __('form.review_none') }}</strong>
                                     @endif
                                     <span class="text-[#6B665E]">· {{ $guestLabel }}</span>
                                 </div>
                                 <div><span class="text-[#9A958D]">{{ __('form.review_budget') }} :</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
-                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }} :</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(', ', $serviceLabels) : __('form.review_none') }}</strong></div>
+                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }} :</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
                                 @if ($description)
                                     <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }} :</span> <em class="text-[#6B665E]">« {{ $description }} »</em></div>
                                 @endif
@@ -429,12 +434,12 @@
                         <x-z.btn type="button" variant="primary" size="lg" wire:click="nextStep" wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="nextStep">{{ __('form.btn_next') }}</span>
                             <span wire:loading wire:target="nextStep">…</span>
-                            <x-z.icon name="arrow_forward" class="text-lg" wire:loading.remove wire:target="nextStep" />
+                            <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" wire:loading.remove wire:target="nextStep" />
                         </x-z.btn>
                     @else
                         <x-z.btn type="submit" variant="accent" size="lg" wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="submit">{{ __('form.btn_submit') }}</span>
-                            <span wire:loading wire:target="submit">Envoi en cours…</span>
+                            <span wire:loading wire:target="submit">{{ __('Envoi en cours…') }}</span>
                             <x-z.icon name="send" class="text-lg" wire:loading.remove wire:target="submit" />
                         </x-z.btn>
                     @endif

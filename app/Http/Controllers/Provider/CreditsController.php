@@ -220,6 +220,8 @@ class CreditsController extends Controller
         }
 
         if ($request->query('format') === 'pdf') {
+            // The PDF receipt is always issued in French.
+            app()->setLocale('fr');
             $pdf = Pdf::loadView('provider.credits.receipt-pdf', ['purchase' => $purchase]);
 
             return $pdf->download('recu-' . $purchase->purchase_uid . '.pdf');

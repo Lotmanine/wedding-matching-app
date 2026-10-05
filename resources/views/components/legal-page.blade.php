@@ -6,11 +6,11 @@
     <div class="bg-[#1A1A1A] pt-16 pb-16 px-5 md:px-8">
         <div class="max-w-3xl mx-auto">
             <a href="{{ route('home') }}" class="flex items-center gap-2 text-white/40 hover:text-white/70 text-sm mb-6 transition-colors w-max">
-                <x-z.icon name="arrow_back" class="text-base" /> Retour
+                <x-z.icon name="arrow_back" class="text-base rtl:-scale-x-100" /> {{ __('Retour') }}
             </a>
-            <p class="text-[#C8956C] text-xs font-bold uppercase tracking-widest mb-3">Documents légaux</p>
+            <p class="text-[#C8956C] text-xs font-bold uppercase tracking-widest mb-3">{{ __('Documents légaux') }}</p>
             <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-3">{{ $title }}</h1>
-            <p class="text-white/50 text-sm">{{ $subtitle }}@if($updated) · Dernière mise à jour : {{ $updated }}@endif</p>
+            <p class="text-white/50 text-sm">{{ $subtitle }}@if($updated) · {{ __('Dernière mise à jour : :date', ['date' => $updated]) }}@endif</p>
         </div>
     </div>
 
@@ -20,7 +20,7 @@
             {{ $slot }}
         </div>
         <div class="mt-14 pt-8 border-t border-[#D4CFC7]/40 flex flex-col sm:flex-row gap-4">
-            <x-z.btn :href="route('home')" variant="outline" icon="arrow_back">Retour à l'accueil</x-z.btn>
+            <x-z.btn :href="route('home')" variant="outline" icon="arrow_back">{{ __("Retour à l'accueil") }}</x-z.btn>
         </div>
     </div>
 </div>

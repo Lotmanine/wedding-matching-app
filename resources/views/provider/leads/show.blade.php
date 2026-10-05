@@ -15,10 +15,10 @@
             'patisserie' => 'cake', 'salle' => 'villa', 'musique' => 'music_note', 'machta' => 'face_retouching_natural',
             default => 'category',
         };
-        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value('name_fr') ?? $wr->couple_wilaya_code;
+        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
         $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
-        $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->wedding_season . ' ' . $wr->created_at->year : 'Date flexible');
-        $durationLeft = $lead->expires_at ? $lead->expires_at->diffForHumans(now(), ['parts' => 2]) : 'Non défini';
+        $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
+        $durationLeft = $lead->expires_at ? $lead->expires_at->diffForHumans(now(), ['parts' => 2, 'join' => true]) : __('Non défini');
         $cost = (int) config('zawaj.credits.unlock_cost', 1);
         $balance = (int) (auth()->user()?->providerProfile?->credit_balance ?? 0);
     @endphp
@@ -26,10 +26,10 @@
     <div class="max-w-5xl mx-auto">
         <div class="flex items-center gap-3 mb-8">
             <a href="{{ route('provider.leads.index') }}" class="flex items-center gap-2 text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors font-medium">
-                <x-z.icon name="arrow_back" class="text-lg" /> {{ __('provider.leads.breadcrumb') }}
+                <x-z.icon name="arrow_back" class="text-lg rtl:-scale-x-100" /> {{ __('provider.leads.breadcrumb') }}
             </a>
             <x-z.badge :variant="$statusBadge['variant']">{{ $statusBadge['label'] }}</x-z.badge>
-            <span class="text-xs text-[#9A958D] font-mono ml-auto">{{ $lead->service_uid }}</span>
+            <span class="text-xs text-[#9A958D] font-mono ms-auto">{{ $lead->service_uid }}</span>
         </div>
 
         {{-- Teaser header --}}
@@ -44,16 +44,16 @@
                     </div>
                     <div class="flex flex-wrap gap-3">
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->couple_commune : '' }}
+                            <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->communeLabel() : '' }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
                             <x-z.icon name="calendar_month" class="text-[#C8956C] text-base" />{{ $dateLine }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? 'Non renseigné' }}
+                            <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? __('Non renseigné') }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label() ?? 'Non renseigné' }}
+                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label() ?? __('Non renseigné') }}
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
 
                 <p class="text-xs text-[#9A958D] pt-2">
                     {{ __('provider.leads.created_on', ['date' => $lead->created_at->isoFormat('LL')]) }} ·
-                    {{ __('provider.leads.expires_on', ['date' => $lead->expires_at?->isoFormat('LL') ?? 'Non renseigné']) }}
+                    {{ __('provider.leads.expires_on', ['date' => $lead->expires_at?->isoFormat('LL') ?? __('Non renseigné')]) }}
                 </p>
             </div>
         </div>
@@ -110,7 +110,7 @@
                     <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ __('provider.leads.couple_card') }}</p>
                     <div class="p-4 bg-[#F7F4F0] rounded-xl mb-5">
                         <p class="font-bold text-[#1A1A1A]">{{ $initial }} & ██████</p>
-                        <p class="text-[#6B665E] font-mono">+213 6 ██ ██ ██ ██</p>
+                        <p class="text-[#6B665E] font-mono"><span dir="ltr">+213 6 ██ ██ ██ ██</span></p>
                     </div>
                     <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('provider.leads.couple_wilaya') }}</p>
                     <p class="text-[#1A1A1A]">{{ $wilayaLabel }}</p>
@@ -126,7 +126,7 @@
                     <div class="flex flex-col sm:flex-row gap-2 w-full max-w-md">
                         <button type="button" @click="showAccept = true"
                                 class="flex-1 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-[#C8956C] text-white font-semibold text-base hover:bg-[#b8845b] shadow-sm hover:shadow-md transition-all active:scale-[0.97]">
-                            <x-z.icon name="lock_open" class="text-lg" /> {{ __('provider.leads.btn_accept') }} ({{ $cost }} {{ $cost > 1 ? 'crédits' : 'crédit' }})
+                            <x-z.icon name="lock_open" class="text-lg" /> {{ __('provider.leads.btn_accept') }} ({{ $cost }} {{ $cost > 1 ? trans_choice('crédits', $cost) : __('crédit') }})
                         </button>
                         <button type="button" @click="showRefuse = true"
                                 class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-white border border-[#D4CFC7] text-[#6B665E] font-semibold text-sm hover:border-[#A84936]/40 hover:text-[#A84936] transition-all">

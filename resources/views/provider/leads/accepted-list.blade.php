@@ -9,8 +9,8 @@
     <div class="max-w-5xl mx-auto px-5 md:px-8 py-8 md:py-10">
 
         <div class="mb-7">
-            <h1 class="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">Demandes acceptées</h1>
-            <p class="text-sm text-[#6B665E] mt-1">Les coordonnées des couples sont anonymisées {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après l'acceptation (conformité ANPDP).</p>
+            <h1 class="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">{{ __('Demandes acceptées') }}</h1>
+            <p class="text-sm text-[#6B665E] mt-1">{{ __("Les coordonnées des couples sont anonymisées :days jours après l'acceptation (conformité ANPDP).", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
         </div>
 
         @if ($leads->isEmpty())
@@ -18,8 +18,8 @@
                 <div class="w-14 h-14 mx-auto rounded-2xl bg-[#F0D9B5]/50 flex items-center justify-center mb-4">
                     <x-z.icon name="workspace_premium" class="text-[#C8956C] text-3xl" />
                 </div>
-                <p class="font-serif text-lg font-bold text-[#1A1A1A]">Aucune demande acceptée pour le moment</p>
-                <p class="text-sm text-[#6B665E] mt-1">Les demandes que vous débloquez apparaîtront ici.</p>
+                <p class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('Aucune demande acceptée pour le moment') }}</p>
+                <p class="text-sm text-[#6B665E] mt-1">{{ __('Les demandes que vous débloquez apparaîtront ici.') }}</p>
             </div>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -28,7 +28,7 @@
                         $wr = $lead->wedRequest;
                         $anonymized = $lead->isAnonymized();
                         $anonymizeAt = $lead->anonymizeAt();
-                        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr?->couple_wilaya_code)->value('name_fr') ?? $wr?->couple_wilaya_code;
+                        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr?->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr?->couple_wilaya_code;
                     @endphp
                     <a href="{{ route('provider.leads.show', $lead->service_uid) }}"
                        class="block bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-5 hover:border-[#C8956C]/50 hover:shadow-md transition-all">
@@ -39,17 +39,17 @@
                                 </div>
                                 <div class="min-w-0">
                                     <p class="font-semibold text-[#1A1A1A] truncate">{{ $lead->service_type?->label() }}</p>
-                                    <p class="text-xs text-[#9A958D]">Acceptée {{ $lead->unlocked_at?->diffForHumans() }}</p>
+                                    <p class="text-xs text-[#9A958D]">{{ __('Acceptée :when', ['when' => $lead->unlocked_at?->diffForHumans()]) }}</p>
                                 </div>
                             </div>
                             @if ($anonymized)
                                 <span class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-[#F7F4F0] text-[#9A958D] border border-[#D4CFC7]/60">
-                                    <x-z.icon name="visibility_off" class="text-xs" /> Anonymisée
+                                    <x-z.icon name="visibility_off" class="text-xs" /> {{ __('Anonymisée') }}
                                 </span>
                             @else
                                 <span class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-[#F0D9B5]/50 text-[#7A5530] border border-[#C8956C]/30"
-                                      title="Anonymisation le {{ $anonymizeAt?->isoFormat('LL') }}">
-                                    <x-z.icon name="schedule" class="text-xs" /> Anonymisation {{ $anonymizeAt?->diffForHumans() }}
+                                      title="{{ __('Anonymisation le :date', ['date' => $anonymizeAt?->isoFormat('LL')]) }}">
+                                    <x-z.icon name="schedule" class="text-xs" /> {{ __('Anonymisation :when', ['when' => $anonymizeAt?->diffForHumans()]) }}
                                 </span>
                             @endif
                         </div>
@@ -58,7 +58,7 @@
                             <p class="flex items-center gap-1.5 text-[#6B665E]">
                                 <x-z.icon name="person" class="text-[#C8956C] text-base" />
                                 @if ($anonymized)
-                                    <span class="italic text-[#9A958D]">Anonymisé</span>
+                                    <span class="italic text-[#9A958D]">{{ __('Anonymisé') }}</span>
                                 @else
                                     <span class="font-medium text-[#1A1A1A]">{{ $wr?->couple_first_name }}</span>
                                 @endif
@@ -68,7 +68,7 @@
                             </p>
                             <p class="flex items-center gap-1.5 text-[#6B665E]">
                                 <x-z.icon name="calendar_month" class="text-[#C8956C] text-base" />
-                                {{ $wr?->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr?->wedding_season ?? 'Date flexible') }}
+                                {{ $wr?->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr?->seasonLabel() ?? __('Date flexible')) }}
                             </p>
                         </div>
                     </a>

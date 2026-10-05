@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,8 @@
     {{-- ─── Public navigation ─────────────────────────────── --}}
     <div x-data="{ open: false }" class="sticky top-0 z-50">
         {{-- Provider utility bar --}}
-        <div class="bg-[#1A1A1A] py-2 px-5 md:px-8 flex items-center justify-end">
+        <div class="bg-[#1A1A1A] py-2 px-5 md:px-8 flex items-center justify-between gap-4">
+            @include('partials.lang-switch', ['tone' => 'dark'])
             <a href="{{ route('provider.login') }}" class="flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-white transition-colors">
                 <x-z.icon name="storefront" class="text-sm" />
                 {{ __('form.nav_provider_area') }}
@@ -34,7 +35,7 @@
                 <div class="hidden sm:flex items-center">
                     <x-z.btn :href="route('couple.request.create')" size="sm">{{ __('form.nav_cta') }}</x-z.btn>
                 </div>
-                <button class="md:hidden p-2 -mr-2" @click="open = !open" aria-label="Menu">
+                <button class="md:hidden p-2 -me-2" @click="open = !open" aria-label="{{ __('Menu') }}">
                     <span class="material-symbols-outlined text-[#1A1A1A] text-2xl" x-text="open ? 'close' : 'menu'">menu</span>
                 </button>
             </div>

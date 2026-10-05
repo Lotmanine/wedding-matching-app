@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,27 +22,28 @@
         $nav = [
             ['route' => 'provider.dashboard',       'pattern' => 'provider.dashboard',    'icon' => 'dashboard',       'label' => __('provider.nav.dashboard')],
             ['route' => 'provider.leads.index',     'pattern' => 'provider.leads.index',  'icon' => 'inbox',           'label' => __('provider.nav.leads')],
-            ['route' => 'provider.leads.accepted',  'pattern' => 'provider.leads.accepted','icon' => 'workspace_premium','label' => 'Acceptées'],
+            ['route' => 'provider.leads.accepted',  'pattern' => 'provider.leads.accepted','icon' => 'workspace_premium','label' => __('Acceptées')],
             ['route' => 'provider.credits.index',   'pattern' => 'provider.credits.index','icon' => 'toll',            'label' => __('provider.nav.credits')],
             ['route' => 'provider.credits.history', 'pattern' => 'provider.credits.history','icon' => 'history',       'label' => __('provider.nav.history')],
             ['route' => 'provider.profile.edit',    'pattern' => 'provider.profile.*',    'icon' => 'manage_accounts','label' => __('provider.nav.profile')],
-            ['route' => 'provider.feedback.create', 'pattern' => 'provider.feedback.*',   'icon' => 'feedback',        'label' => 'Feedback'],
+            ['route' => 'provider.feedback.create', 'pattern' => 'provider.feedback.*',   'icon' => 'feedback',        'label' => __('Feedback')],
         ];
     @endphp
 
     <div class="min-h-screen bg-[#FDFAF6] flex">
 
         {{-- Desktop sidebar --}}
-        <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-[#D4CFC7]/40 sticky top-0 h-screen shrink-0">
+        <aside class="hidden lg:flex flex-col w-64 bg-white border-e border-[#D4CFC7]/40 sticky top-0 h-screen shrink-0">
             <div class="px-6 py-5 border-b border-[#D4CFC7]/30">
                 <a href="{{ route('home') }}" class="font-serif text-xl font-bold text-[#1A1A1A] hover:text-[#C8956C] transition-colors">{{ __('provider.brand') }}</a>
                 <p class="text-[11px] font-bold uppercase tracking-widest text-[#9A958D] mt-1">{{ __('provider.nav.area') }}</p>
+                <div class="mt-3">@include('partials.lang-switch')</div>
             </div>
             <nav class="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
                 @foreach ($nav as $item)
                     @php $active = request()->routeIs($item['pattern']); @endphp
                     <a href="{{ route($item['route']) }}"
-                        class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-left {{ $active ? 'bg-[#F0D9B5] text-[#1A1A1A] font-semibold' : 'text-[#6B665E] hover:bg-[#F7F4F0] hover:text-[#1A1A1A]' }}">
+                        class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-start {{ $active ? 'bg-[#F0D9B5] text-[#1A1A1A] font-semibold' : 'text-[#6B665E] hover:bg-[#F7F4F0] hover:text-[#1A1A1A]' }}">
                         <x-z.icon :name="$item['icon']" :filled="$active" class="text-xl" />
                         {{ $item['label'] }}
                     </a>
@@ -60,7 +61,7 @@
                     <div class="flex items-center gap-3 px-1">
                         <div class="w-9 h-9 rounded-full bg-[#F0D9B5] flex items-center justify-center text-sm font-bold text-[#1A1A1A] shrink-0 uppercase">{{ $initials }}</div>
                         <div class="min-w-0 flex-1">
-                            <p class="text-sm font-semibold text-[#1A1A1A] truncate">{{ $profile?->business_name ?? $user?->name }}</p>
+                            <p class="text-sm font-semibold text-[#1A1A1A] truncate" dir="auto">{{ $profile?->business_name ?? $user?->name }}</p>
                             <button type="submit" class="text-xs text-[#9A958D] hover:text-[#A84936] transition-colors">{{ __('provider.nav.logout') }}</button>
                         </div>
                     </div>
@@ -73,6 +74,7 @@
             <header class="lg:hidden sticky top-0 z-40 bg-white border-b border-[#D4CFC7]/30 px-4 py-3.5 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('provider.brand') }}</a>
                 <div class="flex items-center gap-3">
+                    @include('partials.lang-switch')
                     <a href="{{ route('provider.credits.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F0D9B5] rounded-full text-xs font-bold text-[#1A1A1A]">
                         <x-z.icon name="toll" class="text-sm" /> {{ $creditBalance }}
                     </a>

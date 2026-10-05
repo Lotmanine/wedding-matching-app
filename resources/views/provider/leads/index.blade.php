@@ -42,7 +42,7 @@
                     <select name="wilaya_code" class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
                         <option value="">{{ __('provider.leads.filter_all') }}</option>
                         @foreach ($wilayaOptions as $w)
-                            <option value="{{ $w->code }}" @selected(($filters['wilaya_code'] ?? '') === $w->code)>{{ $w->name_fr }}</option>
+                            <option value="{{ $w->code }}" @selected(($filters['wilaya_code'] ?? '') === $w->code)>{{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -58,7 +58,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-1.5">Tri</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-1.5">{{ __('Tri') }}</label>
                     <select name="sort" class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
                         <option value="newest"       @selected(($filters['sort'] ?? 'newest') === 'newest')>{{ __('provider.leads.sort_newest') }}</option>
                         <option value="oldest"       @selected(($filters['sort'] ?? '') === 'oldest')>{{ __('provider.leads.sort_oldest') }}</option>
@@ -68,7 +68,7 @@
 
                 <div class="flex items-end gap-2">
                     <x-z.btn type="submit" variant="primary" size="md" icon="filter_list" class="flex-1 justify-center">
-                        Filtrer
+                        {{ __('Filtrer') }}
                     </x-z.btn>
                     @if (array_filter($filters))
                         <a href="{{ route('provider.leads.index') }}" class="w-10 h-[42px] rounded-lg border border-[#D4CFC7] text-[#9A958D] hover:text-[#A84936] hover:border-[#A84936]/40 flex items-center justify-center shrink-0 transition-colors" aria-label="{{ __('provider.leads.filter_reset') }}">

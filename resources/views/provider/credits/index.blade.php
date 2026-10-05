@@ -39,8 +39,8 @@
             <div class="mb-8 flex items-start gap-3 p-5 rounded-2xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530]">
                 <x-z.icon name="hourglass_top" :filled="true" class="text-xl shrink-0" />
                 <div>
-                    <p class="font-semibold text-sm text-[#1A1A1A]">Compte en attente de vérification</p>
-                    <p class="text-sm mt-0.5">L'achat de crédits sera débloqué dès que notre équipe aura vérifié votre profil. Vous recevrez alors les demandes correspondant à votre activité.</p>
+                    <p class="font-semibold text-sm text-[#1A1A1A]">{{ __('Compte en attente de vérification') }}</p>
+                    <p class="text-sm mt-0.5">{{ __("L'achat de crédits sera débloqué dès que notre équipe aura vérifié votre profil. Vous recevrez alors les demandes correspondant à votre activité.") }}</p>
                 </div>
             </div>
         @endunless
@@ -65,11 +65,11 @@
                             </div>
                         @endif
 
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ $pack->name }}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ __($pack->name) }}</p>
                         <div class="font-serif text-5xl font-bold text-[#1A1A1A] mb-1">{{ $pack->unlocks_count }}</div>
-                        <p class="text-sm text-[#6B665E] mb-1">crédits</p>
-                        <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1">{{ number_format($pack->price_dzd, 0, ',', ' ') }} DA</p>
-                        <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', ' ')]) }}</p>
+                        <p class="text-sm text-[#6B665E] mb-1">{{ trans_choice('crédits', (int) $pack->unlocks_count) }}</p>
+                        <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1"><bdi>{{ number_format($pack->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
+                        <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', "\u{00A0}")]) }}</p>
 
                         @if ($canBuy)
                             <x-z.btn :href="route('provider.credits.pay', $pack->slug)" :variant="$pack->is_popular ? 'primary' : 'outline'" size="md" class="mt-auto w-full justify-center">
@@ -78,7 +78,7 @@
                         @else
                             <button type="button" disabled aria-disabled="true"
                                 class="mt-auto w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[#F7F4F0] text-[#9A958D] cursor-not-allowed select-none">
-                                <x-z.icon name="lock" class="text-base" /> Vérification requise
+                                <x-z.icon name="lock" class="text-base" /> {{ __('Vérification requise') }}
                             </button>
                         @endif
                     </div>
@@ -91,7 +91,7 @@
             <div class="px-6 py-4 border-b border-[#D4CFC7]/30 flex items-center justify-between">
                 <h2 class="font-semibold text-[#1A1A1A]">{{ __('credits.recent_title') }}</h2>
                 <a href="{{ route('provider.credits.history') }}" class="text-sm text-[#C8956C] font-semibold hover:underline flex items-center gap-1">
-                    {{ __('credits.full_history') }} <x-z.icon name="arrow_forward" class="text-sm" />
+                    {{ __('credits.full_history') }} <x-z.icon name="arrow_forward" class="text-sm rtl:-scale-x-100" />
                 </a>
             </div>
 
@@ -103,9 +103,9 @@
                         <div class="flex items-center justify-between gap-4 px-6 py-4">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-[#1A1A1A] truncate">{{ __('credits.type.' . $entry->type) }}</p>
-                                <p class="text-xs text-[#9A958D] truncate">{{ $entry->notes ?? 'Non renseigné' }} · {{ $entry->created_at->diffForHumans() }}</p>
+                                <p class="text-xs text-[#9A958D] truncate">{{ $entry->notes ?? __('Non renseigné') }} · {{ $entry->created_at->diffForHumans() }}</p>
                             </div>
-                            <div class="text-right shrink-0">
+                            <div class="text-end shrink-0">
                                 <p @class([
                                     'font-bold font-serif text-lg',
                                     'text-green-600' => $entry->delta > 0,
@@ -114,7 +114,7 @@
                                 ])>
                                     {{ $entry->delta > 0 ? '+' : '' }}{{ $entry->delta }}
                                 </p>
-                                <p class="text-xs text-[#9A958D]">solde : {{ $entry->balance_after }}</p>
+                                <p class="text-xs text-[#9A958D]">{{ __('solde : :balance', ['balance' => $entry->balance_after]) }}</p>
                             </div>
                         </div>
                     @endforeach

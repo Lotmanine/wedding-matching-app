@@ -45,7 +45,7 @@ class FeedbackController extends Controller
         $this->sendAlert($feedback, $user);
 
         return redirect()->route('provider.feedback.create')
-            ->with('status', 'Merci, votre message a bien été envoyé. Notre équipe le lira rapidement.');
+            ->with('status', __('Merci, votre message a bien été envoyé. Notre équipe le lira rapidement.'));
     }
 
     /**

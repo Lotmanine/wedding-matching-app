@@ -206,7 +206,7 @@ class ProviderLeadsController extends Controller
             ->where('provider_user_id', $user->id)
             ->exists();
         if ($exists) {
-            return back()->with('error', 'Un signalement existe déjà pour cette demande.');
+            return back()->with('error', __('Un signalement existe déjà pour cette demande.'));
         }
 
         LeadDispute::create([
@@ -216,6 +216,6 @@ class ProviderLeadsController extends Controller
             'details'            => $validated['details'] ?? null,
         ]);
 
-        return back()->with('status', 'Signalement envoyé. Notre équipe vérifie et vous recrédite si le problème est confirmé.');
+        return back()->with('status', __('Signalement envoyé. Notre équipe vérifie et vous recrédite si le problème est confirmé.'));
     }
 }

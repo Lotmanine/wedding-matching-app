@@ -101,4 +101,29 @@ class WedRequest extends Model
     {
         return $query->where('expires_at', '<=', now());
     }
+
+    /**
+     * The commune as shown to the reader. It is stored under its French name;
+     * Arabic pages show the Arabic name of the same commune.
+     */
+    public function communeLabel(): ?string
+    {
+        if (! $this->couple_commune || app()->getLocale() !== 'ar') {
+            return $this->couple_commune;
+        }
+
+        $communes = Commune::query()->where('name_fr', $this->couple_commune);
+
+        $nameAr = (clone $communes)
+            ->whereHas('wilaya', fn (Builder $q) => $q->where('code', (string) $this->couple_wilaya_code))
+            ->value('name_ar') ?: $communes->value('name_ar');
+
+        return $nameAr ?: $this->couple_commune;
+    }
+
+    /** The season (stored in French: Printemps, Été…) in the reader's language. */
+    public function seasonLabel(): ?string
+    {
+        return $this->wedding_season ? __($this->wedding_season) : null;
+    }
 }

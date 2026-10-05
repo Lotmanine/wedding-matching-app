@@ -10,7 +10,7 @@
                 {{ __('credits.history_export') }}
             </x-z.btn>
         </div>
-        <p class="text-[#6B665E] text-sm mb-8">Toutes vos transactions de crédits.</p>
+        <p class="text-[#6B665E] text-sm mb-8">{{ __('Toutes vos transactions de crédits.') }}</p>
 
         <form method="GET" action="{{ route('provider.credits.history') }}" class="flex flex-wrap gap-3 mb-6 items-end">
             <div>
@@ -22,7 +22,7 @@
                     @endforeach
                 </select>
             </div>
-            <x-z.btn type="submit" variant="primary" size="md" icon="filter_list">Filtrer</x-z.btn>
+            <x-z.btn type="submit" variant="primary" size="md" icon="filter_list">{{ __('Filtrer') }}</x-z.btn>
             @if ($type !== 'all')
                 <a href="{{ route('provider.credits.history') }}" class="w-10 h-[42px] rounded-lg border border-[#D4CFC7] text-[#9A958D] hover:text-[#A84936] hover:border-[#A84936]/40 flex items-center justify-center shrink-0 transition-colors" aria-label="{{ __('credits.history_all') }}">
                     <x-z.icon name="close" class="text-lg" />
@@ -38,11 +38,11 @@
                     <table class="w-full min-w-[640px] text-sm">
                         <thead>
                             <tr class="bg-[#F7F4F0] text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/40">
-                                <th class="text-left px-5 py-4">Date</th>
-                                <th class="text-left px-5 py-4">Type</th>
-                                <th class="text-left px-5 py-4">Description</th>
-                                <th class="text-right px-5 py-4">Mouvement</th>
-                                <th class="text-right px-5 py-4">Solde</th>
+                                <th class="text-start px-5 py-4">{{ __('Date') }}</th>
+                                <th class="text-start px-5 py-4">{{ __('Type') }}</th>
+                                <th class="text-start px-5 py-4">{{ __('Description') }}</th>
+                                <th class="text-end px-5 py-4">{{ __('Mouvement') }}</th>
+                                <th class="text-end px-5 py-4">{{ __('Solde') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#D4CFC7]/20">
@@ -52,16 +52,16 @@
                                     <td class="px-5 py-4">
                                         <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F4F0] text-[#6B665E] border border-[#D4CFC7] font-bold uppercase tracking-wider">{{ __('credits.type.' . $e->type) }}</span>
                                     </td>
-                                    <td class="px-5 py-4 text-[#6B665E] max-w-xs truncate">{{ $e->notes ?? 'Non renseigné' }}</td>
+                                    <td class="px-5 py-4 text-[#6B665E] max-w-xs truncate">{{ $e->notes ?? __('Non renseigné') }}</td>
                                     <td @class([
-                                        'px-5 py-4 text-right font-bold font-serif whitespace-nowrap',
+                                        'px-5 py-4 text-end font-bold font-serif whitespace-nowrap',
                                         'text-green-600' => $e->delta > 0,
                                         'text-[#A84936]' => $e->delta < 0,
                                         'text-[#6B665E]' => $e->delta === 0,
                                     ])>
                                         {{ $e->delta > 0 ? '+' : '' }}{{ $e->delta }}
                                     </td>
-                                    <td class="px-5 py-4 text-right text-[#1A1A1A] font-medium whitespace-nowrap">{{ $e->balance_after }}</td>
+                                    <td class="px-5 py-4 text-end text-[#1A1A1A] font-medium whitespace-nowrap">{{ $e->balance_after }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

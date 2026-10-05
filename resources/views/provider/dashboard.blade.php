@@ -67,10 +67,10 @@
         @if (isset($recentLeads) && count($recentLeads) > 0)
             <section>
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="text-[10px] font-bold tracking-widest text-[#9A958D] uppercase">Demandes récentes</span>
+                    <span class="text-[10px] font-bold tracking-widest text-[#9A958D] uppercase">{{ __('Demandes récentes') }}</span>
                     <div class="h-px flex-1 bg-[#D4CFC7]/40"></div>
                     <a href="{{ route('provider.leads.index') }}" class="text-sm text-[#C8956C] font-semibold hover:underline whitespace-nowrap flex items-center gap-1">
-                        Voir toutes les demandes <x-z.icon name="arrow_forward" class="text-sm" />
+                        {{ __('Voir toutes les demandes') }} <x-z.icon name="arrow_forward" class="text-sm rtl:-scale-x-100" />
                     </a>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

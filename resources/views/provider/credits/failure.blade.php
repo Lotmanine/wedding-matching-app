@@ -19,7 +19,7 @@
                 </div>
             @endif
 
-            <ul class="text-sm text-[#6B665E] text-left space-y-2 bg-[#F0D9B5]/20 border border-[#C8956C]/20 rounded-xl p-4">
+            <ul class="text-sm text-[#6B665E] text-start space-y-2 bg-[#F0D9B5]/20 border border-[#C8956C]/20 rounded-xl p-4">
                 @foreach (__('credits.failure_tips') as $tip)
                     <li class="flex items-start gap-2"><x-z.icon name="check" class="text-[#C8956C] text-base shrink-0 mt-0.5" />{{ $tip }}</li>
                 @endforeach

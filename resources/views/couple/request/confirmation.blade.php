@@ -41,7 +41,7 @@
                 $steps = [
                     __('form.confirm_step_1', [
                         'per_round' => (int) config('zawaj.matching.providers_per_round', 3),
-                        'hours'     => max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60)),
+                        'hours'     => \App\Support\LocaleCount::hours(max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60))),
                     ]),
                     __('form.confirm_step_2'),
                     __('form.confirm_step_3'),

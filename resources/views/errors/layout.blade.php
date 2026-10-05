@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,9 +7,11 @@
     <style>
         /* Self-hosted fonts — error pages are standalone (no Vite bundle),
            so we declare the two faces they use directly. No network needed. */
-        @font-face { font-family:'Plus Jakarta Sans'; font-style:normal; font-weight:300 700; font-display:swap; src:url('/fonts/plus-jakarta-sans-400-normal-latin.woff2') format('woff2'); }
-        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:400; font-display:swap; src:url('/fonts/noto-serif-400-normal-latin.woff2') format('woff2'); }
-        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:700; font-display:swap; src:url('/fonts/noto-serif-700-normal-latin.woff2') format('woff2'); }
+        @font-face { font-family:'Plus Jakarta Sans'; font-style:normal; font-weight:300 700; font-display:swap; src:url('/fonts/plus-jakarta-sans-400-normal-latin.woff2') format('woff2'); unicode-range:U+0000-024F,U+2000-206F,U+20AC; }
+        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:400; font-display:swap; src:url('/fonts/noto-serif-400-normal-latin.woff2') format('woff2'); unicode-range:U+0000-024F,U+2000-206F,U+20AC; }
+        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:700; font-display:swap; src:url('/fonts/noto-serif-700-normal-latin.woff2') format('woff2'); unicode-range:U+0000-024F,U+2000-206F,U+20AC; }
+        @font-face { font-family:'Plus Jakarta Sans'; font-style:normal; font-weight:100 900; font-display:swap; src:url('/fonts/noto-sans-arabic-arabic-wght-normal.woff2') format('woff2'); unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFC; }
+        @font-face { font-family:'Noto Serif'; font-style:normal; font-weight:400 700; font-display:swap; src:url('/fonts/noto-naskh-arabic-arabic-wght-normal.woff2') format('woff2'); unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFC; }
         :root { --ink:#1A1A1A; --clay:#C8956C; --bg:#FDFAF6; --muted:#6B665E; --faint:#9A958D; --outline:#D4CFC7; }
         * { box-sizing: border-box; }
         body {
@@ -43,8 +45,8 @@
         <p class="code">@yield('code')</p>
         <h1>@yield('title')</h1>
         <p>@yield('message')</p>
-        <a class="btn" href="{{ url('/') }}">Retour à l'accueil</a>
-        <p class="brand">Zawaj Pro · Algérie</p>
+        <a class="btn" href="{{ url('/') }}">{{ __("Retour à l'accueil") }}</a>
+        <p class="brand">{{ __('Zawaj Pro · Algérie') }}</p>
     </div>
 </body>
 </html>

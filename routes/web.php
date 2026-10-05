@@ -28,10 +28,17 @@ use App\Http\Controllers\Provider\ProviderPasswordResetController;
 use App\Http\Controllers\Provider\ProviderProfileController;
 use App\Http\Controllers\Provider\ProviderRegistrationController;
 use App\Http\Controllers\Webhooks\ChargilyWebhookController;
+use App\Http\Middleware\SetLocale;
 use App\Models\UnlockPack;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'))->name('home');
+
+// FR / AR switch: remembers the language for a year and returns to the page.
+Route::get('/lang/{locale}', function (string $locale) {
+    return redirect()->back(fallback: route('home'))
+        ->withCookie(cookie(SetLocale::COOKIE, $locale, 60 * 24 * 365));
+})->whereIn('locale', SetLocale::SUPPORTED)->name('locale.switch');
 
 Route::get('/demande', [CoupleRequestController::class, 'create'])
     ->name('couple.request.create');

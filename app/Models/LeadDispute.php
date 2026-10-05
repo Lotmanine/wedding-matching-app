@@ -48,10 +48,10 @@ class LeadDispute extends Model
     public function reasonLabel(): string
     {
         return match ($this->reason) {
-            'wrong_number' => 'Numéro erroné / injoignable',
-            'no_response'  => 'Aucune réponse du couple',
-            'fake'         => 'Demande factice / spam',
-            default        => 'Autre',
+            'wrong_number' => __('Numéro erroné / injoignable'),
+            'no_response'  => __('Aucune réponse du couple'),
+            'fake'         => __('Demande factice / spam'),
+            default        => __('Autre'),
         };
     }
 
