@@ -132,6 +132,8 @@ class ProviderController extends Controller
         }
 
         $payload = array_merge([
+            // How many providers n8n should put in a round (set in /admin/settings).
+            'providers_per_round' => (int) config('zawaj.matching.providers_per_round', 3),
             'service_type' => $serviceType,
             'wilaya_code'  => $wilayaCode,
             'wilaya_name'  => $wilayaIndex->get($wilayaCode)?->name_fr,

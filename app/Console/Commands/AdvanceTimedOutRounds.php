@@ -31,7 +31,7 @@ class AdvanceTimedOutRounds extends Command
                 RequestStatus::Round3->value,
             ])
             ->whereNotNull('round_started_at')
-            ->where('round_started_at', '<=', now()->subMinutes(RoundStateMachine::ROUND_TIMEOUT_MINUTES))
+            ->where('round_started_at', '<=', now()->subMinutes(RoundStateMachine::roundTimeoutMinutes()))
             ->where('expires_at', '>', now())
             ->whereNull('unlocked_by_user_id')
             ->get();

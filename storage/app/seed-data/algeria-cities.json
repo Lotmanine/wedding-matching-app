@@ -32,7 +32,7 @@
     },
     {
       "wilaya_id": 6,
-      "wilaya_name_latin": "Bejaia",
+      "wilaya_name_latin": "Béjaïa",
       "wilaya_name_arabic": "بجاية"
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "wilaya_id": 8,
-      "wilaya_name_latin": "Bechar",
+      "wilaya_name_latin": "Béchar",
       "wilaya_name_arabic": "بشار"
     },
     {
@@ -62,7 +62,7 @@
     },
     {
       "wilaya_id": 12,
-      "wilaya_name_latin": "Tebessa",
+      "wilaya_name_latin": "Tébessa",
       "wilaya_name_arabic": "تبسة"
     },
     {
@@ -97,12 +97,12 @@
     },
     {
       "wilaya_id": 19,
-      "wilaya_name_latin": "Setif",
+      "wilaya_name_latin": "Sétif",
       "wilaya_name_arabic": "سطيف"
     },
     {
       "wilaya_id": 20,
-      "wilaya_name_latin": "Saida",
+      "wilaya_name_latin": "Saïda",
       "wilaya_name_arabic": "سعيدة"
     },
     {
@@ -112,7 +112,7 @@
     },
     {
       "wilaya_id": 22,
-      "wilaya_name_latin": "Sidi Bel Abbes",
+      "wilaya_name_latin": "Sidi Bel Abbès",
       "wilaya_name_arabic": "سيدي بلعباس"
     },
     {
@@ -132,7 +132,7 @@
     },
     {
       "wilaya_id": 26,
-      "wilaya_name_latin": "Medea",
+      "wilaya_name_latin": "Médéa",
       "wilaya_name_arabic": "المدية"
     },
     {
@@ -177,7 +177,7 @@
     },
     {
       "wilaya_id": 35,
-      "wilaya_name_latin": "Boumerdes",
+      "wilaya_name_latin": "Boumerdès",
       "wilaya_name_arabic": "بومرداس"
     },
     {
@@ -222,22 +222,22 @@
     },
     {
       "wilaya_id": 44,
-      "wilaya_name_latin": "Ain Defla",
+      "wilaya_name_latin": "Aïn Defla",
       "wilaya_name_arabic": "عين الدفلى"
     },
     {
       "wilaya_id": 45,
-      "wilaya_name_latin": "Naama",
+      "wilaya_name_latin": "Naâma",
       "wilaya_name_arabic": "النعامة"
     },
     {
       "wilaya_id": 46,
-      "wilaya_name_latin": "Ain Temouchent",
+      "wilaya_name_latin": "Aïn Témouchent",
       "wilaya_name_arabic": "عين تموشنت"
     },
     {
       "wilaya_id": 47,
-      "wilaya_name_latin": "Ghardaia",
+      "wilaya_name_latin": "Ghardaïa",
       "wilaya_name_arabic": "غرداية"
     },
     {
@@ -262,7 +262,7 @@
     },
     {
       "wilaya_id": 52,
-      "wilaya_name_latin": "Beni Abbes",
+      "wilaya_name_latin": "Béni Abbès",
       "wilaya_name_arabic": "بني عباس"
     },
     {
@@ -322,7 +322,7 @@
     },
     {
       "wilaya_id": 64,
-      "wilaya_name_latin": "Bou Saada",
+      "wilaya_name_latin": "Bou Saâda",
       "wilaya_name_arabic": "بوسعادة"
     },
     {
@@ -342,7 +342,7 @@
     },
     {
       "wilaya_id": 68,
-      "wilaya_name_latin": "Ain Oussara",
+      "wilaya_name_latin": "Aïn Oussara",
       "wilaya_name_arabic": "عين وسارة"
     },
     {

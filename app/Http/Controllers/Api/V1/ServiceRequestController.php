@@ -71,7 +71,8 @@ class ServiceRequestController extends Controller
     {
         $data = $request->validate([
             'round'         => ['required', 'integer', 'between:1,3'],
-            'provider_ids'  => ['required', 'array', 'min:1', 'max:5'],
+            // 10 = the highest "providers per round" /admin/settings accepts.
+            'provider_ids'  => ['required', 'array', 'min:1', 'max:10'],
             'provider_ids.*'=> ['integer', 'exists:users,id'],
         ]);
 

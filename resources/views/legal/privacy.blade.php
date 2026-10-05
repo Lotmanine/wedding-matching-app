@@ -28,7 +28,7 @@
     </x-legal-section>
 
     <x-legal-section title="4. Durée de conservation">
-        <p><strong>Données des couples :</strong> votre demande et vos données personnelles sont supprimées automatiquement {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après l'envoi de la demande. Le prestataire qui a accepté votre demande ne voit plus vos coordonnées {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après son acceptation.</p>
+        <p><strong>Données des couples :</strong> votre demande expire {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après son envoi. Votre prénom, votre numéro WhatsApp, votre commune et votre description sont alors effacés de notre base. Si un prestataire a accepté votre demande, il conserve vos coordonnées {{ (int) config('zawaj.anpdp.retention_days', 14) }} jours après son acceptation, puis elles sont effacées à leur tour. Nous ne gardons ensuite que des données anonymes (wilaya, services demandés, tranche de budget) à des fins statistiques.</p>
         <p><strong>Données des prestataires :</strong> conservées pendant la durée du compte, puis 3 ans après sa clôture à des fins comptables.</p>
         <p><strong>Données techniques :</strong> l'adresse IP anonymisée est supprimée avec la demande ; les journaux de sécurité sont conservés aussi longtemps que la sécurité de la plateforme l'exige.</p>
     </x-legal-section>

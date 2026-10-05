@@ -58,7 +58,7 @@ Production-only (app environment = `production`):
 ## ANPDP (loi 18-07) compliance
 
 - Couple consent checkbox required at form submission
-- 14-day hard-cap retention — `zawaj:cleanup-expired` soft-deletes + cascades
+- 14-day hard-cap retention — `zawaj:cleanup-expired` soft-deletes + cascades, then erases the couple's personal data (name, WhatsApp, commune, description, IP) once no provider access window is open
 - Couple data fields never exposed via API to providers who haven't unlocked
 - Contact info blurred pre-unlock, fully revealed only to the unlocking provider
 - Admin views of couple data are audit-logged per access

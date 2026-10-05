@@ -172,6 +172,38 @@ class CoupleRequestSubmissionTest extends TestCase
         $this->assertSame(3, WedRequest::count(), '4th attempt should be blocked by rate limiter');
     }
 
+    public function test_cleanup_erases_personal_data_of_expired_requests(): void
+    {
+        $fresh = WedRequest::factory()->create(['couple_first_name' => 'Lina']);
+
+        $expired = WedRequest::factory()->create(['couple_first_name' => 'Amina', 'couple_whatsapp' => '+213661234567', 'description' => 'Texte libre']);
+        $expired->forceFill(['expires_at' => now()->subDay(), 'ip_address' => '10.0.0.0', 'user_agent' => 'UA'])->save();
+
+        // Accepted 3 days ago: the provider's 14-day access window is still open.
+        $stillInUse = WedRequest::factory()->create(['couple_first_name' => 'Sara']);
+        $stillInUse->forceFill(['expires_at' => now()->subDay()])->save();
+        ServiceRequest::factory()->create(['wed_request_id' => $stillInUse->id, 'service_type' => 'photo'])
+            ->forceFill(['unlocked_at' => now()->subDays(3)])->save();
+
+        Artisan::call('zawaj:cleanup-expired');
+
+        $row = WedRequest::withTrashed()->find($expired->id);
+        $this->assertSame('Supprimé', $row->couple_first_name);
+        $this->assertSame('', $row->couple_whatsapp);
+        $this->assertNull($row->description);
+        $this->assertNull($row->ip_address);
+        $this->assertNull($row->user_agent);
+        $this->assertNotNull($row->personal_data_purged_at);
+
+        $this->assertSame('Lina', WedRequest::find($fresh->id)->couple_first_name);
+        $this->assertSame('Sara', WedRequest::withTrashed()->find($stillInUse->id)->couple_first_name);
+
+        // Once the provider's window has closed, the next run erases it too.
+        $this->travel(12)->days();
+        Artisan::call('zawaj:cleanup-expired');
+        $this->assertSame('Supprimé', WedRequest::withTrashed()->find($stillInUse->id)->couple_first_name);
+    }
+
     public function test_cleanup_expired_command_soft_deletes_past_requests(): void
     {
         $fresh = WedRequest::factory()->create();

@@ -6,7 +6,10 @@ namespace App\Providers;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
+use App\Support\SettingsConfig;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +26,14 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             URL::forceScheme('https');
         }
+
+        // Values saved in /admin/settings override config/zawaj.php.
+        try {
+            SettingsConfig::apply();
+        } catch (\Throwable) {
+            // Database not reachable yet (first deploy, config:cache…): keep defaults.
+        }
+        Event::listen(JobProcessing::class, fn () => SettingsConfig::apply());
 
         RateLimiter::for('form-submission', function (Request $request) {
             return Limit::perHour(3)->by($request->ip());

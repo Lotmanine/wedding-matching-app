@@ -4,7 +4,7 @@
 
 | Command | Frequency | Purpose |
 |---------|-----------|---------|
-| `zawaj:cleanup-expired`       | daily 03:00 Africa/Algiers | ANPDP 14-day soft-delete |
+| `zawaj:cleanup-expired`       | daily 03:00 Africa/Algiers | ANPDP: expires requests, then erases the couple's personal data |
 | `zawaj:advance-rounds`        | every 5 min | Round timeout → next round / marketplace |
 | `zawaj:cleanup-orphan-uploads`| hourly | Remove provider files whose User was deleted + stale temp uploads |
 

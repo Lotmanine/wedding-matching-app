@@ -12,7 +12,14 @@ use App\Models\User;
 
 class RoundStateMachine
 {
+    /** Default only: the effective value is roundTimeoutMinutes(). */
     public const ROUND_TIMEOUT_MINUTES = 120;
+
+    /** Round duration, as set in /admin/settings (falls back to the default). */
+    public static function roundTimeoutMinutes(): int
+    {
+        return max(1, (int) config('zawaj.matching.round_timeout_minutes', self::ROUND_TIMEOUT_MINUTES));
+    }
 
     /**
      * Start a specific round with the given provider IDs.
@@ -78,7 +85,7 @@ class RoundStateMachine
         // future expiry, otherwise a manually-assigned (often older) request
         // would already be past its expires_at and stay invisible.
         if ($sr->expires_at === null || $sr->expires_at->isPast()) {
-            $sr->expires_at = now()->addMinutes(self::ROUND_TIMEOUT_MINUTES);
+            $sr->expires_at = now()->addMinutes(self::roundTimeoutMinutes());
         }
         $sr->setAttribute("round_{$round}_provider_ids", $roundIds);
         $sr->all_notified_provider_ids = $allIds;
@@ -157,6 +164,6 @@ class RoundStateMachine
             return false;
         }
 
-        return $sr->round_started_at->copy()->addMinutes(self::ROUND_TIMEOUT_MINUTES)->isPast();
+        return $sr->round_started_at->copy()->addMinutes(self::roundTimeoutMinutes())->isPast();
     }
 }

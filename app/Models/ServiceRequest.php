@@ -68,7 +68,7 @@ class ServiceRequest extends Model
                 }
             }
             if (empty($sr->expires_at)) {
-                $sr->expires_at = now()->addDays(14);
+                $sr->expires_at = now()->addDays((int) config('zawaj.anpdp.retention_days', 14));
             }
         });
     }
@@ -201,7 +201,7 @@ class ServiceRequest extends Model
             RequestStatus::Round2->value,
             RequestStatus::Round3->value,
         ])->whereNotNull('round_started_at')
-          ->where('round_started_at', '<=', now()->subHours(2));
+          ->where('round_started_at', '<=', now()->subMinutes(\App\Services\Matching\RoundStateMachine::roundTimeoutMinutes()));
     }
 
     public function isLocked(): bool

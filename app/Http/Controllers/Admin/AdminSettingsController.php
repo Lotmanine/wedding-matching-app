@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Services\AuditLogger;
+use App\Support\SettingsConfig;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -49,6 +50,8 @@ class AdminSettingsController extends Controller
         if ($request->exists('feedback_alert_email')) {
             Setting::set('feedback.alert_email', (string) ($validated['feedback_alert_email'] ?? ''), 'string');
         }
+
+        SettingsConfig::apply();
 
         $this->audit->log('settings.update', null, $validated);
 

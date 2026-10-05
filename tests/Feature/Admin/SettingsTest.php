@@ -70,6 +70,30 @@ class SettingsTest extends TestCase
         $this->assertSame('', Setting::get('feedback.alert_email'));
     }
 
+    public function test_saved_settings_actually_drive_the_application(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $admin->assignRole('admin');
+
+        $this->actingAs($admin)->put(route('admin.settings.update'), [
+            'credits_unlock_cost'            => 2,
+            'matching_round_timeout_minutes' => 180,
+            'matching_providers_per_round'   => 4,
+            'anpdp_retention_days'           => 21,
+        ])->assertRedirect();
+
+        $this->assertSame(2, config('zawaj.credits.unlock_cost'));
+        $this->assertSame(180, config('zawaj.matching.round_timeout_minutes'));
+        $this->assertSame(4, config('zawaj.matching.providers_per_round'));
+        $this->assertSame(21, config('zawaj.anpdp.retention_days'));
+        $this->assertSame(180, \App\Services\Matching\RoundStateMachine::roundTimeoutMinutes());
+
+        // A new request is valid for the configured number of days.
+        $this->seed(\Database\Seeders\WilayaSeeder::class);
+        $wr = \App\Models\WedRequest::factory()->create(['couple_wilaya_code' => '16']);
+        $this->assertEqualsWithDelta(21, now()->diffInDays($wr->expires_at), 0.01);
+    }
+
     public function test_settings_get_falls_back_to_default(): void
     {
         $this->assertSame('def', Setting::get('does.not.exist', 'def'));

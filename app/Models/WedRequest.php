@@ -59,7 +59,7 @@ class WedRequest extends Model
                 $wr->wed_uid = self::generateUid();
             }
             if (empty($wr->expires_at)) {
-                $wr->expires_at = now()->addDays(14);
+                $wr->expires_at = now()->addDays((int) config('zawaj.anpdp.retention_days', 14));
             }
         });
 
