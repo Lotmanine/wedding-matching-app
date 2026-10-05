@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
 use App\Models\Feedback;
+use App\Models\Setting;
 use App\Models\User;
 use App\Support\Logger;
 use Illuminate\Http\RedirectResponse;
@@ -16,8 +17,8 @@ use Illuminate\View\View;
 
 /**
  * Lets a logged-in provider send the team a subject + message (bug report,
- * remark, suggestion). Stored for the /admin/feedback inbox, then every
- * admin is alerted by email.
+ * remark, suggestion). Stored for the /admin/feedback inbox, then the alert
+ * address configured in /admin/settings is emailed.
  */
 class FeedbackController extends Controller
 {
@@ -41,20 +42,21 @@ class FeedbackController extends Controller
             'message' => trim($validated['message']),
         ]);
 
-        $this->alertAdmins($feedback, $user);
+        $this->sendAlert($feedback, $user);
 
         return redirect()->route('provider.feedback.create')
             ->with('status', 'Merci, votre message a bien été envoyé. Notre équipe le lira rapidement.');
     }
 
     /**
-     * The message is already saved: a mail failure must never surface to the
-     * provider nor lose the feedback, so it is only logged.
+     * Emails the alert address set in /admin/settings (feedback.alert_email);
+     * no address, no email. The message is already saved: a mail failure must
+     * never surface to the provider nor lose the feedback, so it is only logged.
      */
-    private function alertAdmins(Feedback $feedback, User $author): void
+    private function sendAlert(Feedback $feedback, User $author): void
     {
-        $recipients = User::role('admin')->pluck('email')->filter()->unique()->values()->all();
-        if ($recipients === []) {
+        $recipient = trim((string) Setting::get('feedback.alert_email', ''));
+        if ($recipient === '') {
             return;
         }
 
@@ -67,7 +69,7 @@ class FeedbackController extends Controller
             . 'Boîte de réception : ' . route('admin.feedback.index');
 
         try {
-            Mail::raw($body, fn ($m) => $m->to($recipients)->subject('[Zawaj Pro] Feedback : ' . $feedback->subject));
+            Mail::raw($body, fn ($m) => $m->to($recipient)->subject('[Zawaj Pro] Feedback : ' . $feedback->subject));
         } catch (\Throwable $e) {
             Logger::warning('feedback.alert_email_failed', [
                 'feedback_id' => $feedback->id,

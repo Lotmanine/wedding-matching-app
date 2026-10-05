@@ -43,6 +43,33 @@ class SettingsTest extends TestCase
         $this->assertSame(2, Setting::get('credits.unlock_cost'));
     }
 
+    public function test_feedback_alert_email_can_be_saved_cleared_and_is_validated(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $admin->assignRole('admin');
+
+        $numbers = [
+            'credits_unlock_cost'            => 1,
+            'matching_round_timeout_minutes' => 120,
+            'matching_providers_per_round'   => 3,
+            'anpdp_retention_days'           => 14,
+        ];
+
+        $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => 'alerts@zawajpro.dz'])
+            ->assertRedirect()->assertSessionHasNoErrors();
+        $this->assertSame('alerts@zawajpro.dz', Setting::get('feedback.alert_email'));
+
+        $this->actingAs($admin)->get(route('admin.settings.index'))->assertOk()->assertSee('alerts@zawajpro.dz');
+
+        $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => 'not-an-email'])
+            ->assertSessionHasErrors('feedback_alert_email');
+        $this->assertSame('alerts@zawajpro.dz', Setting::get('feedback.alert_email'));
+
+        $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => ''])
+            ->assertRedirect()->assertSessionHasNoErrors();
+        $this->assertSame('', Setting::get('feedback.alert_email'));
+    }
+
     public function test_settings_get_falls_back_to_default(): void
     {
         $this->assertSame('def', Setting::get('does.not.exist', 'def'));

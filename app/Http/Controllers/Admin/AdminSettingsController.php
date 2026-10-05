@@ -38,10 +38,16 @@ class AdminSettingsController extends Controller
             'matching_round_timeout_minutes' => ['required', 'integer', 'min:10'],
             'matching_providers_per_round'   => ['required', 'integer', 'min:1', 'max:10'],
             'anpdp_retention_days'           => ['required', 'integer', 'min:1', 'max:365'],
+            'feedback_alert_email'           => ['nullable', 'email', 'max:255'],
         ]);
 
-        foreach ($validated as $flat => $value) {
-            Setting::set($mapping[$flat], (string) $value, 'int');
+        foreach ($mapping as $flat => $key) {
+            Setting::set($key, (string) $validated[$flat], 'int');
+        }
+
+        // Address emailed each time a provider sends feedback. Empty = no email.
+        if ($request->exists('feedback_alert_email')) {
+            Setting::set('feedback.alert_email', (string) ($validated['feedback_alert_email'] ?? ''), 'string');
         }
 
         $this->audit->log('settings.update', null, $validated);

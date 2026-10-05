@@ -6,6 +6,7 @@ namespace Tests\Feature\Provider;
 
 use App\Models\AuditLog;
 use App\Models\Feedback;
+use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -53,10 +54,10 @@ class FeedbackTest extends TestCase
             ->assertSee('Feedback');
     }
 
-    public function test_provider_can_send_feedback_and_admins_are_emailed(): void
+    public function test_provider_can_send_feedback_and_the_alert_address_is_emailed(): void
     {
+        Setting::set('feedback.alert_email', 'alerts@zawajpro.dz');
         $this->userWithRole('admin', ['email' => 'boss@zawajpro.dz']);
-        $this->userWithRole('manager', ['email' => 'ops@zawajpro.dz']);
         $provider = $this->userWithRole('provider');
 
         $this->actingAs($provider)->post(route('provider.feedback.store'), [
@@ -72,9 +73,22 @@ class FeedbackTest extends TestCase
         $mails = $this->sentMails();
         $this->assertCount(1, $mails);
         $email = $mails->first()->getOriginalMessage();
-        $this->assertSame(['boss@zawajpro.dz'], array_map(fn ($a) => $a->getAddress(), $email->getTo()));
+        $this->assertSame(['alerts@zawajpro.dz'], array_map(fn ($a) => $a->getAddress(), $email->getTo()));
         $this->assertStringContainsString('Bouton cassé', $email->getSubject());
         $this->assertStringContainsString('Le bouton Accepter ne répond pas.', $email->getTextBody());
+    }
+
+    public function test_feedback_is_stored_but_not_emailed_when_no_alert_address_is_set(): void
+    {
+        $this->userWithRole('admin', ['email' => 'boss@zawajpro.dz']);
+
+        $this->actingAs($this->userWithRole('provider'))->post(route('provider.feedback.store'), [
+            'subject' => 'Sans alerte',
+            'message' => 'Aucune adresse configurée.',
+        ])->assertRedirect(route('provider.feedback.create'))->assertSessionHas('status');
+
+        $this->assertSame(1, Feedback::count());
+        $this->assertCount(0, $this->sentMails());
     }
 
     public function test_subject_and_message_are_required(): void

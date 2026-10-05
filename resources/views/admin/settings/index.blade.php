@@ -32,6 +32,15 @@
                 </div>
             @endforeach
 
+            <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-5">
+                <label class="block font-semibold text-sm text-[#1A1A1A]" for="setting-feedback_alert_email">E-mail d'alerte feedback</label>
+                <p class="text-xs text-[#9A958D] mt-0.5 font-mono">feedback.alert_email</p>
+                <p class="text-xs text-[#9A958D] mt-1 mb-3">Adresse qui reçoit un e-mail à chaque feedback envoyé par un prestataire. Laissez vide pour ne rien envoyer.</p>
+                <input type="email" id="setting-feedback_alert_email" name="feedback_alert_email"
+                       value="{{ old('feedback_alert_email', $settings->get('feedback.alert_email')?->value ?? '') }}" placeholder="vous@exemple.com"
+                       class="w-full px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
+            </div>
+
             <div class="flex justify-end pt-2">
                 <x-z.btn type="submit" variant="accent">{{ __('admin.settings.save_btn') }}</x-z.btn>
             </div>
