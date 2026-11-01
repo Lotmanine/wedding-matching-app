@@ -204,7 +204,7 @@
                             <select
                                 id="couple_city_code"
                                 wire:model.live="couple_city_code"
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] bg-no-repeat pe-11"
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pe-11"
                                 required
                             >
                                 <option value="">{{ __('form.placeholder_city') }}</option>
@@ -217,13 +217,13 @@
 
                         <div>
                             <label for="couple_district" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_district') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif)') }}</span>
+                                {{ __('form.label_district') }} <span class="text-[#9A958D] font-normal">{{ __('(optional)') }}</span>
                             </label>
                             <select
                                 id="couple_district"
                                 wire:model="couple_district"
                                 @disabled($couple_city_code === '')
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] bg-no-repeat pe-11 disabled:bg-[#F7F4F0] disabled:text-[#9A958D] disabled:cursor-not-allowed"
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pe-11 disabled:bg-[#F7F4F0] disabled:text-[#9A958D] disabled:cursor-not-allowed"
                             >
                                 <option value="">{{ __('form.placeholder_district') }}</option>
                                 @foreach ($this->availableDistricts as $c)
@@ -266,7 +266,7 @@
                                 <select
                                     id="guest_count"
                                     wire:model="guest_count"
-                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] bg-no-repeat pe-11"
+                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] bg-[right_0.9rem_center] bg-no-repeat pe-11"
                                     required
                                 >
                                     <option value="">{{ __('form.placeholder_guest_count') }}</option>
@@ -369,7 +369,7 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                                 <div><span class="text-[#9A958D]">{{ __('form.review_couple') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]">({{ $couple_whatsapp ?: __('form.review_none') }})</span></div>
-                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $cityRow?->name ?? __('form.review_none') }}</strong>{{ $couple_district ? __(', ') . $couple_district : '' }}</div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $cityRow?->name ?? __('form.review_none') }}</strong>{{ $couple_district ? ', ' . $couple_district : '' }}</div>
                                 <div>
                                     <span class="text-[#9A958D]">{{ $guest_count ? __('form.review_date_guests') : __('form.review_date') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span>
                                     @if ($wedding_date)
@@ -384,14 +384,19 @@
                                     @endif
                                 </div>
                                 <div><span class="text-[#9A958D]">{{ __('form.review_budget') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
-                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
+                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(', ', $serviceLabels) : __('form.review_none') }}</strong></div>
                                 @if ($description)
-                                    <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <em class="text-[#6B665E]">« {{ $description }} »</em></div>
+                                    <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <em class="text-[#6B665E]">{{ app()->getLocale() === 'fr' ? '« ' . $description . ' »' : '“' . $description . '”' }}</em></div>
                                 @endif
                             </div>
                         </section>
 
-                        {{-- ANPDP consent --}}
+                        {{-- Demo notice, then consent --}}
+                        <p class="flex items-start gap-2 rounded-xl border border-[#C8956C]/30 bg-[#F0D9B5]/30 p-4 text-xs sm:text-sm font-semibold text-[#7A5530]">
+                            <x-z.icon name="info" :filled="true" class="text-base shrink-0 mt-0.5" />
+                            <span>{{ __('form.demo_notice') }}</span>
+                        </p>
+
                         <label @class([
                             'flex items-start gap-3 rounded-xl border p-5 cursor-pointer transition',
                             'border-[#C8956C] bg-[#F0D9B5]/40' => $acceptTerms,

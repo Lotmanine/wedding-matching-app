@@ -109,9 +109,9 @@ class AdminUsersController extends Controller
             'email' => $validated['email'],
         ]);
 
-        $message = "Utilisateur {$user->email} créé ({$validated['role']}).";
+        $message = __('User :email created (:role).', ['email' => $user->email, 'role' => $validated['role']]);
         if ($generated !== null) {
-            $message .= " Mot de passe généré : {$generated} — transmettez-le maintenant, il ne sera plus affiché.";
+            $message .= ' ' . __('Generated password: :password. Pass it on now, it will not be shown again.', ['password' => $generated]);
         }
 
         return redirect()->route('admin.users.show', $user->id)->with('status', $message);

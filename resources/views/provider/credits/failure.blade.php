@@ -39,7 +39,7 @@
                 <x-z.btn :href="route('provider.credits.index')" variant="accent" size="lg" class="flex-1 justify-center">
                     {{ __('credits.failure_retry') }}
                 </x-z.btn>
-                <x-z.btn href="mailto:support@zawajpro.dz" variant="outline" size="lg" class="flex-1 justify-center">
+                <x-z.btn :href="route('provider.feedback.create')" variant="outline" size="lg" class="flex-1 justify-center">
                     {{ __('credits.failure_contact') }}
                 </x-z.btn>
             </div>

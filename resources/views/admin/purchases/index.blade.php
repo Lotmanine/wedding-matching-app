@@ -8,12 +8,12 @@
 
         <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
             <select name="status" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
-                <option value="all" @selected($status === 'all')>Tous</option>
+                <option value="all" @selected($status === 'all')>{{ __('All') }}</option>
                 @foreach (['pending', 'paid', 'failed', 'cancelled'] as $s)
                     <option value="{{ $s }}" @selected($status === $s)>{{ $s }}</option>
                 @endforeach
             </select>
-            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">Filtrer</x-z.btn>
+            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">{{ __('Filter') }}</x-z.btn>
         </form>
 
         <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm overflow-hidden">
@@ -51,7 +51,7 @@
                                 <td class="px-5 py-4 text-xs text-[#9A958D]">{{ $p->created_at?->diffForHumans() }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="p-6 text-center text-[#9A958D] text-sm">Aucun achat.</td></tr>
+                            <tr><td colspan="6" class="p-6 text-center text-[#9A958D] text-sm">{{ __('No purchases.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

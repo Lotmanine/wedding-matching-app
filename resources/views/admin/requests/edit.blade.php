@@ -8,8 +8,8 @@
             </a>
         </nav>
 
-        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-1">Modifier la demande</h1>
-        <p class="text-sm text-[#6B665E] mb-6">Corrigez les informations du couple ou ajustez les critères de la demande.</p>
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-1">{{ __('Edit request') }}</h1>
+        <p class="text-sm text-[#6B665E] mb-6">{{ __("Correct the couple's details or adjust the request criteria.") }}</p>
 
         @if ($errors->any())
             <div class="mb-5 p-3 rounded-lg bg-red-50 border border-red-100 text-[#A84936] text-sm">
@@ -28,15 +28,15 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Prénom du couple</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __("Couple's first name") }}</label>
                     <input type="text" name="couple_first_name" value="{{ old('couple_first_name', $wr->couple_first_name) }}" required class="{{ $inputClass }}" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Numéro WhatsApp</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('WhatsApp number') }}</label>
                     <input type="text" name="couple_whatsapp" value="{{ old('couple_whatsapp', $wr->couple_whatsapp) }}" required placeholder="+12125550123" class="{{ $inputClass }}" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Wilaya</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('City') }}</label>
                     <select name="couple_city_code" required class="{{ $inputClass }}">
                         @foreach ($cities as $w)
                             <option value="{{ $w->code }}" @selected(old('couple_city_code', $wr->couple_city_code) === $w->code)>{{ $w->code }} · {{ $w->name }}</option>
@@ -44,35 +44,35 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Commune <span class="text-[#9A958D] font-normal">(facultatif)</span></label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('District') }} <span class="text-[#9A958D] font-normal">{{ __('(optional)') }}</span></label>
                     <input type="text" name="couple_district" value="{{ old('couple_district', $wr->couple_district) }}" class="{{ $inputClass }}" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Date du mariage</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Wedding date') }}</label>
                     <input type="date" name="wedding_date" value="{{ old('wedding_date', $wr->wedding_date?->format('Y-m-d')) }}" class="{{ $inputClass }}" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Saison</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Season') }}</label>
                     <select name="wedding_season" class="{{ $inputClass }}">
-                        <option value="">Aucune</option>
+                        <option value="">{{ __('No season') }}</option>
                         @foreach (\App\Models\WedRequest::SEASONS as $s)
                             <option value="{{ $s }}" @selected(old('wedding_season', $wr->wedding_season) === $s)>{{ \App\Models\WedRequest::labelForSeason($s) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Nombre d'invités</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Number of guests') }}</label>
                     <select name="guest_count" class="{{ $inputClass }}">
-                        <option value="">Non renseigné</option>
+                        <option value="">{{ __('Not specified') }}</option>
                         @foreach ($guestCounts as $g)
                             <option value="{{ $g->value }}" @selected(old('guest_count', $wr->guest_count?->value) === $g->value)>{{ $g->label() }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Budget</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Budget') }}</label>
                     <select name="budget_range" class="{{ $inputClass }}">
-                        <option value="">Non renseigné</option>
+                        <option value="">{{ __('Not specified') }}</option>
                         @foreach ($budgetRanges as $b)
                             <option value="{{ $b->value }}" @selected(old('budget_range', $wr->budget_range?->value) === $b->value)>{{ $b->label($wr->currency()) }}</option>
                         @endforeach
@@ -81,14 +81,14 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Description</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Description') }}</label>
                 <textarea name="description" rows="3" maxlength="500" class="{{ $inputClass }} resize-none">{{ old('description', $wr->description) }}</textarea>
             </div>
 
-            {{-- Services (sync children: ajout = nouvelle sous-demande, retrait = suppression douce) --}}
+            {{-- Services (sync children: added = new sub-request, removed = soft delete) --}}
             <fieldset class="pt-4 border-t border-[#D4CFC7]/40">
-                <legend class="text-sm font-semibold text-[#1A1A1A] mb-1">Prestataires recherchés <span class="text-[#C8956C]">*</span></legend>
-                <p class="text-xs text-[#9A958D] mb-3">Ajouter un service crée une nouvelle sous-demande (statut « new »). Retirer un service supprime sa sous-demande (impossible si elle a déjà été acceptée).</p>
+                <legend class="text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('Providers wanted') }} <span class="text-[#C8956C]">*</span></legend>
+                <p class="text-xs text-[#9A958D] mb-3">{{ __('Adding a service creates a new sub-request (status: new). Removing a service deletes its sub-request (not possible once it has been accepted).') }}</p>
                 @php $currentServices = old('services_needed', (array) $wr->services_needed); @endphp
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     @foreach ($serviceTypes as $svc)
@@ -118,7 +118,7 @@
             {{-- Status + expiration --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#D4CFC7]/40">
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Statut de la demande <span class="text-[#C8956C]">*</span></label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Request status') }} <span class="text-[#C8956C]">*</span></label>
                     <select name="status" required class="{{ $inputClass }}">
                         @foreach ($statuses as $st)
                             <option value="{{ $st }}" @selected(old('status', $wr->status?->value ?? $wr->status) === $st)>{{ $st }}</option>
@@ -126,14 +126,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Expiration <span class="text-[#9A958D] font-normal">(vide = inchangée)</span></label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('Expiration') }} <span class="text-[#9A958D] font-normal">{{ __('(empty = unchanged)') }}</span></label>
                     <input type="datetime-local" name="expires_at" value="{{ old('expires_at', $wr->expires_at?->format('Y-m-d\TH:i')) }}" class="{{ $inputClass }}" />
                 </div>
             </div>
 
             <div class="flex items-center justify-end gap-3 pt-2">
-                <a href="{{ route('admin.requests.show', $wr->wed_uid) }}" class="text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors">Annuler</a>
-                <x-z.btn type="submit" variant="accent">Enregistrer</x-z.btn>
+                <a href="{{ route('admin.requests.show', $wr->wed_uid) }}" class="text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors">{{ __('Cancel') }}</a>
+                <x-z.btn type="submit" variant="accent">{{ __('Save') }}</x-z.btn>
             </div>
         </form>
     </div>

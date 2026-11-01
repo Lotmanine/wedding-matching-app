@@ -29,7 +29,7 @@ class CoupleRequestSubmissionTest extends TestCase
 
     public function test_form_renders_at_demande_route(): void
     {
-        $response = $this->get('/demande');
+        $response = $this->get('/request');
 
         $response->assertOk();
         $response->assertSeeLivewire(CoupleRequestForm::class);
@@ -70,22 +70,22 @@ class CoupleRequestSubmissionTest extends TestCase
 
         $this->get(route('couple.request.confirmation', ['wedUid' => $wr->wed_uid]))
             ->assertOk()
-            ->assertSee('Demande acceptée')
-            ->assertSee('Recherche en cours')
-            ->assertSee('Recherche élargie')
-            ->assertSee('Chacun a 2 heures pour répondre', false);
+            ->assertSee('Request accepted')
+            ->assertSee('Search in progress')
+            ->assertSee('Wider search')
+            ->assertSee('Each has 2 hours to respond', false);
     }
 
     public function test_public_pages_render_without_invented_figures(): void
     {
-        foreach (['/', '/devenir-prestataire', '/conditions-utilisation', '/confidentialite'] as $url) {
+        foreach (['/', '/for-providers', '/terms', '/privacy'] as $url) {
             $this->get($url)->assertOk()
                 ->assertDontSee('2 000+')
                 ->assertDontSee('69 cities')
                 ->assertDontSee('Témoignages');
         }
 
-        $this->get('/')->assertSee('Disponible à');
+        $this->get('/')->assertSee('Available in');
     }
 
     public function test_successful_submission_creates_wed_request_with_service_requests(): void
@@ -188,7 +188,7 @@ class CoupleRequestSubmissionTest extends TestCase
         Artisan::call('wedding:cleanup-expired');
 
         $row = WedRequest::withTrashed()->find($expired->id);
-        $this->assertSame('Supprimé', $row->couple_first_name);
+        $this->assertSame('Deleted', $row->couple_first_name);
         $this->assertSame('', $row->couple_whatsapp);
         $this->assertNull($row->description);
         $this->assertNull($row->ip_address);
@@ -201,7 +201,7 @@ class CoupleRequestSubmissionTest extends TestCase
         // Once the provider's window has closed, the next run erases it too.
         $this->travel(12)->days();
         Artisan::call('wedding:cleanup-expired');
-        $this->assertSame('Supprimé', WedRequest::withTrashed()->find($stillInUse->id)->couple_first_name);
+        $this->assertSame('Deleted', WedRequest::withTrashed()->find($stillInUse->id)->couple_first_name);
     }
 
     public function test_cleanup_expired_command_soft_deletes_past_requests(): void

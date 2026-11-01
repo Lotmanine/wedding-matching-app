@@ -92,7 +92,7 @@ class ProviderLeadsController extends Controller
     }
 
     /**
-     * "Mes demandes acceptées" — every lead this provider unlocked. Contact
+     * Accepted requests: every lead this provider unlocked. Contact
      * details are masked once the privacy anonymization window has passed.
      */
     public function accepted(Request $request)
@@ -185,7 +185,7 @@ class ProviderLeadsController extends Controller
     }
 
     /**
-     * Flag an unlocked lead as bad (litige). One dispute per lead per
+     * Flag an unlocked lead as bad. One dispute per lead per
      * provider; an admin reviews it and refunds the credits if justified.
      */
     public function dispute(Request $request, string $serviceUid): RedirectResponse
@@ -206,7 +206,7 @@ class ProviderLeadsController extends Controller
             ->where('provider_user_id', $user->id)
             ->exists();
         if ($exists) {
-            return back()->with('error', __('Un signalement existe déjà pour cette demande.'));
+            return back()->with('error', __('A report already exists for this request.'));
         }
 
         LeadDispute::create([
@@ -216,6 +216,6 @@ class ProviderLeadsController extends Controller
             'details'            => $validated['details'] ?? null,
         ]);
 
-        return back()->with('status', __("Signalement envoyé. Notre équipe va l'examiner."));
+        return back()->with('status', __('Report sent. Our team will review it.'));
     }
 }

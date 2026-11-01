@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
-    <title>Reçu {{ $purchase->purchase_uid }}</title>
+    <title>{{ __('credits.receipt.title') }} {{ $purchase->purchase_uid }}</title>
     <style>
         body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #1A1A1A; }
         h1 { font-size: 20px; color: #1A1A1A; margin: 0 0 5px; }
@@ -18,8 +18,13 @@
     </style>
 </head>
 <body>
+    @php
+        $statusKey = 'credits.status.' . $purchase->status;
+        $statusLabel = \Illuminate\Support\Facades\Lang::has($statusKey) ? __($statusKey) : ucfirst((string) $purchase->status);
+    @endphp
+
     <div class="header">
-        <div class="brand">💍 Zawaj Pro · Algérie</div>
+        <div class="brand">{{ __('provider.brand') }}</div>
         <h1>{{ __('credits.receipt.title') }}</h1>
         <p style="font-family: monospace; color: #6b7280; font-size: 11px; margin: 4px 0;">{{ $purchase->purchase_uid }}</p>
     </div>
@@ -34,22 +39,22 @@
         </tr>
         <tr>
             <td class="label">{{ __('credits.receipt.paid_on') }}</td>
-            <td class="value">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? 'Non renseigné' }}</td>
+            <td class="value">{{ $purchase->paid_at?->isoFormat('LL, LT') ?? __('Not provided') }}</td>
         </tr>
         <tr>
             <td class="label">{{ __('credits.receipt.reference') }}</td>
-            <td style="font-family: monospace; font-size: 11px;">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? 'Non renseigné' }}</td>
+            <td style="font-family: monospace; font-size: 11px;">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Not provided') }}</td>
         </tr>
         <tr>
             <td class="label">{{ __('credits.receipt.status') }}</td>
-            <td class="value">{{ ucfirst($purchase->status) }}</td>
+            <td class="value">{{ $statusLabel }}</td>
         </tr>
     </table>
 
     <table style="margin-top: 30px;">
         <tr>
-            <td class="value">{{ $purchase->unlockPack?->name ?? 'Non renseigné' }}</td>
-            <td style="text-align: right;" class="value">{{ $purchase->unlocks_count }} {{ __('credits.receipt.unlocks') }}</td>
+            <td class="value">{{ $purchase->unlockPack?->name ? __($purchase->unlockPack->name) : __('Not provided') }}</td>
+            <td style="text-align: right;" class="value">{{ trans_choice('credits.count', (int) $purchase->unlocks_count, ['count' => (int) $purchase->unlocks_count]) }}</td>
         </tr>
         <tr class="total-row">
             <td class="value">{{ __('credits.receipt.amount') }}</td>
@@ -58,8 +63,8 @@
     </table>
 
     <p class="footer">
-        {{ __('credits.receipt.footer') }}<br>
-        Document généré le {{ now()->isoFormat('LL') }} · Zawaj Pro.
+        {{ __('credits.receipt.demo_notice') }}<br>
+        {{ __('credits.receipt.generated_on', ['date' => now()->isoFormat('LL')]) }}
     </p>
 </body>
 </html>

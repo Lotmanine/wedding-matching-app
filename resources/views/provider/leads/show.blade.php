@@ -17,11 +17,11 @@
         };
         $cityLabel = \App\Models\City::where('code', (string) $wr->couple_city_code)->value('name') ?? $wr->couple_city_code;
         $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
-        $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
+        $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Flexible date'));
         // Two different deadlines: the request itself expires on a fixed date;
         // the current round (if any) ends earlier, after which the request can
         // be offered to more providers.
-        $expiryDate = $lead->expires_at ? $lead->expires_at->isoFormat('LL') : __('Non renseigné');
+        $expiryDate = $lead->expires_at ? $lead->expires_at->isoFormat('LL') : __('Not provided');
         $roundDeadline = in_array($lead->status?->value, ['round1', 'round2', 'round3'], true) && $lead->round_started_at
             ? $lead->round_started_at->copy()->addMinutes(\App\Services\Matching\RoundStateMachine::roundTimeoutMinutes())
             : null;
@@ -59,10 +59,10 @@
                             <x-z.icon name="calendar_month" class="text-[#C8956C] text-base" />{{ $dateLine }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? __('Non renseigné') }}
+                            <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? __('Not provided') }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label($wr->currency()) ?? __('Non renseigné') }}
+                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label($wr->currency()) ?? __('Not provided') }}
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         @if ($roundDeadline)
                             <div class="mt-3 pt-3 border-t border-[#D4CFC7]/50">
                                 <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.leads.round_deadline_label') }}</p>
-                                <p class="text-sm font-bold text-[#1A1A1A]">{{ $roundDeadline->isoFormat('LL, HH:mm') }}</p>
+                                <p class="text-sm font-bold text-[#1A1A1A]">{{ $roundDeadline->isoFormat('LL, LT') }}</p>
                                 <p class="text-[11px] text-[#9A958D] mt-1 max-w-[15rem] mx-auto leading-snug">{{ __('provider.leads.round_deadline_note') }}</p>
                             </div>
                         @endif
@@ -101,7 +101,7 @@
                 @if ($wr->description)
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-2">{{ __('provider.leads.description') }}</p>
-                        <p class="text-sm text-[#1A1A1A] italic leading-relaxed">« {{ $wr->description }} »</p>
+                        <p class="text-sm text-[#1A1A1A] italic leading-relaxed">{{ __('provider.leads.quoted', ['text' => $wr->description]) }}</p>
                     </div>
                 @endif
 

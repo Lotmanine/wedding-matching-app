@@ -120,10 +120,10 @@ class WedRequest extends Model
     public static function labelForSeason(?string $season): ?string
     {
         return match ($season) {
-            'spring' => __('Printemps'),
-            'summer' => __('Été'),
-            'autumn' => __('Automne'),
-            'winter' => __('Hiver'),
+            'spring' => __('Spring'),
+            'summer' => __('Summer'),
+            'autumn' => __('Fall'),
+            'winter' => __('Winter'),
             default  => null,
         };
     }

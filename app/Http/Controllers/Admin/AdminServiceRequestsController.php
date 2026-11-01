@@ -80,11 +80,11 @@ class AdminServiceRequestsController extends Controller
         $provider = User::with('providerProfile')->findOrFail($validated['provider_id']);
 
         if (! $provider->providerProfile?->isActive()) {
-            return back()->with('error', 'Ce prestataire doit être vérifié et actif pour être assigné.');
+            return back()->with('error', __('This provider must be verified and active to be assigned.'));
         }
 
         if ($sr->unlocked_by_user_id !== null) {
-            return back()->with('error', 'Cette demande a déjà été acceptée par un prestataire.');
+            return back()->with('error', __('This request has already been accepted by a provider.'));
         }
 
         // Form values arrive as strings; the state machine is strictly typed.
@@ -98,7 +98,7 @@ class AdminServiceRequestsController extends Controller
             'round'       => $sr->current_round,
         ]);
 
-        return back()->with('status', "Demande assignée à {$provider->name} (sans notification automatique).");
+        return back()->with('status', __('Request assigned to :name (no automatic notification).', ['name' => $provider->name]));
     }
 
     /**
@@ -119,7 +119,7 @@ class AdminServiceRequestsController extends Controller
         Cache::forget('leads:open_marketplace:version');
         $this->audit->log('service_request.update_status', $sr, ['from' => $old, 'to' => $validated['status']]);
 
-        return back()->with('status', 'Statut mis à jour.');
+        return back()->with('status', __('Status updated.'));
     }
 
     /**
@@ -138,7 +138,7 @@ class AdminServiceRequestsController extends Controller
 
         $this->audit->log('service_request.update_expiry', $sr, ['expires_at' => (string) $sr->expires_at]);
 
-        return back()->with('status', 'Date d\'expiration mise à jour.');
+        return back()->with('status', __('Expiration date updated.'));
     }
 
     public function forceOpen(Request $request, string $serviceUid): RedirectResponse

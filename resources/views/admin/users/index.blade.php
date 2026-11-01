@@ -4,19 +4,19 @@
     <div class="max-w-7xl">
         <div class="mb-8 flex items-start justify-between gap-3">
             <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('admin.users.title') }}</h1>
-            <x-z.btn :href="route('admin.users.create')" variant="accent" size="sm" icon="person_add">Créer un utilisateur</x-z.btn>
+            <x-z.btn :href="route('admin.users.create')" variant="accent" size="sm" icon="person_add">{{ __('Create a user') }}</x-z.btn>
         </div>
 
         <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
-            <input type="text" name="q" value="{{ $search }}" placeholder="Rechercher…" class="flex-1 min-w-[200px] px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
+            <input type="text" name="q" value="{{ $search }}" placeholder="{{ __('Search…') }}" class="flex-1 min-w-[200px] px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
             <select name="role" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
-                <option value="all" @selected($role === 'all')>Tous</option>
-                <option value="admin" @selected($role === 'admin')>Admin</option>
-                <option value="manager" @selected($role === 'manager')>Manager</option>
-                <option value="provider" @selected($role === 'provider')>Prestataire</option>
-                <option value="couple" @selected($role === 'couple')>Couple</option>
+                <option value="all" @selected($role === 'all')>{{ __('All') }}</option>
+                <option value="admin" @selected($role === 'admin')>{{ __('admin.common.admin') }}</option>
+                <option value="manager" @selected($role === 'manager')>{{ __('Manager') }}</option>
+                <option value="provider" @selected($role === 'provider')>{{ __('admin.common.provider') }}</option>
+                <option value="couple" @selected($role === 'couple')>{{ __('Couple') }}</option>
             </select>
-            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">Filtrer</x-z.btn>
+            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">{{ __('Filter') }}</x-z.btn>
         </form>
 
         <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm overflow-hidden">
@@ -44,7 +44,7 @@
                                 <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $u->status }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="p-6 text-center text-[#9A958D] text-sm">Aucun utilisateur.</td></tr>
+                            <tr><td colspan="4" class="p-6 text-center text-[#9A958D] text-sm">{{ __('No users.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

@@ -25,6 +25,7 @@ class AuditProduction extends Command
         $this->assert('CHARGILY_MODE=live',  config('wedding.chargily.mode') === 'live');
         $this->assert('Chargily secret set', ! empty(config('wedding.chargily.secret_key')));
         $this->assert('Chargily webhook secret set', ! empty(config('wedding.chargily.webhook_secret')));
+        $this->assert('n8n webhook secret set', ! empty(config('wedding.n8n.webhook_secret')));
 
         if ($this->issues > 0) {
             $this->error("{$this->issues} production-readiness issue(s).");

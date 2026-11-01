@@ -108,8 +108,9 @@ class WebhookEventListener
     {
         // Idempotency: never re-dispatch a `purchase.completed` for a purchase whose receipt
         // has already been emailed. Defends against re-firing of CreditsGranted on retries.
+        // The public demo sends no receipts: its addresses are not real.
         $purchase = $event->purchase->fresh(['user.providerProfile', 'unlockPack']);
-        if ($purchase?->receipt_emailed_at !== null) {
+        if ($purchase?->receipt_emailed_at !== null || config('wedding.demo.enabled')) {
             return;
         }
 
@@ -130,6 +131,7 @@ class WebhookEventListener
             'preferred_language' => $preferredLanguage,
             'pack_name'          => $purchase?->unlockPack?->name,
             'amount'         => (int) $event->purchase->amount,
+            'currency'       => (string) $event->purchase->currency,
             'credits_granted'    => (int) $event->purchase->unlocks_count,
             'unlocks'            => (int) $event->purchase->unlocks_count, // backwards-compat for any older subscriber
             'completed_at'       => ($purchase?->credits_granted_at ?? $purchase?->paid_at ?? now())->toAtomString(),

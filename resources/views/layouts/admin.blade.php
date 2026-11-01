@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? __('admin.brand') . ' · Admin' }}</title>
+    <title>{{ $title ?? __('admin.brand') . ' · ' . __('admin.admin_badge') }}</title>
 
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -20,14 +20,14 @@
             ['route' => 'admin.providers.index',      'pattern' => 'admin.providers.*',       'icon' => 'storefront',    'label' => __('admin.nav.providers')],
             ['route' => 'admin.packs.index',          'pattern' => 'admin.packs.*',           'icon' => 'inventory_2',   'label' => __('admin.nav.packs'),      'admin_only' => true],
             ['route' => 'admin.purchases.index',      'pattern' => 'admin.purchases.*',       'icon' => 'payments',      'label' => __('admin.nav.purchases')],
-            ['route' => 'admin.disputes.index',       'pattern' => 'admin.disputes.*',        'icon' => 'flag',          'label' => 'Litiges'],
-            ['route' => 'admin.feedback.index',       'pattern' => 'admin.feedback.*',        'icon' => 'feedback',      'label' => 'Feedback'],
-            ['route' => 'admin.payments.edit',        'pattern' => 'admin.payments.*',        'icon' => 'account_balance','label' => 'Paiements',               'admin_only' => true],
-            ['route' => 'admin.whatsapp.edit',        'pattern' => 'admin.whatsapp.*',        'icon' => 'chat',          'label' => 'WhatsApp',                 'admin_only' => true],
-            ['route' => 'admin.catalog.edit',         'pattern' => 'admin.catalog.*',         'icon' => 'category',      'label' => 'Catalogue',                'admin_only' => true],
+            ['route' => 'admin.disputes.index',       'pattern' => 'admin.disputes.*',        'icon' => 'flag',          'label' => __('admin.nav.disputes')],
+            ['route' => 'admin.feedback.index',       'pattern' => 'admin.feedback.*',        'icon' => 'feedback',      'label' => __('admin.nav.feedback')],
+            ['route' => 'admin.payments.edit',        'pattern' => 'admin.payments.*',        'icon' => 'account_balance','label' => __('admin.nav.payments'),   'admin_only' => true],
+            ['route' => 'admin.whatsapp.edit',        'pattern' => 'admin.whatsapp.*',        'icon' => 'chat',          'label' => __('admin.nav.whatsapp'),   'admin_only' => true],
+            ['route' => 'admin.catalog.edit',         'pattern' => 'admin.catalog.*',         'icon' => 'category',      'label' => __('admin.nav.catalog'),    'admin_only' => true],
             ['route' => 'admin.users.index',          'pattern' => 'admin.users.*',           'icon' => 'group',         'label' => __('admin.nav.users'),      'admin_only' => true],
             ['route' => 'admin.logs.audit',           'pattern' => 'admin.logs.*',            'icon' => 'receipt_long',  'label' => __('admin.nav.logs'),       'admin_only' => true],
-            ['route' => 'admin.webhooks.index',       'pattern' => 'admin.webhooks.*',        'icon' => 'webhook',       'label' => 'Webhooks',                 'admin_only' => true],
+            ['route' => 'admin.webhooks.index',       'pattern' => 'admin.webhooks.*',        'icon' => 'webhook',       'label' => __('admin.nav.webhooks'),   'admin_only' => true],
             ['route' => 'admin.settings.index',       'pattern' => 'admin.settings.*',        'icon' => 'settings',      'label' => __('admin.nav.settings'),   'admin_only' => true],
         ];
 

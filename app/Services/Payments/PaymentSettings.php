@@ -11,11 +11,11 @@ use App\Models\Setting;
  * generic settings table under the `payments.*` keys. Two methods are
  * supported:
  *
- *  - online_chargily   : the existing Chargily Pay redirect flow (Edahabia / CIB).
- *  - offline_versement  : bank transfer or CCP; the provider declares a
+ *  - online_chargily   : the optional Chargily Pay card redirect flow.
+ *  - offline_versement  : bank transfer; the provider declares a
  *                         reference and an admin confirms receipt manually.
  *
- * Bank / CCP coordinates shown on the offline checkout page are also stored
+ * Bank details shown on the offline checkout page are also stored
  * here so a super-admin can edit them without touching code or .env.
  */
 class PaymentSettings
@@ -53,7 +53,7 @@ class PaymentSettings
     }
 
     /**
-     * Bank / CCP coordinates shown to the provider for an offline versement.
+     * Bank details shown to the provider for an offline bank transfer.
      *
      * @return array<string, string>
      */

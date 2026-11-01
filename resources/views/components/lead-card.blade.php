@@ -30,10 +30,10 @@
 
     $dateLine = $wr->wedding_date
         ? $wr->wedding_date->isoFormat('LL')
-        : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
+        : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Flexible date'));
 
-    $guestLabel = $wr->guest_count?->label() ?? __('Non renseigné');
-    $budgetLabel = $wr->budget_range?->label($wr->currency()) ?? __('Non renseigné');
+    $guestLabel = $wr->guest_count?->label() ?? __('Not provided');
+    $budgetLabel = $wr->budget_range?->label($wr->currency()) ?? __('Not provided');
 
     $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
     $excerpt = $wr->description ? \Illuminate\Support\Str::limit($wr->description, 120) : '';
@@ -68,7 +68,7 @@
     </div>
 
     @if ($excerpt !== '')
-        <p class="text-sm text-[#9A958D] italic border-t border-[#D4CFC7]/30 pt-3 leading-relaxed">« {{ $excerpt }} »</p>
+        <p class="text-sm text-[#9A958D] italic border-t border-[#D4CFC7]/30 pt-3 leading-relaxed">{{ __('provider.leads.quoted', ['text' => $excerpt]) }}</p>
     @endif
 
     <div class="flex items-center justify-between pt-3 border-t border-[#D4CFC7]/30 text-xs text-[#9A958D]">

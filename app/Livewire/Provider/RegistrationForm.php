@@ -29,7 +29,7 @@ class RegistrationForm extends Component
 
     public int $step = 1;
 
-    // Step 1 — Compte
+    // Step 1 — Account
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
@@ -39,7 +39,7 @@ class RegistrationForm extends Component
     public bool $accept_terms = false;
     public bool $accept_privacy = false;
 
-    // Step 2 — Entreprise
+    // Step 2 — Business
     public string $business_name = '';
     public string $business_type = '';
     public ?string $trade_register = null;
@@ -57,7 +57,7 @@ class RegistrationForm extends Component
     /** @var string[] */
     public array $services = [];
 
-    // Step 4 — Couverture
+    // Step 4 — Coverage
     /** @var string[] */
     public array $coverage_cities = [];
 

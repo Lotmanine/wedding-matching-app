@@ -17,9 +17,13 @@ class N8nWebhookController extends Controller
 
     public function error(Request $request): JsonResponse
     {
-        // Guard the public endpoint with a shared secret when configured, so an
-        // anonymous caller can't pollute the audit log or trip ops alerts.
+        // Guard the public endpoint with a shared secret, so an anonymous caller
+        // can't pollute the audit log or trip ops alerts. Outside local and
+        // testing a missing secret refuses the request instead of opening it.
         $secret = (string) config('wedding.n8n.webhook_secret', '');
+        if ($secret === '' && ! app()->environment('local', 'testing')) {
+            return response()->json(['message' => 'Webhook secret not configured'], 503);
+        }
         if ($secret !== '' && ! hash_equals($secret, (string) $request->header('X-Wedding-Token', ''))) {
             return response()->json(['message' => 'Invalid token'], 401);
         }

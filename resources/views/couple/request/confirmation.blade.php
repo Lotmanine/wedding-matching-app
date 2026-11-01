@@ -88,7 +88,7 @@
                             </div>
                         @endif
                     </div>
-                    {{-- "Recherche élargie" alone is vague: say what the open stage means. --}}
+                    {{-- "Wider search" alone is vague: say what the open stage means. --}}
                     @if ($state === 'open_marketplace')
                         <p class="mt-2 text-xs text-[#6B665E] leading-relaxed">{{ __('form.confirm_status_open_help') }}</p>
                     @endif
@@ -97,7 +97,7 @@
             </div>
         </div>
 
-        {{-- Expiry / ANPDP notice --}}
+        {{-- Expiry notice --}}
         <div class="flex gap-3 px-4 py-3 bg-[#F7F4F0] rounded-xl border border-[#D4CFC7]/40">
             <x-z.icon name="shield" :filled="true" class="text-[#9A958D] text-lg shrink-0 mt-0.5" />
             <p class="text-xs text-[#9A958D] leading-relaxed">

@@ -119,7 +119,7 @@ class AdminRequestsController extends Controller
         $blocked = $accepted->diff($newServices);
         if ($blocked->isNotEmpty()) {
             return back()->withInput()->withErrors([
-                'services_needed' => 'Impossible de retirer ' . $blocked->implode(', ') . ' : la demande a déjà été acceptée par un prestataire.',
+                'services_needed' => __('Cannot remove :services: the request has already been accepted by a provider.', ['services' => $blocked->implode(', ')]),
             ]);
         }
 
@@ -166,7 +166,7 @@ class AdminRequestsController extends Controller
             'services_removed' => array_values(array_diff($oldServices, $newServices)),
         ]);
 
-        return redirect()->route('admin.requests.show', $wr->wed_uid)->with('status', 'Demande mise à jour.');
+        return redirect()->route('admin.requests.show', $wr->wed_uid)->with('status', __('Request updated.'));
     }
 
     public function expire(Request $request, string $wedUid): RedirectResponse
@@ -185,7 +185,7 @@ class AdminRequestsController extends Controller
     public function delete(Request $request, string $wedUid): RedirectResponse
     {
         $request->validate([
-            'confirm'   => ['required', 'in:SUPPRIMER'],
+            'confirm'   => ['required', 'in:DELETE,SUPPRIMER'],
             'reason'    => ['required', 'string', 'max:500'],
         ]);
 

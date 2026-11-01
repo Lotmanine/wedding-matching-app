@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-6">
-        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('Connexion') }}</h1>
-        <p class="mt-1 text-sm text-[#6B665E]">{{ __('Accédez à votre espace.') }}</p>
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('Login') }}</h1>
+        <p class="mt-1 text-sm text-[#6B665E]">{{ __('Access your account.') }}</p>
     </div>
 
     <!-- Session Status -->
@@ -12,7 +12,7 @@
 
         <!-- Email Address -->
         <div class="space-y-1.5">
-            <label for="email" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Adresse e-mail') }}</label>
+            <label for="email" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Email address') }}</label>
             <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="username"
                    class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none transition-all duration-200 focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15" />
             <x-input-error :messages="$errors->get('email')" class="text-xs text-[#A84936]" />
@@ -20,7 +20,7 @@
 
         <!-- Password -->
         <div class="space-y-1.5">
-            <label for="password" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Mot de passe') }}</label>
+            <label for="password" class="block text-sm font-semibold text-[#1A1A1A]">{{ __('Password') }}</label>
             <input id="password" name="password" type="password" required autocomplete="current-password"
                    class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none transition-all duration-200 focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15" />
             <x-input-error :messages="$errors->get('password')" class="text-xs text-[#A84936]" />
@@ -30,16 +30,16 @@
         <div class="block">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox" class="w-4 h-4 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/30" name="remember">
-                <span class="ms-2 text-sm text-[#6B665E]">{{ __('Rester connecté') }}</span>
+                <span class="ms-2 text-sm text-[#6B665E]">{{ __('Stay logged in') }}</span>
             </label>
         </div>
 
-        <x-z.btn type="submit" variant="primary" size="lg" class="w-full">{{ __('Se connecter') }}</x-z.btn>
+        <x-z.btn type="submit" variant="primary" size="lg" class="w-full">{{ __('Log in') }}</x-z.btn>
 
         @if (Route::has('password.request'))
             <div class="text-center">
                 <a class="text-sm font-semibold text-[#C8956C] hover:text-[#B8845B] hover:underline" href="{{ route('password.request') }}">
-                    {{ __('Mot de passe oublié ?') }}
+                    {{ __('Forgot your password?') }}
                 </a>
             </div>
         @endif

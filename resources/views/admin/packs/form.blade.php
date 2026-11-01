@@ -3,8 +3,8 @@
 @section('content')
     @php $isEdit = (bool) $pack?->exists; @endphp
     <div class="max-w-2xl">
-        <nav class="text-sm text-[#9A958D] mb-3"><a href="{{ route('admin.packs.index') }}" class="inline-flex items-center gap-1 hover:text-[#C8956C] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> Packs</a></nav>
-        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-6">{{ $isEdit ? 'Éditer le pack' : 'Nouveau pack' }}</h1>
+        <nav class="text-sm text-[#9A958D] mb-3"><a href="{{ route('admin.packs.index') }}" class="inline-flex items-center gap-1 hover:text-[#C8956C] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('admin.nav.packs') }}</a></nav>
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-6">{{ $isEdit ? __('Edit pack') : __('admin.packs.create_btn') }}</h1>
 
         <form method="POST" action="{{ $isEdit ? route('admin.packs.update', $pack->id) : route('admin.packs.store') }}" class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6 md:p-8 space-y-5">
             @csrf
@@ -44,8 +44,8 @@
             </label>
 
             <div class="pt-4 border-t border-[#D4CFC7]/30 flex justify-end gap-3">
-                <x-z.btn :href="route('admin.packs.index')" variant="outline" size="sm">Annuler</x-z.btn>
-                <x-z.btn type="submit" variant="accent" size="sm">{{ $isEdit ? 'Enregistrer' : 'Créer' }}</x-z.btn>
+                <x-z.btn :href="route('admin.packs.index')" variant="outline" size="sm">{{ __('Cancel') }}</x-z.btn>
+                <x-z.btn type="submit" variant="accent" size="sm">{{ $isEdit ? __('Save') : __('Create') }}</x-z.btn>
             </div>
         </form>
     </div>

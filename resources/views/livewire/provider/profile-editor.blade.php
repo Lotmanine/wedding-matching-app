@@ -23,13 +23,13 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.phone') }}</label>
                     <input type="tel" wire:model="phone" placeholder="+12125550123" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
-                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '+1 / +33', 'example' => '<span>+12125550123</span>']) !!}</p>
+                    <p class="mt-1 text-xs text-[#9A958D]">{{ __('provider.registration.phone_hint') }}</p>
                     @error('phone') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.whatsapp') }}</label>
                     <input type="tel" wire:model="whatsapp" placeholder="+12125550123" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
-                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '+1 / +33', 'example' => '<span>+12125550123</span>']) !!}</p>
+                    <p class="mt-1 text-xs text-[#9A958D]">{{ __('provider.registration.phone_hint') }}</p>
                     @error('whatsapp') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
@@ -54,7 +54,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.business_type') }}</label>
                     <select wire:model="business_type" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">{{ __('Sélectionner…') }}</option>
+                        <option value="">{{ __('Select…') }}</option>
                         @foreach (__('provider.registration.business_type_options') as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
@@ -71,7 +71,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.primary_city') }}</label>
                     <select wire:model.live="primary_city_code" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">{{ __('Sélectionner…') }}</option>
+                        <option value="">{{ __('Select…') }}</option>
                         @foreach ($this->cities as $w)
                             <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name }}</option>
                         @endforeach
@@ -80,18 +80,18 @@
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.price_tier') }}</label>
                     <select wire:model="price_tier" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
-                        <option value="">{{ __('Sélectionner…') }}</option>
+                        <option value="">{{ __('Select…') }}</option>
                         @foreach (__('provider.registration.price_tier_options') as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.min_price') }}</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.min_price', ['symbol' => \App\Support\Money::symbol(\App\Support\Money::currencyForCity($primary_city_code ?: null))]) }}</label>
                     <input type="number" wire:model="min_price" min="0" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.max_price') }}</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.max_price', ['symbol' => \App\Support\Money::symbol(\App\Support\Money::currencyForCity($primary_city_code ?: null))]) }}</label>
                     <input type="number" wire:model="max_price" min="0" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                     @error('max_price') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>

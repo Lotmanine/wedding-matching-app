@@ -27,30 +27,30 @@
                 </div>
                 <div>
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.paid_on') }}</dt>
-                    <dd class="mt-1 font-medium text-[#1A1A1A]">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? __('Non renseigné') }}</dd>
+                    <dd class="mt-1 font-medium text-[#1A1A1A]">{{ $purchase->paid_at?->isoFormat('LL, LT') ?? __('Not provided') }}</dd>
                 </div>
                 <div>
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.status') }}</dt>
                     <dd class="mt-1">
                         @php $badge = match ($purchase->status) {
-                            'paid'      => ['success', __('Payé')],
-                            'pending'   => ['warning', __('En attente')],
-                            'pending_verification' => ['warning', __('credits.offline.pending_status')],
-                            'failed'    => ['danger', __('Échoué')],
-                            'cancelled' => ['muted', __('Annulé')],
+                            'paid'      => ['success', __('credits.status.paid')],
+                            'pending'   => ['warning', __('credits.status.pending')],
+                            'pending_verification' => ['warning', __('credits.status.pending_verification')],
+                            'failed'    => ['danger', __('credits.status.failed')],
+                            'cancelled' => ['muted', __('credits.status.cancelled')],
                             default     => ['default', $purchase->status],
                         }; @endphp
                         <x-z.badge :variant="$badge[0]">{{ $badge[1] }}</x-z.badge>
                     </dd>
                 </div>
                 <div>
-                    {{-- A versement has no Chargily reference: show the reference the provider declared --}}
+                    {{-- A bank transfer has no gateway reference: show the reference the provider declared --}}
                     @if ($purchase->payment_method === \App\Services\Payments\PaymentSettings::METHOD_OFFLINE)
                         <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.transfer_ref') }}</dt>
-                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span>{{ $purchase->payment_reference ?? __('Non renseigné') }}</span></dd>
+                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span>{{ $purchase->payment_reference ?? __('Not provided') }}</span></dd>
                     @else
                         <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.gateway_ref') }}</dt>
-                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span>{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Non renseigné') }}</span></dd>
+                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span>{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Not provided') }}</span></dd>
                     @endif
                 </div>
                 @if ($purchase->status === 'pending_verification')
@@ -66,6 +66,8 @@
                     </dd>
                 </div>
             </dl>
+
+            <p class="mt-6 pt-4 border-t border-[#D4CFC7]/30 text-xs text-[#9A958D]">{{ __('credits.receipt.demo_notice') }}</p>
         </div>
     </div>
 @endsection

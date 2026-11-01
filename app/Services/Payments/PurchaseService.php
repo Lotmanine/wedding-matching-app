@@ -28,13 +28,13 @@ class PurchaseService
             'currency'       => $user->providerProfile?->currency() ?? 'USD',
             'unlocks_count'  => (int) $pack->unlocks_count,
             'status'         => 'pending',
-            'gateway'        => 'chargily',
-            'payment_method' => 'online_chargily',
+            'gateway'        => config('wedding.demo.enabled') ? 'demo' : 'chargily',
+            'payment_method' => config('wedding.demo.enabled') ? 'online_demo' : 'online_chargily',
         ]);
     }
 
     /**
-     * Record an offline (bank transfer / CCP) purchase. No credits are granted
+     * Record an offline (bank transfer) purchase. No credits are granted
      * yet — the purchase sits in 'pending_verification' until an admin confirms
      * the funds arrived and marks it paid.
      */
@@ -112,7 +112,7 @@ class PurchaseService
     {
         $purchase->loadMissing('unlockPack', 'user');
 
-        $notes = 'Achat ' . ($purchase->unlockPack?->name ?? 'pack') . ' — ' . $purchase->purchase_uid;
+        $notes = 'Purchase ' . ($purchase->unlockPack?->name ?? 'pack') . ' — ' . $purchase->purchase_uid;
 
         return $this->credits->add(
             user: $purchase->user,

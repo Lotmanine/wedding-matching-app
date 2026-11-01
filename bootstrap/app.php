@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\DemoGuard;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
@@ -33,10 +34,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->append(SecurityHeaders::class);
+        $middleware->web(append: [DemoGuard::class]);
 
-        // FR / AR on the public site and the provider area. Global, so that
+        // EN / FR. Global, so that
         // error pages follow the visitor's language too; the cookie only holds
-        // "fr" or "ar" and is read before cookie decryption.
+        // "en" or "fr" and is read before cookie decryption.
         $middleware->append(SetLocale::class);
         $middleware->encryptCookies(except: [SetLocale::COOKIE]);
 

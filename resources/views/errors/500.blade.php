@@ -1,4 +1,4 @@
 @extends('errors.layout')
 @section('code', '500')
-@section('title', __('Une erreur est survenue'))
-@section('message', __("Quelque chose s'est mal passé de notre côté. Nos équipes ont été notifiées. Merci de réessayer dans un instant."))
+@section('title', __('Something went wrong'))
+@section('message', __('Something went wrong on our side. Please try again in a moment.'))

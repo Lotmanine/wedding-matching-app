@@ -14,28 +14,28 @@
             @if ($stats['providers_pending'] > 0)
                 <a href="{{ route('admin.providers.index', ['status' => 'pending']) }}" class="flex items-center gap-3 p-4 rounded-xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530] text-sm hover:bg-[#F0D9B5]/60 transition">
                     <x-z.icon name="pending_actions" :filled="true" class="text-xl text-[#C8956C]" />
-                    <span class="flex-1">{{ __('admin.dashboard.alerts.pending_providers', ['count' => $stats['providers_pending']]) }}</span>
+                    <span class="flex-1">{{ trans_choice('admin.dashboard.alerts.pending_providers', $stats['providers_pending']) }}</span>
                     <x-z.icon name="arrow_forward" class="text-base" />
                 </a>
             @endif
             @if ($stats['failed_purchases_24h'] > 0)
                 <a href="{{ route('admin.purchases.index', ['status' => 'failed']) }}" class="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-100 text-[#A84936] text-sm hover:bg-red-100/70 transition">
                     <x-z.icon name="warning" :filled="true" class="text-xl" />
-                    <span class="flex-1">{{ __('admin.dashboard.alerts.failed_purchases', ['count' => $stats['failed_purchases_24h']]) }}</span>
+                    <span class="flex-1">{{ trans_choice('admin.dashboard.alerts.failed_purchases', $stats['failed_purchases_24h']) }}</span>
                     <x-z.icon name="arrow_forward" class="text-base" />
                 </a>
             @endif
             @if ($stats['purchases_pending_old'] > 0)
                 <a href="{{ route('admin.purchases.index', ['status' => 'pending']) }}" class="flex items-center gap-3 p-4 rounded-xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530] text-sm hover:bg-[#F0D9B5]/60 transition">
                     <x-z.icon name="pause_circle" :filled="true" class="text-xl text-[#C8956C]" />
-                    <span class="flex-1">{{ __('admin.dashboard.alerts.stuck_pending', ['count' => $stats['purchases_pending_old']]) }}</span>
+                    <span class="flex-1">{{ trans_choice('admin.dashboard.alerts.stuck_pending', $stats['purchases_pending_old']) }}</span>
                     <x-z.icon name="arrow_forward" class="text-base" />
                 </a>
             @endif
             @if ($stats['stuck_matching'] > 0)
                 <a href="{{ route('admin.service_requests.index', ['status' => 'matching']) }}" class="flex items-center gap-3 p-4 rounded-xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530] text-sm hover:bg-[#F0D9B5]/60 transition">
                     <x-z.icon name="sync_problem" :filled="true" class="text-xl text-[#C8956C]" />
-                    <span class="flex-1">{{ __('admin.dashboard.alerts.stuck_matching', ['count' => $stats['stuck_matching']]) }}</span>
+                    <span class="flex-1">{{ trans_choice('admin.dashboard.alerts.stuck_matching', $stats['stuck_matching']) }}</span>
                     <x-z.icon name="arrow_forward" class="text-base" />
                 </a>
             @endif
@@ -53,10 +53,10 @@
                     ['label' => __('admin.dashboard.kpi_verified'),    'value' => $stats['providers_verified'],   'icon' => 'verified'],
                     ['label' => __('admin.dashboard.kpi_pending'),     'value' => $stats['providers_pending'],    'icon' => 'pending'],
                     ['label' => __('admin.dashboard.kpi_suspended'),   'value' => $stats['providers_suspended'],  'icon' => 'block'],
-                    ['label' => __('admin.dashboard.kpi_revenue'),     'value' => number_format($stats['revenue'], 0, ',', ' '), 'icon' => 'payments'],
+                    ['label' => __('admin.dashboard.kpi_revenue'),     'value' => \App\Support\Money::format($stats['revenue'], \App\Support\Money::currencyForCity(null)), 'icon' => 'payments'],
                     ['label' => __('admin.dashboard.kpi_credits_out'), 'value' => $stats['credits_outstanding'], 'icon' => 'toll'],
                     ['label' => __('admin.dashboard.kpi_match_rate'),  'value' => $stats['match_rate'] . '%',    'icon' => 'percent'],
-                    ['label' => __('admin.dashboard.kpi_avg_accept'),  'value' => $stats['avg_time_to_accept'] ?? 'Non renseigné', 'icon' => 'timer'],
+                    ['label' => __('admin.dashboard.kpi_avg_accept'),  'value' => $stats['avg_time_to_accept'] ?? __('Not specified'), 'icon' => 'timer'],
                 ];
             @endphp
             @foreach ($kpis as $k)
@@ -74,7 +74,7 @@
 
         {{-- By-status breakdown --}}
         <section class="mt-8">
-            <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-3">Demandes de services par statut</h2>
+            <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-3">{{ __('Service requests by status') }}</h2>
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-2">
                 @foreach ($stats['service_requests_by_status'] as $status => $count)
                     <a href="{{ route('admin.service_requests.index', ['status' => $status]) }}" class="p-4 rounded-xl bg-white border border-[#D4CFC7]/50 shadow-sm hover:border-[#C8956C] hover:-translate-y-0.5 transition-all">
@@ -97,13 +97,13 @@
                             </div>
                             <div class="min-w-0">
                                 <span class="font-mono text-xs text-[#9A958D]">{{ $log->action }}</span>
-                                <span class="text-[#1A1A1A]">par {{ $log->user?->email ?? 'système' }}</span>
+                                <span class="text-[#1A1A1A]">{{ __('by :actor', ['actor' => $log->user?->email ?? __('system')]) }}</span>
                             </div>
                         </div>
                         <time class="text-xs text-[#9A958D] whitespace-nowrap">{{ $log->created_at?->diffForHumans() }}</time>
                     </div>
                 @empty
-                    <p class="p-6 text-sm text-[#9A958D] text-center">Aucune activité.</p>
+                    <p class="p-6 text-sm text-[#9A958D] text-center">{{ __('No activity.') }}</p>
                 @endforelse
             </div>
         </section>

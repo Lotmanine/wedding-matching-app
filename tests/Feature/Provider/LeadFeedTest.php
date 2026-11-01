@@ -79,7 +79,7 @@ class LeadFeedTest extends TestCase
 
         $response = $this->actingAs($user)->get('/provider/leads');
         $response->assertOk();
-        $response->assertSee('en cours de vérification');
+        $response->assertSee('under review');
     }
 
     public function test_verified_provider_sees_matching_lead(): void

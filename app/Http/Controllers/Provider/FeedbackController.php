@@ -45,7 +45,7 @@ class FeedbackController extends Controller
         $this->sendAlert($feedback, $user);
 
         return redirect()->route('provider.feedback.create')
-            ->with('status', __('Merci, votre message a bien été envoyé à notre équipe.'));
+            ->with('status', __('Thank you, your message has been sent to our team.'));
     }
 
     /**
@@ -62,14 +62,14 @@ class FeedbackController extends Controller
 
         $sender = $author->providerProfile?->business_name ?? $author->name;
 
-        $body = "Nouveau feedback prestataire sur Wedding Matching App\n\n"
-            . "De : {$sender} ({$author->email})\n"
-            . "Sujet : {$feedback->subject}\n\n"
+        $body = "New provider feedback on Wedding Matching App\n\n"
+            . "From: {$sender} ({$author->email})\n"
+            . "Subject: {$feedback->subject}\n\n"
             . "{$feedback->message}\n\n"
-            . 'Boîte de réception : ' . route('admin.feedback.index');
+            . 'Inbox: ' . route('admin.feedback.index');
 
         try {
-            Mail::raw($body, fn ($m) => $m->to($recipient)->subject('[Wedding Matching App] Feedback : ' . $feedback->subject));
+            Mail::raw($body, fn ($m) => $m->to($recipient)->subject('[Wedding Matching App] Feedback: ' . $feedback->subject));
         } catch (\Throwable $e) {
             Logger::warning('feedback.alert_email_failed', [
                 'feedback_id' => $feedback->id,

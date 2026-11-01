@@ -17,14 +17,14 @@ class LocaleSwitchTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('<html lang="' . config('app.locale') . '"', false)
-            ->assertSee('Trouvez les prestataires de votre mariage');
+            ->assertSee('Find the providers for your wedding');
     }
 
     public function test_switch_stores_the_language_and_returns_to_the_page(): void
     {
-        $this->from('/demande')
+        $this->from('/request')
             ->get('/lang/en')
-            ->assertRedirect('/demande')
+            ->assertRedirect('/request')
             ->assertPlainCookie(SetLocale::COOKIE, 'en');
     }
 
@@ -35,7 +35,7 @@ class LocaleSwitchTest extends TestCase
 
     public function test_pages_follow_the_language_cookie(): void
     {
-        foreach (['/', '/demande', '/devenir-prestataire', '/confidentialite', '/conditions-utilisation', '/provider/login', '/provider/register'] as $url) {
+        foreach (['/', '/request', '/for-providers', '/privacy', '/terms', '/provider/login', '/provider/register'] as $url) {
             $this->withUnencryptedCookie(SetLocale::COOKIE, 'en')
                 ->get($url)
                 ->assertOk()

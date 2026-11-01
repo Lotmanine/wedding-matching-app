@@ -33,11 +33,11 @@
             @endforeach
 
             <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-5">
-                <label class="block font-semibold text-sm text-[#1A1A1A]" for="setting-feedback_alert_email">E-mail d'alerte feedback</label>
+                <label class="block font-semibold text-sm text-[#1A1A1A]" for="setting-feedback_alert_email">{{ __('Feedback alert email') }}</label>
                 <p class="text-xs text-[#9A958D] mt-0.5 font-mono">feedback.alert_email</p>
-                <p class="text-xs text-[#9A958D] mt-1 mb-3">Adresse qui reçoit un e-mail à chaque feedback envoyé par un prestataire. Laissez vide pour ne rien envoyer.</p>
+                <p class="text-xs text-[#9A958D] mt-1 mb-3">{{ __('Address that receives an email each time a provider sends feedback. Leave empty to send nothing.') }}</p>
                 <input type="email" id="setting-feedback_alert_email" name="feedback_alert_email"
-                       value="{{ old('feedback_alert_email', $settings->get('feedback.alert_email')?->value ?? '') }}" placeholder="vous@exemple.com"
+                       value="{{ old('feedback_alert_email', $settings->get('feedback.alert_email')?->value ?? '') }}" placeholder="{{ __('you@example.com') }}"
                        class="w-full px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
             </div>
 

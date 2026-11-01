@@ -46,7 +46,7 @@ class WhatsappSettingsTest extends TestCase
         $this->actingAs($this->userWithRole('admin'))
             ->get(route('admin.whatsapp.edit'))
             ->assertOk()
-            ->assertSee('WhatsApp est désactivé.');
+            ->assertSee('WhatsApp is disabled.');
     }
 
     public function test_manager_is_forbidden(): void
@@ -118,7 +118,7 @@ class WhatsappSettingsTest extends TestCase
 
         $this->actingAs($admin)->get(route('admin.whatsapp.edit'))
             ->assertOk()
-            ->assertSee('WhatsApp est actif.')
+            ->assertSee('WhatsApp is active.')
             ->assertDontSee('EAAG-access-token-1234')
             ->assertDontSee('app-secret-9012');
 

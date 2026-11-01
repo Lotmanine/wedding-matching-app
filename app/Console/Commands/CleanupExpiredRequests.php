@@ -82,7 +82,7 @@ class CleanupExpiredRequests extends Command
 
         foreach ($requests as $wr) {
             DB::table('wed_requests')->where('id', $wr->id)->update([
-                'couple_first_name'       => 'Supprimé',
+                'couple_first_name'       => 'Deleted',
                 'couple_whatsapp'         => '',
                 'couple_district'          => null,
                 'description'             => null,

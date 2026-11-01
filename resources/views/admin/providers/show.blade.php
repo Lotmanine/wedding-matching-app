@@ -34,14 +34,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <section class="lg:col-span-2 space-y-6">
                 <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6">
-                    <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">Profil</h2>
+                    <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">{{ __('Profile') }}</h2>
                     <dl class="grid grid-cols-2 gap-4 text-sm">
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Wilaya</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->primary_city_code }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Type</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->business_type }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Tarif</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->price_tier }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Expérience</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->years_experience ?? 'Non renseigné' }} ans</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Vérifié</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->verified ? 'Oui' : 'Non' }}</dd></div>
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Statut</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->status }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('City') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->primary_city_code }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Type') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->business_type }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Price tier') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->price_tier }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Experience') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->years_experience !== null ? trans_choice(':count year|:count years', $prof->years_experience) : __('Not specified') }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Verified') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->verified ? __('Yes') : __('No') }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Status') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->status }}</dd></div>
                     </dl>
                     @if ($prof?->business_description)
                         <p class="mt-4 text-sm text-[#6B665E] border-t border-[#D4CFC7]/30 pt-4">{{ $prof->business_description }}</p>
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6">
-                    <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">Services & Couverture</h2>
+                    <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">{{ __('Services & coverage') }}</h2>
                     <div class="flex flex-wrap gap-1 mb-4">
                         @foreach ($user->providerServices as $svc)
                             <span class="text-xs bg-[#F0D9B5]/40 text-[#7A5530] px-2.5 py-1 rounded-full border border-[#C8956C]/30 font-medium">{{ $svc->service_type?->label() ?? $svc->service_type }}</span>
@@ -57,11 +57,11 @@
                     </div>
                     <table class="w-full text-xs">
                         <thead>
-                            <tr class="text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/30"><th class="text-left py-2">Wilaya</th><th class="text-right py-2">Frais DA</th></tr>
+                            <tr class="text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/30"><th class="text-left py-2">{{ __('City') }}</th><th class="text-right py-2">{{ __('Travel fee') }}</th></tr>
                         </thead>
                         <tbody class="divide-y divide-[#D4CFC7]/20">
                             @foreach ($user->providerCoverage as $cov)
-                                <tr><td class="py-2 text-[#1A1A1A]">{{ $cov->city_code }}</td><td class="text-right font-mono text-[#6B665E]">{{ $cov->travel_fee }}</td></tr>
+                                <tr><td class="py-2 text-[#1A1A1A]">{{ $cov->city_code }}</td><td class="text-right font-mono text-[#6B665E]">{{ \App\Support\Money::format((int) $cov->travel_fee, $prof?->currency() ?? \App\Support\Money::currencyForCity(null)) }}</td></tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -69,13 +69,13 @@
 
                 @if ($purchases->isNotEmpty())
                     <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6">
-                        <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">Derniers achats</h2>
+                        <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">{{ __('Recent purchases') }}</h2>
                         <table class="w-full text-xs">
                             <tbody class="divide-y divide-[#D4CFC7]/20">
                                 @foreach ($purchases as $p)
                                     <tr>
                                         <td class="py-2 font-mono text-[#6B665E]">{{ $p->purchase_uid }}</td>
-                                        <td class="py-2 text-[#1A1A1A]">{{ $p->unlockPack?->name ?? 'Non renseigné' }}</td>
+                                        <td class="py-2 text-[#1A1A1A]">{{ $p->unlockPack?->name ?? __('Not specified') }}</td>
                                         <td class="py-2 text-[#1A1A1A]">{{ \App\Support\Money::format($p->amount, $p->currency) }}</td>
                                         <td class="py-2"><x-z.badge variant="default">{{ $p->status }}</x-z.badge></td>
                                         <td class="py-2 text-[#9A958D] text-right">{{ $p->created_at?->diffForHumans() }}</td>
@@ -89,7 +89,7 @@
 
             <aside class="space-y-4">
                 <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6">
-                    <h3 class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-2">Crédits</h3>
+                    <h3 class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-2">{{ __('admin.common.credits') }}</h3>
                     <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ $prof?->credit_balance ?? 0 }}</p>
                     <form method="POST" action="{{ route('admin.providers.credits.adjust', $user->id) }}" class="mt-5 space-y-3">
                         @csrf

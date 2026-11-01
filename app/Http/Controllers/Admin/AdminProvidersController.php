@@ -171,6 +171,6 @@ class AdminProvidersController extends Controller
             'ledger_id' => $ledger->id,
         ]);
 
-        return back()->with('status', __('admin.providers.credits_adjusted_ok', ['amount' => $data['amount']]));
+        return back()->with('status', trans_choice('admin.providers.credits_adjusted_ok', abs((int) $data['amount']), ['amount' => $data['amount']]));
     }
 }

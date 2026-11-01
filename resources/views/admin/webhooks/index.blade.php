@@ -4,9 +4,9 @@
     <div class="max-w-6xl">
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">Webhooks</h1>
+                <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('admin.nav.webhooks') }}</h1>
             </div>
-            <x-z.btn :href="route('admin.webhooks.create')" variant="accent" size="sm" icon="add">Créer un webhook</x-z.btn>
+            <x-z.btn :href="route('admin.webhooks.create')" variant="accent" size="sm" icon="add">{{ __('Create a webhook') }}</x-z.btn>
         </div>
 
         <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm overflow-hidden">
@@ -14,11 +14,11 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-[#F7F4F0] text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/40">
-                            <th class="text-left px-5 py-4">Nom</th>
-                            <th class="text-left px-5 py-4">URL</th>
-                            <th class="text-left px-5 py-4">Événements</th>
-                            <th class="text-center px-5 py-4">Livraisons</th>
-                            <th class="text-center px-5 py-4">Actif</th>
+                            <th class="text-left px-5 py-4">{{ __('Name') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('URL') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('Events') }}</th>
+                            <th class="text-center px-5 py-4">{{ __('Deliveries') }}</th>
+                            <th class="text-center px-5 py-4">{{ __('Active') }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -39,19 +39,19 @@
                                 </td>
                                 <td class="px-5 py-4 text-center">
                                     <form method="POST" action="{{ route('admin.webhooks.toggle', $e->id) }}" class="inline">@csrf
-                                        <button class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase border {{ $e->active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[#F7F4F0] text-[#9A958D] border-[#D4CFC7]' }}">{{ $e->active ? 'Actif' : 'Inactif' }}</button>
+                                        <button class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase border {{ $e->active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[#F7F4F0] text-[#9A958D] border-[#D4CFC7]' }}">{{ $e->active ? __('Active') : __('Inactive') }}</button>
                                     </form>
                                 </td>
                                 <td class="px-5 py-4 text-right whitespace-nowrap">
-                                    <a href="{{ route('admin.webhooks.edit', $e->id) }}" class="text-[#C8956C] text-xs font-bold hover:underline">Éditer</a>
-                                    <form method="POST" action="{{ route('admin.webhooks.destroy', $e->id) }}" class="inline ml-2" onsubmit="return confirm('Supprimer ?');">
+                                    <a href="{{ route('admin.webhooks.edit', $e->id) }}" class="text-[#C8956C] text-xs font-bold hover:underline">{{ __('Edit') }}</a>
+                                    <form method="POST" action="{{ route('admin.webhooks.destroy', $e->id) }}" class="inline ml-2" onsubmit="return confirm({{ \Illuminate\Support\Js::from(__('Delete this webhook?')) }});">
                                         @csrf @method('DELETE')
-                                        <button class="text-[#A84936] text-xs font-bold hover:underline">Supprimer</button>
+                                        <button class="text-[#A84936] text-xs font-bold hover:underline">{{ __('Delete') }}</button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="p-6 text-center text-[#9A958D] text-sm">Aucun webhook configuré.</td></tr>
+                            <tr><td colspan="6" class="p-6 text-center text-[#9A958D] text-sm">{{ __('No webhooks configured.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

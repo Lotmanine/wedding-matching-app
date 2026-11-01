@@ -45,8 +45,8 @@ class AdminCatalogController extends Controller
             'active_services'   => ['required', 'array', 'min:1'],
             'active_services.*' => ['string', 'in:' . implode(',', $allServices)],
         ], [
-            'active_cities.required'  => 'Au moins une ville doit rester active.',
-            'active_services.required' => 'Au moins un service doit rester actif.',
+            'active_cities.required'  => __('At least one city must stay active.'),
+            'active_services.required' => __('At least one service must stay active.'),
         ]);
 
         $activeCities = array_values(array_unique($validated['active_cities']));
@@ -64,6 +64,6 @@ class AdminCatalogController extends Controller
             'services_disabled' => $disabledServices,
         ]);
 
-        return back()->with('status', 'Catalogue mis à jour.');
+        return back()->with('status', __('Catalog updated.'));
     }
 }

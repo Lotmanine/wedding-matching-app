@@ -23,7 +23,7 @@
             // 'short' is the label of the mobile bottom bar when the full label is too long for it.
             ['route' => 'provider.dashboard',       'pattern' => 'provider.dashboard',    'icon' => 'dashboard',       'label' => __('provider.nav.dashboard'), 'short' => __('provider.nav.dashboard_short')],
             ['route' => 'provider.leads.index',     'pattern' => 'provider.leads.index',  'icon' => 'inbox',           'label' => __('provider.nav.leads')],
-            ['route' => 'provider.leads.accepted',  'pattern' => 'provider.leads.accepted','icon' => 'workspace_premium','label' => __('Acceptées')],
+            ['route' => 'provider.leads.accepted',  'pattern' => 'provider.leads.accepted','icon' => 'workspace_premium','label' => __('provider.nav.accepted')],
             ['route' => 'provider.credits.index',   'pattern' => 'provider.credits.index','icon' => 'toll',            'label' => __('provider.nav.credits')],
             ['route' => 'provider.credits.history', 'pattern' => 'provider.credits.history','icon' => 'history',       'label' => __('provider.nav.history')],
             ['route' => 'provider.profile.edit',    'pattern' => 'provider.profile.*',    'icon' => 'manage_accounts','label' => __('provider.nav.profile'), 'short' => __('provider.nav.profile_short')],

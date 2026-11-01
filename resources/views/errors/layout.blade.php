@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title') · Zawaj Pro</title>
+    <title>@yield('title') · {{ __('form.brand') }}</title>
     <style>
         /* Self-hosted fonts — error pages are standalone (no Vite bundle),
            so we declare the two faces they use directly. No network needed. */
@@ -43,8 +43,8 @@
         <p class="code">@yield('code')</p>
         <h1>@yield('title')</h1>
         <p>@yield('message')</p>
-        <a class="btn" href="{{ url('/') }}">{{ __("Retour à l'accueil") }}</a>
-        <p class="brand">{{ __('Zawaj Pro · Algérie') }}</p>
+        <a class="btn" href="{{ url('/') }}">{{ __('form.btn_home') }}</a>
+        <p class="brand">{{ __('form.brand') }}</p>
     </div>
 </body>
 </html>

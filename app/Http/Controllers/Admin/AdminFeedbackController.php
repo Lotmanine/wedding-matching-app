@@ -46,7 +46,7 @@ class AdminFeedbackController extends Controller
         $feedback = Feedback::findOrFail($id);
 
         if (! $feedback->isNew()) {
-            return back()->with('error', 'Ce message a déjà été traité.');
+            return back()->with('error', __('This message has already been handled.'));
         }
 
         $feedback->forceFill([
@@ -57,6 +57,6 @@ class AdminFeedbackController extends Controller
 
         $this->audit->log('feedback.handle', $feedback, ['author_id' => $feedback->user_id]);
 
-        return back()->with('status', 'Message marqué comme traité.');
+        return back()->with('status', __('Message marked as handled.'));
     }
 }

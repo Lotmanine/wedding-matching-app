@@ -56,13 +56,15 @@
                 <x-z.btn type="submit" variant="primary" size="lg" class="w-full">{{ __('provider.auth.btn_login') }}</x-z.btn>
             </form>
 
+            @include('partials.demo-accounts', ['accounts' => ['provider', 'provider_fr']])
+
             <p class="mt-6 text-center text-sm text-[#6B665E]">
                 {{ __('provider.auth.no_account') }}
                 <a href="{{ route('provider.register') }}" class="font-semibold text-[#C8956C] hover:text-[#B8845B] hover:underline">{{ __('provider.auth.create_account') }}</a>
             </p>
         </div>
 
-        <a href="{{ route('home') }}" class="mt-6 inline-flex items-center gap-1 text-sm text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('Retour au site') }}</a>
+        <a href="{{ route('home') }}" class="mt-6 inline-flex items-center gap-1 text-sm text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('Back to the site') }}</a>
     </main>
 </body>
 </html>

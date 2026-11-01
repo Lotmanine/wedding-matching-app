@@ -13,8 +13,8 @@ use Illuminate\View\View;
 
 /**
  * Super-admin configuration of payment methods:
- *  - toggle online (Chargily) and offline (versement CCP/banque)
- *  - edit the bank / CCP coordinates shown to providers on the offline
+ *  - toggle online (Chargily) and offline (bank transfer)
+ *  - edit the bank details shown to providers on the offline
  *    checkout page.
  *
  * The values live in the generic settings table (payments.* keys) via
@@ -67,6 +67,6 @@ class AdminPaymentsController extends Controller
             'chargily_webhook_secret' => filled($validated['chargily_webhook_secret'] ?? null) ? 'updated' : 'unchanged',
         ]);
 
-        return back()->with('status', 'Modes de paiement enregistrés.');
+        return back()->with('status', __('Payment methods saved.'));
     }
 }

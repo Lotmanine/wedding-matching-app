@@ -18,6 +18,17 @@ return [
         'retention_days' => (int) env('WEDDING_RETENTION_DAYS', 14),
     ],
 
+    // Public demo: fills the database with sample data, enables the test
+    // checkout and shows these logins on the login pages.
+    'demo' => [
+        'enabled' => (bool) env('WEDDING_DEMO_MODE', false),
+        'accounts' => [
+            'provider'    => ['label' => 'Provider (New York)', 'email' => 'demo.provider@example.com', 'password' => 'demo1234'],
+            'provider_fr' => ['label' => 'Provider (Paris)', 'email' => 'demo.prestataire@example.com', 'password' => 'demo1234'],
+            'admin'       => ['label' => 'Administrator', 'email' => 'demo.admin@example.com', 'password' => 'demo1234'],
+        ],
+    ],
+
     'whatsapp' => [
         'link_prefix' => 'https://wa.me/',
     ],

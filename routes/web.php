@@ -34,29 +34,29 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'))->name('home');
 
-// FR / AR switch: remembers the language for a year and returns to the page.
+// EN / FR switch: remembers the language for a year and returns to the page.
 Route::get('/lang/{locale}', function (string $locale) {
     return redirect()->back(fallback: route('home'))
         ->withCookie(cookie(SetLocale::COOKIE, $locale, 60 * 24 * 365));
 })->whereIn('locale', SetLocale::SUPPORTED)->name('locale.switch');
 
-Route::get('/demande', [CoupleRequestController::class, 'create'])
+Route::get('/request', [CoupleRequestController::class, 'create'])
     ->name('couple.request.create');
 
-Route::get('/demande/confirmation/{wedUid}', [CoupleRequestController::class, 'confirmation'])
+Route::get('/request/confirmation/{wedUid}', [CoupleRequestController::class, 'confirmation'])
     ->name('couple.request.confirmation');
 
-// Provider marketing landing — sells the platform to prestataires,
+// Provider marketing landing — sells the platform to providers,
 // CTAs funnel to the registration form. Pricing reads live unlock packs.
-Route::get('/devenir-prestataire', function () {
+Route::get('/for-providers', function () {
     return view('provider-landing', [
         'packs' => UnlockPack::active()->get(),
     ]);
 })->name('provider.landing');
 
 // Legal / privacy pages (public)
-Route::view('/confidentialite', 'legal.privacy')->name('legal.privacy');
-Route::view('/conditions-utilisation', 'legal.terms')->name('legal.terms');
+Route::view('/privacy', 'legal.privacy')->name('legal.privacy');
+Route::view('/terms', 'legal.terms')->name('legal.terms');
 
 Route::prefix('provider')->name('provider.')->group(function () {
 

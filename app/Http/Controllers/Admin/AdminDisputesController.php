@@ -63,7 +63,7 @@ class AdminDisputesController extends Controller
                 $credits,
                 'refund',
                 $dispute,
-                'Remboursement litige ' . $dispute->serviceRequest?->service_uid,
+                'Dispute refund ' . $dispute->serviceRequest?->service_uid,
             );
 
             $dispute->forceFill([
@@ -82,8 +82,8 @@ class AdminDisputesController extends Controller
         });
 
         return $result === 'ok'
-            ? back()->with('status', 'Litige approuvé — crédits remboursés au prestataire.')
-            : back()->with('error', 'Ce litige a déjà été traité.');
+            ? back()->with('status', __('Dispute approved: credits refunded to the provider.'))
+            : back()->with('error', __('This dispute has already been handled.'));
     }
 
     public function reject(Request $request, int $id): RedirectResponse
@@ -95,7 +95,7 @@ class AdminDisputesController extends Controller
         $dispute = LeadDispute::findOrFail($id);
 
         if (! $dispute->isPending()) {
-            return back()->with('error', 'Ce litige a déjà été traité.');
+            return back()->with('error', __('This dispute has already been handled.'));
         }
 
         $dispute->forceFill([
@@ -107,6 +107,6 @@ class AdminDisputesController extends Controller
 
         $this->audit->log('dispute.reject', $dispute, ['note' => $validated['admin_note']]);
 
-        return back()->with('status', 'Litige rejeté.');
+        return back()->with('status', __('Dispute rejected.'));
     }
 }

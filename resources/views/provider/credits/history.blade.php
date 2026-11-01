@@ -10,7 +10,7 @@
                 {{ __('credits.history_export') }}
             </x-z.btn>
         </div>
-        <p class="text-[#6B665E] text-sm mb-8">{{ __('Toutes vos transactions de crédits.') }}</p>
+        <p class="text-[#6B665E] text-sm mb-8">{{ __('All your credit transactions.') }}</p>
 
         <form method="GET" action="{{ route('provider.credits.history') }}" class="flex flex-wrap gap-3 mb-6 items-end">
             <div>
@@ -22,7 +22,7 @@
                     @endforeach
                 </select>
             </div>
-            <x-z.btn type="submit" variant="primary" size="md" icon="filter_list">{{ __('Filtrer') }}</x-z.btn>
+            <x-z.btn type="submit" variant="primary" size="md" icon="filter_list">{{ __('Filter') }}</x-z.btn>
             @if ($type !== 'all')
                 <a href="{{ route('provider.credits.history') }}" class="w-10 h-[42px] rounded-lg border border-[#D4CFC7] text-[#9A958D] hover:text-[#A84936] hover:border-[#A84936]/40 flex items-center justify-center shrink-0 transition-colors" aria-label="{{ __('credits.history_all') }}">
                     <x-z.icon name="close" class="text-lg" />
@@ -41,14 +41,14 @@
                                 <th class="text-start px-5 py-4">{{ __('Date') }}</th>
                                 <th class="text-start px-5 py-4">{{ __('Type') }}</th>
                                 <th class="text-start px-5 py-4">{{ __('Description') }}</th>
-                                <th class="text-end px-5 py-4">{{ __('Mouvement') }}</th>
-                                <th class="text-end px-5 py-4">{{ __('Solde') }}</th>
+                                <th class="text-end px-5 py-4">{{ __('Credit change') }}</th>
+                                <th class="text-end px-5 py-4">{{ __('Balance') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#D4CFC7]/20">
                             @foreach ($entries as $e)
                                 <tr class="hover:bg-[#F7F4F0]/50 transition-colors">
-                                    <td class="px-5 py-4 text-xs text-[#9A958D] whitespace-nowrap">{{ $e->created_at?->isoFormat('DD/MM/YYYY HH:mm') }}</td>
+                                    <td class="px-5 py-4 text-xs text-[#9A958D] whitespace-nowrap">{{ $e->created_at?->isoFormat('L LT') }}</td>
                                     <td class="px-5 py-4">
                                         <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F4F0] text-[#6B665E] border border-[#D4CFC7] font-bold uppercase tracking-wider">{{ $e->typeLabel() }}</span>
                                     </td>
@@ -60,7 +60,7 @@
                                         @elseif (filled($e->notes))
                                             <span>{{ $e->notes }}</span>
                                         @else
-                                            {{ __('Non renseigné') }}
+                                            {{ __('Not provided') }}
                                         @endif
                                     </td>
                                     <td @class([

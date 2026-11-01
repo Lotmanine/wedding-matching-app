@@ -37,7 +37,7 @@ return [
 
     // Descriptions des écritures créées par la plateforme (voir CreditLedger::systemDescription()).
     'entry' => [
-        'purchase_pack'  => 'Achat du :pack · :uid',
+        'purchase_pack'  => 'Achat du pack :pack · :uid',
         'purchase'       => 'Achat de crédits',
         'unlock_request' => 'Acceptation de la demande :uid',
         'unlock'         => 'Acceptation d\'une demande',
@@ -58,9 +58,9 @@ return [
     'pay' => [
         'title_choice'  => 'Mode de paiement',
         'title_single'  => 'Mode de paiement',
-        'intro_both'    => 'Payez par carte ou par versement bancaire ou CCP.',
-        'online_body'   => 'Paiement par carte via Chargily Pay. Les crédits sont ajoutés après confirmation du paiement.',
-        'offline_body'  => 'Effectuez le versement, puis envoyez sa référence. Les crédits sont ajoutés après vérification par notre équipe.',
+        'intro_both'    => 'Payez par carte ou par virement bancaire.',
+        'online_body'   => 'Paiement de test, aucun débit réel. Les crédits sont ajoutés après confirmation du paiement.',
+        'offline_body'  => 'Ceci est une démo, aucun virement réel n\'est nécessaire : saisissez une référence de votre choix. Les crédits sont ajoutés après vérification par notre équipe.',
     ],
 
     'failure_title'   => 'Paiement non finalisé',
@@ -71,7 +71,7 @@ return [
         'gateway_failed'       => 'Le service de paiement nous a signalé que le paiement a échoué.',
         'user_cancelled'       => 'Le paiement a été annulé avant d\'être validé.',
         'checkout_init_failed' => 'La page de paiement n\'a pas pu être ouverte.',
-        'offline_rejected'     => 'Votre versement n\'a pas été validé par notre équipe.',
+        'offline_rejected'     => 'Votre virement n\'a pas été validé par notre équipe.',
         'unknown'              => 'Le paiement n\'a pas abouti.',
     ],
     'failure_team_note'    => 'Motif indiqué par notre équipe :',
@@ -82,7 +82,7 @@ return [
         'refuse' => 'refus de la transaction par la banque.',
     ],
     'failure_next'         => 'Vous pouvez réessayer ou utiliser une autre carte.',
-    'failure_next_offline' => 'Vous pouvez réessayer, utiliser une autre carte ou payer par versement bancaire ou CCP.',
+    'failure_next_offline' => 'Vous pouvez réessayer, utiliser une autre carte ou payer par virement bancaire.',
 
     'checkout' => [
         'failed'       => 'Impossible de démarrer le paiement. Merci de réessayer.',
@@ -92,9 +92,16 @@ return [
     ],
 
     'offline' => [
-        'submitted'      => 'Versement signalé. Les crédits seront ajoutés après vérification par notre équipe.',
-        'pending_status' => 'En cours de vérification',
-        'pending_note'   => 'Versement en cours de vérification. Les crédits seront ajoutés après validation.',
+        'submitted'      => 'Virement signalé. Les crédits seront ajoutés après vérification par notre équipe.',
+        'pending_note'   => 'Virement en cours de vérification. Les crédits seront ajoutés après validation.',
+    ],
+
+    'status' => [
+        'paid'                 => 'Payé',
+        'pending'              => 'En attente',
+        'pending_verification' => 'En cours de vérification',
+        'failed'               => 'Échoué',
+        'cancelled'            => 'Annulé',
     ],
 
     'receipt' => [
@@ -103,12 +110,12 @@ return [
         'issued_to'    => 'Émis à',
         'paid_on'      => 'Payé le',
         'reference'    => 'Référence',
-        'gateway_ref'  => 'Référence Chargily',
-        'transfer_ref' => 'Référence du versement',
+        'gateway_ref'  => 'Référence du paiement',
+        'transfer_ref' => 'Référence du virement',
         'status'       => 'Statut',
         'amount'       => 'Montant',
-        'unlocks'      => 'Crédits',
-        'footer'       => 'Zawaj Pro · Plateforme de mariage en Algérie. Auto-entrepreneur. Paiements en ligne traités par Chargily Pay.',
+        'demo_notice'  => 'Reçu de démonstration, aucun paiement réel.',
+        'generated_on' => 'Document généré le :date · Wedding Matching App.',
     ],
 
     'low_balance_warning' => 'Crédits insuffisants pour accepter une demande. Achetez des crédits pour continuer.',

@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
         ]);
 
-        if (app()->environment('local')) {
+        if (config('wedding.demo.enabled')) {
+            $this->call(DemoSeeder::class);
+        } elseif (app()->environment('local')) {
             $this->call(DevDataSeeder::class);
         }
     }

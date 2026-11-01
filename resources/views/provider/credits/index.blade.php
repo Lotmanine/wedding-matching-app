@@ -40,8 +40,8 @@
             <div class="mb-8 flex items-start gap-3 p-5 rounded-2xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530]">
                 <x-z.icon name="hourglass_top" :filled="true" class="text-xl shrink-0" />
                 <div>
-                    <p class="font-semibold text-sm text-[#1A1A1A]">{{ __('Profil en cours de vérification') }}</p>
-                    <p class="text-sm mt-0.5">{{ __("L'achat de crédits sera possible après validation de votre profil.") }}</p>
+                    <p class="font-semibold text-sm text-[#1A1A1A]">{{ __('Profile under review') }}</p>
+                    <p class="text-sm mt-0.5">{{ __('credits.checkout.not_verified') }}</p>
                 </div>
             </div>
         @endunless
@@ -74,7 +74,7 @@
                         @else
                             <button type="button" disabled aria-disabled="true"
                                 class="mt-auto w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[#F7F4F0] text-[#9A958D] cursor-not-allowed select-none">
-                                <x-z.icon name="lock" class="text-base" /> {{ __('Vérification requise') }}
+                                <x-z.icon name="lock" class="text-base" /> {{ __('Verification required') }}
                             </button>
                         @endif
                     </div>
@@ -119,7 +119,7 @@
                                 ])>
                                     {{ $entry->delta > 0 ? '+' : '' }}{{ $entry->delta }}
                                 </p>
-                                <p class="text-xs text-[#9A958D]">{{ __('solde : :balance', ['balance' => $entry->balance_after]) }}</p>
+                                <p class="text-xs text-[#9A958D]">{{ __('balance: :balance', ['balance' => $entry->balance_after]) }}</p>
                             </div>
                         </div>
                     @endforeach

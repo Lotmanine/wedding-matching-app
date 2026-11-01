@@ -2,8 +2,8 @@
 
 @section('content')
     <div class="max-w-4xl" x-data>
-        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">Catalogue</h1>
-        <p class="text-sm text-[#6B665E] mt-1 mb-6">{{ __('Activez ou désactivez les services et les wilayas proposés.') }} Une entrée désactivée disparaît des nouveaux formulaires (demande couple, inscription prestataire) sans toucher aux données existantes.</p>
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('admin.nav.catalog') }}</h1>
+        <p class="text-sm text-[#6B665E] mt-1 mb-6">{{ __('Turn on or off the services and cities on offer.') }} {{ __('A disabled entry disappears from new forms (couple request, provider sign-up) without touching existing data.') }}</p>
 
         <form method="POST" action="{{ route('admin.catalog.update') }}" class="space-y-6">
             @csrf @method('PUT')
@@ -11,8 +11,8 @@
             {{-- Services --}}
             <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-5">
                 <div class="flex items-center justify-between mb-4">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">Services (activités)</p>
-                    <span class="text-xs text-[#9A958D]">{{ count($activeServices) }} / {{ count($services) }} actifs</span>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('Services (activities)') }}</p>
+                    <span class="text-xs text-[#9A958D]">{{ __(':active of :total services active', ['active' => count($activeServices), 'total' => count($services)]) }}</span>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     @foreach ($services as $svc)
@@ -30,18 +30,18 @@
             {{-- Cities --}}
             <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-5">
                 <div class="flex items-center justify-between mb-1">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">Wilayas couvertes</p>
-                    <span class="text-xs text-[#9A958D]">{{ $cities->where('active', true)->count() }} / {{ $cities->count() }} actives</span>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('Cities covered') }}</p>
+                    <span class="text-xs text-[#9A958D]">{{ __(':active of :total cities active', ['active' => $cities->where('active', true)->count(), 'total' => $cities->count()]) }}</span>
                 </div>
                 <div class="flex items-center gap-3 mb-4">
                     <button type="button" class="text-xs font-semibold text-[#C8956C] hover:underline"
                             @click="[...$el.closest('form').querySelectorAll('input[name=\'active_cities[]\']')].forEach(c => c.checked = true)">
-                        Tout activer
+                        {{ __('Enable all') }}
                     </button>
                     <span class="text-[#D4CFC7]">·</span>
                     <button type="button" class="text-xs font-semibold text-[#9A958D] hover:underline"
                             @click="[...$el.closest('form').querySelectorAll('input[name=\'active_cities[]\']')].forEach(c => c.checked = false)">
-                        Tout désactiver
+                        {{ __('Disable all') }}
                     </button>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -58,8 +58,8 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <p class="text-xs text-[#9A958D]">Les demandes et prestataires existants ne sont pas modifiés.</p>
-                <x-z.btn type="submit" variant="accent">Enregistrer</x-z.btn>
+                <p class="text-xs text-[#9A958D]">{{ __('Existing requests and providers are not changed.') }}</p>
+                <x-z.btn type="submit" variant="accent">{{ __('Save') }}</x-z.btn>
             </div>
         </form>
     </div>

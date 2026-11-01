@@ -33,11 +33,11 @@
                                 <td class="px-5 py-4 text-center text-[#6B665E]">{{ $p->sort_order }}</td>
                                 <td class="px-5 py-4 text-center">
                                     <form method="POST" action="{{ route('admin.packs.toggle', $p->id) }}" class="inline">@csrf
-                                        <button class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase border {{ $p->active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[#F7F4F0] text-[#9A958D] border-[#D4CFC7]' }}">{{ $p->active ? 'Actif' : 'Inactif' }}</button>
+                                        <button class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase border {{ $p->active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[#F7F4F0] text-[#9A958D] border-[#D4CFC7]' }}">{{ $p->active ? __('Active') : __('Inactive') }}</button>
                                     </form>
                                 </td>
                                 <td class="px-5 py-4 text-right">
-                                    <a href="{{ route('admin.packs.edit', $p->id) }}" class="text-[#C8956C] text-xs font-bold hover:underline">Éditer</a>
+                                    <a href="{{ route('admin.packs.edit', $p->id) }}" class="text-[#C8956C] text-xs font-bold hover:underline">{{ __('Edit') }}</a>
                                 </td>
                             </tr>
                         @endforeach

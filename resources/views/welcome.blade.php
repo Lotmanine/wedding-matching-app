@@ -9,7 +9,7 @@
     $maxRounds    = (int) config('wedding.matching.max_rounds', 3);
     $validityDays = (int) config('wedding.privacy.retention_days', 14);
     $openCities   = \App\Models\City::active()->pluck('name');
-    $openCitiesText = $openCities->join(', ', ' et ');
+    $openCitiesText = $openCities->join(', ', ' ' . __('and') . ' ');
     $freeLabel    = \App\Support\Money::format(0, \App\Support\Money::currencyForCity(null));
 
     // ─── Catégories (bento) — adaptées de claude-design/Landing.jsx ───
@@ -17,8 +17,8 @@
     // page never advertises a service the request form does not offer. Labels come
     // from ServiceType::label(), so marketing, form and provider pages agree.
     $categoryStyles = [
-        'photo'      => ['icon' => 'camera_alt',              'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => asset('images/categories/photographe.jpg'), 'span' => false],
-        'video'      => ['icon' => 'videocam',                'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => asset('images/categories/videaste.jpg'), 'span' => false],
+        'photo'      => ['icon' => 'camera_alt',              'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => asset('images/categories/photo.jpg'), 'span' => false],
+        'video'      => ['icon' => 'videocam',                'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => asset('images/categories/video.jpg'), 'span' => false],
         'catering'   => ['icon' => 'restaurant',              'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => asset('images/categories/catering.jpg'), 'span' => false],
         'venue'      => ['icon' => 'villa',                   'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => asset('images/categories/venue.jpg'), 'span' => true],
         'decoration' => ['icon' => 'local_florist',           'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => asset('images/categories/decoration.jpg'), 'span' => false],
@@ -42,11 +42,11 @@
 
     // 'html' => true : the answer is static copy from lang/ holding one escaped link.
     $faqs = [
-        ['q' => __("L'envoi de la demande est-il gratuit ?"), 'a' => __("Oui. Les prestataires paient pour accéder à vos coordonnées. Vous convenez du prix des services directement avec eux.")],
-        ['q' => __("Comment vérifiez-vous les prestataires ?"), 'a' => __("Notre équipe vérifie chaque prestataire avant l'accès aux demandes. Votre demande est envoyée selon le service recherché et la wilaya.")],
-        ['q' => __("Quand un prestataire me contactera-t-il ?"), 'a' => __("Le délai dépend de l'acceptation d'un prestataire. Pour chaque service, nous prévenons jusqu'à :per_round prestataires vérifiés à la fois. Chacun a :hours heures pour répondre. Sans acceptation, nous en prévenons d'autres, :max_rounds tours au maximum. La demande devient ensuite visible par tous les prestataires éligibles de votre wilaya. Elle reste active :days jours : sans acceptation d'ici là, elle expire. Vous suivez l'avancement sur votre page de confirmation.", ['per_round' => $perRound, 'hours' => $roundHours, 'max_rounds' => $maxRounds, 'days' => $validityDays])],
-        ['q' => __("Qui reçoit mon numéro WhatsApp ?"), 'html' => true, 'a' => __("Pour chaque service, seul le prestataire qui accepte votre demande reçoit votre numéro WhatsApp. Votre demande expire :days jours après son envoi. Un prestataire qui l'accepte garde l'accès à vos coordonnées pendant :days jours après son acceptation. Vos données personnelles sont effacées une fois la demande expirée et cette période terminée. Les durées de conservation sont détaillées dans la :link.", ['days' => $validityDays, 'link' => $privacyLink])],
-        ['q' => __("Et si le prestataire ne me convient pas ?"), 'a' => __("Vous êtes libres de refuser et d'envoyer une nouvelle demande gratuitement.")],
+        ['q' => __('Is sending a request free?'), 'a' => __('Yes. Providers pay to access your contact details. You agree on the price of services directly with them.')],
+        ['q' => __('How are providers verified?'), 'a' => __('An admin verifies each provider before they can see requests. Your request is sent according to the service you need and your city.')],
+        ['q' => __('When will a provider contact me?'), 'a' => __('It depends on when a provider accepts. For each service, we notify up to :per_round verified providers at a time. Each has :hours hours to respond. If nobody accepts, we notify others, for up to :max_rounds rounds. The request then becomes visible to all eligible providers in your city. It stays active for :days days: if nobody accepts by then, it expires. You can follow the progress on your confirmation page.', ['per_round' => $perRound, 'hours' => $roundHours, 'max_rounds' => $maxRounds, 'days' => $validityDays])],
+        ['q' => __('Who receives my WhatsApp number?'), 'html' => true, 'a' => __('For each service, only the provider who accepts your request receives your WhatsApp number. Your request expires :days days after it is sent. A provider who accepts it keeps access to your contact details for :days days after accepting. Your personal details are erased once the request has expired and that period is over. Retention periods are explained in the :link.', ['days' => $validityDays, 'link' => $privacyLink])],
+        ['q' => __('What if the provider is not right for me?'), 'a' => __('You are free to say no and send a new request at no cost.')],
     ];
 
 @endphp
@@ -60,17 +60,17 @@
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative">
             <div>
                 <x-z.badge variant="accent" class="mb-7">
-                    <x-z.icon name="auto_awesome" class="text-sm" /> {{ __('Une demande, plusieurs services') }}
+                    <x-z.icon name="auto_awesome" class="text-sm" /> {{ __('One request, several services') }}
                 </x-z.badge>
                 <h1 class="font-serif text-5xl md:text-6xl lg:text-[72px] text-[#1A1A1A] leading-[1.05] font-bold mb-7 text-balance">
-                    {{ __('Trouvez les prestataires de votre mariage') }}
+                    {{ __('Find the providers for your wedding') }}
                 </h1>
                 <p class="text-lg md:text-xl text-[#6B665E] leading-relaxed mb-4 max-w-xl">
-                    {{ __("Indiquez vos besoins. Nous envoyons votre demande aux prestataires vérifiés de votre wilaya. Pour chaque service, le premier qui accepte vous contacte sur WhatsApp.") }}
+                    {{ __('Tell us what you need. We send your request to verified providers in your city. For each service, the first to accept contacts you on WhatsApp.') }}
                 </p>
                 <p class="text-sm text-[#6B665E] mb-10 max-w-xl flex items-start gap-2">
                     <x-z.icon name="verified" :filled="true" class="text-[#C8956C] text-base shrink-0 mt-0.5" />
-                    <span>{{ __('Demande gratuite. Prix des services à convenir avec le prestataire.') }}</span>
+                    <span>{{ __('Free request. Prices for services are agreed with the provider.') }}</span>
                 </p>
                 <div class="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div class="flex flex-col gap-2">
@@ -80,8 +80,8 @@
                         </x-z.btn>
                         <p class="text-xs text-[#9A958D] text-center">{{ __('form.cta_free_note') }}</p>
                     </div>
-                    <x-z.btn href="#comment" size="lg" variant="outline">
-                        {{ __('Comment ça marche') }}
+                    <x-z.btn href="#how-it-works" size="lg" variant="outline">
+                        {{ __('How it works') }}
                     </x-z.btn>
                 </div>
             </div>
@@ -95,20 +95,20 @@
                         <div class="w-full rounded-[2.3rem] overflow-hidden bg-[#F0D9B5]/20 flex flex-col" style="height:560px">
                             {{-- WA header --}}
                             <div class="bg-[#1A1A1A] px-4 pt-8 pb-3 flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-[#C8956C] flex items-center justify-center text-white text-xs font-bold shrink-0">ZP</div>
+                                <div class="w-9 h-9 rounded-full bg-[#C8956C] flex items-center justify-center text-white text-xs font-bold shrink-0">WM</div>
                                 <div>
-                                    <p class="text-white text-sm font-bold leading-none">Zawaj Pro</p>
-                                    <p class="text-[#C8956C] text-[10px] mt-0.5">{{ __('En ligne') }}</p>
+                                    <p class="text-white text-sm font-bold leading-none">{{ __('form.brand') }}</p>
+                                    <p class="text-[#C8956C] text-[10px] mt-0.5">{{ __('Online') }}</p>
                                 </div>
                             </div>
                             {{-- WA chat --}}
                             <div class="flex-1 bg-[#FDFAF6] p-3 space-y-3 overflow-hidden">
                                 <div class="bg-white rounded-2xl rounded-ss-sm p-3 shadow-sm border border-[#D4CFC7]/30 max-w-[85%] text-[11px] leading-relaxed text-[#1A1A1A]">
-                                    {{ __('Bonjour, nous cherchons un photographe pour notre mariage à Alger.') }}
+                                    {{ __('Hello, we are looking for a photographer for our wedding in New York.') }}
                                     <p class="text-[9px] text-end text-[#9A958D] mt-1">10:14</p>
                                 </div>
                                 <div class="bg-[#F0D9B5] rounded-2xl rounded-se-sm p-3 shadow-sm max-w-[85%] ms-auto text-[11px] leading-relaxed text-[#1A1A1A]">
-                                    {!! __("Félicitations 🎉 Nous transmettons votre demande aux <b>photographes vérifiés</b> d'Alger.") !!}
+                                    {!! __('Congratulations 🎉 We are sending your request to <b>verified photographers</b> in New York.') !!}
                                     <p class="text-[9px] text-end text-[#7A5530]/60 mt-1">10:14</p>
                                 </div>
                                 <div class="flex items-center gap-1.5 ms-auto max-w-[85%]">
@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="bg-[#F0D9B5] rounded-2xl rounded-se-sm p-3 shadow-sm max-w-[90%] ms-auto text-[11px] leading-relaxed text-[#1A1A1A]">
                                     {{-- No timestamp here: the example must not suggest a response time. --}}
-                                    {!! __('✅ <b>Un photographe</b> a accepté votre demande. Il vous contacte directement sur WhatsApp.') !!}
+                                    {!! __('✅ <b>A photographer</b> has accepted your request. They will contact you directly on WhatsApp.') !!}
                                 </div>
                             </div>
                             {{-- WA input --}}
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <p class="relative mt-5 w-[280px] text-xs text-[#9A958D] flex items-center justify-center gap-1.5">
-                        <x-z.icon name="info" class="text-sm" /> {{ __('Exemple de fonctionnement') }}
+                        <x-z.icon name="info" class="text-sm" /> {{ __('Example of how it works') }}
                     </p>
                 </div>
             </div>
@@ -147,7 +147,7 @@
     <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
         <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-10">
             {{-- The two durations are process facts (provider response window, request validity), not a response promise. --}}
-            @foreach ([[$freeLabel, __('pour les futurs mariés')], [null, __('Disponible à :cities', ['cities' => $openCitiesText])], [__(':hours h', ['hours' => $roundHours]), __('Délai de réponse par prestataire')], [__(':days jours', ['days' => $validityDays]), __('Validité de la demande')]] as $stat)
+            @foreach ([[$freeLabel, __('for couples')], [null, __('Available in :cities', ['cities' => $openCitiesText])], [__(':hours h', ['hours' => $roundHours]), __('Response window per provider')], [trans_choice('form.days_count', $validityDays, ['count' => $validityDays]), __('Request validity')]] as $stat)
                 <div class="flex items-center gap-3">
                     @if ($stat[0] === null)
                         <x-z.icon name="location_on" :filled="true" class="text-2xl text-[#C8956C]" />
@@ -161,19 +161,19 @@
     </section>
 
     {{-- ── How it works ────────────────────────────────────── --}}
-    <section id="comment" class="py-24 md:py-32 px-5 md:px-8 scroll-mt-28">
+    <section id="how-it-works" class="py-24 md:py-32 px-5 md:px-8 scroll-mt-28">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 md:mb-20">
-                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">{{ __('Comment ça marche') }}</p>
-                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">{{ __('Comment envoyer votre demande') }}</h2>
+                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">{{ __('How it works') }}</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">{{ __('How to send your request') }}</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-6 md:gap-8 relative">
                 <div class="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px bg-gradient-to-r from-[#D4CFC7] via-[#C8956C] to-[#D4CFC7] z-0"></div>
                 @php
                     $steps = [
-                        ['n' => '01', 'icon' => 'edit_note', 'title' => __('Décrivez vos besoins'), 'body' => __('Choisissez les services, la wilaya, la date et le budget de votre mariage.')],
-                        ['n' => '02', 'icon' => 'send', 'title' => __('Nous envoyons votre demande'), 'body' => __('Elle est transmise aux prestataires vérifiés qui proposent ces services dans votre wilaya.')],
-                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => __('Échangez sur WhatsApp'), 'body' => __('Pour chaque service, le premier prestataire qui accepte vous contacte. Vous convenez du prix avec lui.')],
+                        ['n' => '01', 'icon' => 'edit_note', 'title' => __('Describe your needs'), 'body' => __('Choose the services, city, date and budget for your wedding.')],
+                        ['n' => '02', 'icon' => 'send', 'title' => __('We send your request'), 'body' => __('It goes to verified providers offering these services in your city.')],
+                        ['n' => '03', 'icon' => 'chat_bubble', 'title' => __('Talk on WhatsApp'), 'body' => __('For each service, the first provider to accept contacts you. You agree on the price together.')],
                     ];
                 @endphp
                 @foreach ($steps as $step)
@@ -195,16 +195,16 @@
     {{-- ── Comparison ──────────────────────────────────────── --}}
     <section class="py-24 md:py-32 px-5 md:px-8 bg-[#F7F4F0]">
         <div class="max-w-4xl mx-auto">
-            <h2 class="font-serif text-4xl md:text-5xl font-bold text-center text-[#1A1A1A] mb-14">{{ __('Pourquoi Zawaj Pro ?') }}</h2>
+            <h2 class="font-serif text-4xl md:text-5xl font-bold text-center text-[#1A1A1A] mb-14">{{ __('Why :brand?', ['brand' => __('form.brand')]) }}</h2>
             <div class="grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl shadow-black/5 border border-[#D4CFC7]/40">
                 {{-- Without --}}
                 <div class="bg-white p-8 md:p-10">
                     <div class="flex items-center gap-3 mb-8">
                         <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 font-bold text-sm">×</div>
-                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('Recherche classique') }}</h3>
+                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('Searching on your own') }}</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach ([__('Chercher dans plusieurs groupes'), __('Vérifier chaque prestataire vous-même'), __('Contacter chaque prestataire un par un'), __('Attendre les réponses séparément')] as $t)
+                        @foreach ([__('Look through many listings'), __('Check each provider yourself'), __('Contact each provider one by one'), __('Wait for replies separately')] as $t)
                             <li class="flex items-start gap-3 text-sm text-[#6B665E]">
                                 <x-z.icon name="remove_circle_outline" class="text-[#D4CFC7] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -219,10 +219,10 @@
                         <div class="w-8 h-8 rounded-full bg-[#F0D9B5] flex items-center justify-center">
                             <x-z.icon name="check" :filled="true" class="text-[#C8956C] text-sm" />
                         </div>
-                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('Avec Zawaj Pro') }}</h3>
+                        <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('With :brand', ['brand' => __('form.brand')]) }}</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach ([__('Une seule demande, transmise aux prestataires de votre wilaya'), __('Chaque prestataire est vérifié par notre équipe'), __('Chaque prestataire sollicité a :hours heures pour répondre', ['hours' => $roundHours]), __('Contact direct sur WhatsApp avec le prestataire qui accepte')] as $t)
+                        @foreach ([__('One request, sent to providers in your city'), __('Every provider is verified by an admin'), __('Each provider contacted has :hours hours to respond', ['hours' => $roundHours]), __('Direct contact on WhatsApp with the provider who accepts')] as $t)
                             <li class="flex items-start gap-3 text-sm font-semibold text-[#1A1A1A]">
                                 <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -239,10 +239,10 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-12">
                 <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">{{ __('Nos catégories') }}</p>
-                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">{{ __('Quels services recherchez-vous ?') }}</h2>
+                    <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-4">{{ __('Our categories') }}</p>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A]">{{ __('Which services are you looking for?') }}</h2>
                 </div>
-                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">{{ __('Choisissez un ou plusieurs services.') }}</p>
+                <p class="text-[#6B665E] max-w-xs text-sm leading-relaxed">{{ __('Choose one or more services.') }}</p>
             </div>
 
             {{-- Reusable card markup: render once per layout (desktop bento + mobile grid) --}}
@@ -266,7 +266,7 @@
                 };
             @endphp
 
-            {{-- Desktop bento — Salle des fêtes spans 2 rows when it is offered and the grid has more than one row --}}
+            {{-- Desktop bento — the venue card spans 2 rows when it is offered and the grid has more than one row --}}
             <div class="hidden lg:grid gap-4" style="grid-template-columns:repeat({{ $categoryCols }},1fr);grid-auto-rows:300px">
                 @foreach ($categories as $c)
                     {!! $renderCategory($c, $categorySpans) !!}
@@ -287,13 +287,13 @@
             {{-- Image collage --}}
             <div class="relative h-[420px] md:h-[520px]">
                 <div class="absolute top-0 start-0 w-[58%] h-[65%] rounded-2xl overflow-hidden shadow-xl shadow-black/10">
-                    <img src="{{ asset('images/gallery/mariage.jpg') }}" alt="{{ __('Mariage algérien') }}" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ asset('images/gallery/wedding.jpg') }}" alt="{{ __('Wedding celebration') }}" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute bottom-0 start-[8%] w-[48%] h-[48%] rounded-2xl overflow-hidden shadow-xl shadow-black/10 border-4 border-white">
-                    <img src="{{ asset('images/gallery/couple.jpg') }}" alt="{{ __('Couple heureux') }}" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ asset('images/gallery/couple.jpg') }}" alt="{{ __('Happy couple') }}" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute top-[10%] end-0 w-[38%] h-[55%] rounded-2xl overflow-hidden shadow-xl shadow-black/10">
-                    <img src="{{ asset('images/gallery/ceremonie.jpg') }}" alt="{{ __('Cérémonie') }}" class="w-full h-full object-cover" loading="lazy">
+                    <img src="{{ asset('images/gallery/ceremony.jpg') }}" alt="{{ __('Ceremony') }}" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 <div class="absolute bottom-[15%] end-[2%] bg-white rounded-2xl p-4 shadow-lg shadow-black/10 border border-[#D4CFC7]/40">
                     <div class="flex items-center gap-3">
@@ -302,26 +302,26 @@
                         </div>
                         <div>
                             <p class="font-serif text-2xl font-bold text-[#1A1A1A] leading-none">{{ $freeLabel }}</p>
-                            <p class="text-xs text-[#9A958D] mt-0.5">{{ __('pour les futurs mariés') }}</p>
+                            <p class="text-xs text-[#9A958D] mt-0.5">{{ __('for couples') }}</p>
                         </div>
                     </div>
                 </div>
             </div>
             {{-- Text --}}
             <div>
-                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">{{ __('Notre mission') }}</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">{{ __('Who you deal with') }}</p>
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] leading-[1.1] mb-6 text-balance">
-                    {{ __('Des prestataires vérifiés dans votre wilaya') }}
+                    {{ __('Verified providers in your city') }}
                 </h2>
                 <p class="text-[#6B665E] leading-relaxed text-lg mb-8">
-                    {{ __("Notre équipe vérifie les prestataires avant l'accès aux demandes. Vous échangez directement avec eux et convenez du prix.") }}
+                    {{ __('An admin verifies providers before they can see requests. You talk to them directly and agree on the price.') }}
                 </p>
                 <div class="space-y-5">
                     @php
                         $missionItems = [
                             // The verification card was dropped: the heading and paragraph above already say it.
-                            ['icon' => 'shield', 'title' => __('Qui voit votre numéro ?'), 'body' => __('Pour chaque service, seul le prestataire qui accepte votre demande reçoit votre numéro WhatsApp.'), 'email' => null],
-                            ['icon' => 'support_agent', 'title' => __("Besoin d'aide ?"), 'body' => __('Une question ? Écrivez-nous.'), 'email' => 'contact@zawajpro.dz'],
+                            ['icon' => 'shield', 'title' => __('Who sees your number?'), 'body' => __('For each service, only the provider who accepts your request receives your WhatsApp number.')],
+                            ['icon' => 'support_agent', 'title' => __('Need help?'), 'body' => __('This is a demo, so there is no support service.')],
                         ];
                     @endphp
                     @foreach ($missionItems as $item)
@@ -331,11 +331,7 @@
                             </div>
                             <div>
                                 <p class="font-semibold text-[#1A1A1A] mb-0.5">{{ $item['title'] }}</p>
-                                <p class="text-sm text-[#6B665E] leading-relaxed">{{ $item['body'] }}
-                                    @if ($item['email'])
-                                        <a href="mailto:{{ $item['email'] }}" class="font-semibold text-[#1A1A1A] underline">{{ $item['email'] }}</a>
-                                    @endif
-                                </p>
+                                <p class="text-sm text-[#6B665E] leading-relaxed">{{ $item['body'] }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -348,7 +344,7 @@
     <section id="faq" class="py-24 md:py-32 px-5 md:px-8 scroll-mt-28">
         <div class="max-w-2xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="font-serif text-4xl font-bold text-[#1A1A1A]">{{ __('Questions fréquentes') }}</h2>
+                <h2 class="font-serif text-4xl font-bold text-[#1A1A1A]">{{ __('Frequently asked questions') }}</h2>
             </div>
             <div class="space-y-3">
                 @foreach ($faqs as $f)
@@ -373,12 +369,12 @@
             <div class="bg-[#1A1A1A] rounded-[2rem] px-8 md:px-20 py-16 md:py-20 text-center relative overflow-hidden">
                 <div class="absolute inset-0 pointer-events-none opacity-[0.04]" style="background-image:radial-gradient(circle at 2px 2px, #F0D9B5 1px, transparent 0);background-size:28px 28px"></div>
                 <div class="relative">
-                    <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">{{ __('Commencez maintenant') }}</p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-[#C8956C] mb-5">{{ __('Get started') }}</p>
                     <h2 class="font-serif text-4xl md:text-5xl text-white font-bold mb-6 leading-tight text-balance">
-                        {{ __('Commençons par votre mariage') }}
+                        {{ __("Let's start with your wedding") }}
                     </h2>
                     <p class="text-white/60 text-lg mb-10 max-w-xl mx-auto">
-                        {{ __('Demande gratuite, sans engagement.') }}
+                        {{ __('Free request, no commitment.') }}
                     </p>
                     <div class="flex flex-col sm:flex-row sm:items-start justify-center gap-4">
                         <div class="flex flex-col gap-2">
@@ -388,7 +384,7 @@
                             <p class="text-xs text-white/50 text-center">{{ __('form.cta_free_note') }}</p>
                         </div>
                         <x-z.btn :href="route('provider.register')" size="lg" variant="ghost-white">
-                            {{ __('Créer un compte prestataire') }}
+                            {{ __('Create a provider account') }}
                         </x-z.btn>
                     </div>
                 </div>

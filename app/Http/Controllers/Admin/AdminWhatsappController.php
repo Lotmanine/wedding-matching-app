@@ -47,7 +47,7 @@ class AdminWhatsappController extends Controller
             'verify_token'    => ['nullable', 'string', 'max:255'],
             'app_secret'      => ['nullable', 'string', 'max:255'],
         ], [
-            'phone_number_id.regex' => 'Le « Phone number ID » est un identifiant numérique (pas le numéro de téléphone).',
+            'phone_number_id.regex' => __('The Phone number ID is a numeric ID (not the phone number).'),
         ]);
 
         $this->whatsapp->save($validated);
@@ -61,6 +61,6 @@ class AdminWhatsappController extends Controller
             'app_secret'      => filled($validated['app_secret'] ?? null) ? 'updated' : 'unchanged',
         ]);
 
-        return back()->with('status', 'Configuration WhatsApp enregistrée.');
+        return back()->with('status', __('WhatsApp configuration saved.'));
     }
 }

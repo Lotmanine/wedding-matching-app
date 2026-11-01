@@ -82,7 +82,7 @@ class AcceptedLeadsTest extends TestCase
         $response->assertOk()
             ->assertSee('Khadidja')
             ->assertSee('+12125554567')
-            ->assertSee('Coordonnées affichées jusqu'); // end-of-access notice
+            ->assertSee('Contact details shown until'); // end-of-access notice
     }
 
     public function test_old_lead_is_anonymized(): void
@@ -93,8 +93,8 @@ class AcceptedLeadsTest extends TestCase
         $response = $this->actingAs($provider)->get(route('provider.leads.show', $lead->service_uid));
 
         $response->assertOk()
-            ->assertSee('Non disponible')
-            ->assertSee('Coordonnées masquées')
+            ->assertSee('Not available')
+            ->assertSee('Contact details hidden')
             ->assertDontSee('Khadidja')
             ->assertDontSee('+12125554567');
     }
@@ -112,7 +112,7 @@ class AcceptedLeadsTest extends TestCase
 
         $response->assertOk()
             ->assertSee($fresh->service_type?->label())
-            ->assertSee('Non disponible')          // the old one is masked in the list
+            ->assertSee('Not available')          // the old one is masked in the list
             ->assertSee('Khadidja');          // the fresh one still shows the name
 
         // The other provider's lead must not leak into this list.

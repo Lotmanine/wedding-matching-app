@@ -8,7 +8,7 @@
 
         <form method="GET" class="flex flex-wrap gap-3 mb-5 items-end bg-white p-4 rounded-xl border border-[#D4CFC7]/50 shadow-sm">
             <div class="flex-1 min-w-[200px]">
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">Recherche</label>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('Search') }}</label>
                 <input name="q" value="{{ $search }}" placeholder="{{ __('admin.providers.search_placeholder') }}" class="w-full px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors placeholder-[#9A958D]" />
             </div>
             <div>
@@ -23,13 +23,13 @@
             <div>
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.providers.filter_city') }}</label>
                 <select name="city" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
-                    <option value="">Toutes</option>
+                    <option value="">{{ __('All cities') }}</option>
                     @foreach ($cities as $w)
                         <option value="{{ $w->code }}" @selected($city === $w->code)>{{ $w->code }} · {{ $w->name }}</option>
                     @endforeach
                 </select>
             </div>
-            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">Filtrer</x-z.btn>
+            <x-z.btn type="submit" variant="primary" size="sm" icon="filter_list">{{ __('Filter') }}</x-z.btn>
         </form>
 
         <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm overflow-hidden">
@@ -54,7 +54,7 @@
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-lg bg-[#F0D9B5] flex items-center justify-center text-xs font-bold text-[#1A1A1A] shrink-0 uppercase">{{ mb_substr($prof?->business_name ?? $p->name, 0, 1) }}</div>
                                         <div class="min-w-0">
-                                            <div class="font-semibold text-[#1A1A1A]">{{ $prof?->business_name ?? 'Non renseigné' }}</div>
+                                            <div class="font-semibold text-[#1A1A1A]">{{ $prof?->business_name ?? __('Not specified') }}</div>
                                             <div class="text-xs text-[#9A958D]">{{ $p->name }}</div>
                                         </div>
                                     </div>
@@ -63,14 +63,14 @@
                                     <div class="text-[#1A1A1A]">{{ $p->email }}</div>
                                     <div class="text-[#9A958D] font-mono">{{ $p->phone }}</div>
                                 </td>
-                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_city_code ?? 'Non renseigné' }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_city_code ?? __('Not specified') }}</td>
                                 <td class="px-5 py-4">
                                     @if ($prof?->suspended_at)
-                                        <x-z.badge variant="danger">Suspendu</x-z.badge>
+                                        <x-z.badge variant="danger">{{ __('Suspended') }}</x-z.badge>
                                     @elseif ($prof?->verified)
-                                        <x-z.badge variant="success">Vérifié</x-z.badge>
+                                        <x-z.badge variant="success">{{ __('Verified') }}</x-z.badge>
                                     @else
-                                        <x-z.badge variant="warning">En attente</x-z.badge>
+                                        <x-z.badge variant="warning">{{ __('Pending') }}</x-z.badge>
                                     @endif
                                 </td>
                                 <td class="px-5 py-4 text-right font-bold text-[#1A1A1A]">{{ $prof?->credit_balance ?? 0 }}</td>
@@ -85,7 +85,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="7" class="p-6 text-center text-[#9A958D] text-sm">Aucun prestataire.</td></tr>
+                            <tr><td colspan="7" class="p-6 text-center text-[#9A958D] text-sm">{{ __('No providers.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

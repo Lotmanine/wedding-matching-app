@@ -46,7 +46,7 @@ class CreditsController extends Controller
 
     /**
      * Payment-method choice page (logged-in providers only). Shows the enabled
-     * methods (online Chargily and/or offline versement) for a pack.
+     * methods (online and/or offline bank transfer) for a pack.
      */
     public function pay(Request $request, string $packSlug)
     {
@@ -59,7 +59,7 @@ class CreditsController extends Controller
 
         $pack = UnlockPack::where('slug', $packSlug)->where('active', true)->first();
         if (! $pack) {
-            throw new NotFoundHttpException('Pack introuvable ou inactif.');
+            throw new NotFoundHttpException('Pack not found or inactive.');
         }
 
         $methods = $this->paymentSettings->enabledMethods();
@@ -76,7 +76,8 @@ class CreditsController extends Controller
     }
 
     /**
-     * Start an online Chargily checkout and redirect to the gateway.
+     * Start an online checkout. The public demo pays immediately with a test
+     * payment; otherwise the provider is redirected to the Chargily gateway.
      */
     public function checkout(Request $request, string $packSlug): RedirectResponse
     {
@@ -95,10 +96,16 @@ class CreditsController extends Controller
 
         $pack = UnlockPack::where('slug', $packSlug)->where('active', true)->first();
         if (! $pack) {
-            throw new NotFoundHttpException('Pack introuvable ou inactif.');
+            throw new NotFoundHttpException('Pack not found or inactive.');
         }
 
         $purchase = $this->purchases->initiate($user, $pack);
+
+        if (config('wedding.demo.enabled')) {
+            $this->purchases->markPaid($purchase, ['id' => 'test-' . $purchase->purchase_uid]);
+
+            return redirect()->route('provider.credits.success', ['purchase' => $purchase->purchase_uid]);
+        }
 
         try {
             $checkout = $this->chargily->createCheckout($purchase);
@@ -122,7 +129,7 @@ class CreditsController extends Controller
     }
 
     /**
-     * Record an offline (bank transfer / CCP) payment declaration. Credits are
+     * Record an offline (bank transfer) payment declaration. Credits are
      * NOT granted here — the purchase waits in 'pending_verification' for an
      * admin to confirm the funds arrived.
      */
@@ -141,7 +148,7 @@ class CreditsController extends Controller
 
         $pack = UnlockPack::where('slug', $packSlug)->where('active', true)->first();
         if (! $pack) {
-            throw new NotFoundHttpException('Pack introuvable ou inactif.');
+            throw new NotFoundHttpException('Pack not found or inactive.');
         }
 
         $validated = $request->validate([
@@ -192,7 +199,7 @@ class CreditsController extends Controller
             $explanation = __('credits.failure_reasons.' . (in_array($code, $known, true) ? $code : 'unknown'));
         }
 
-        // Free text typed by the team when rejecting a versement: shown as stored.
+        // Free text typed by the team when rejecting a bank transfer: shown as stored.
         $teamNote = $code === 'offline_rejected' && str_contains($reason, ':')
             ? trim(explode(':', $reason, 2)[1])
             : '';
@@ -242,11 +249,9 @@ class CreditsController extends Controller
         }
 
         if ($request->query('format') === 'pdf') {
-            // The PDF receipt is always issued in French.
-            app()->setLocale('fr');
             $pdf = Pdf::loadView('provider.credits.receipt-pdf', ['purchase' => $purchase]);
 
-            return $pdf->download('recu-' . $purchase->purchase_uid . '.pdf');
+            return $pdf->download('receipt-' . $purchase->purchase_uid . '.pdf');
         }
 
         return view('provider.credits.purchase-show', [
@@ -260,7 +265,7 @@ class CreditsController extends Controller
 
         return response()->streamDownload(function () use ($entries) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, [__('Date'), __('Type'), __('Mouvement'), __('Solde'), __('Description')]);
+            fputcsv($handle, [__('Date'), __('Type'), __('Credit change'), __('Balance'), __('Description')]);
             foreach ($entries as $e) {
                 fputcsv($handle, [
                     $e->created_at?->toDateTimeString(),

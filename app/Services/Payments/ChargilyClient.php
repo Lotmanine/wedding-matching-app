@@ -22,11 +22,11 @@ class ChargilyClient
 
         $payload = [
             'amount'            => (int) $purchase->amount,
-            'currency'          => 'dzd',
+            'currency'          => strtolower((string) $purchase->currency),
             'success_url'       => config('wedding.chargily.success_url') . '?purchase=' . $purchase->purchase_uid,
             'failure_url'       => config('wedding.chargily.failure_url') . '?purchase=' . $purchase->purchase_uid,
             'webhook_endpoint'  => config('wedding.chargily.webhook_url'),
-            'description'       => 'Wedding Matching App — ' . ($purchase->unlockPack?->name ?? 'Pack de crédits'),
+            'description'       => 'Wedding Matching App — ' . ($purchase->unlockPack?->name ?? 'Credit pack'),
             'metadata'          => [
                 'purchase_uid' => $purchase->purchase_uid,
                 'user_id'      => $purchase->user_id,
@@ -46,7 +46,7 @@ class ChargilyClient
                 ->post($this->settings->chargilyBaseUrl() . '/checkouts', $payload);
         } catch (ConnectionException $e) {
             Log::error('Chargily: connection error creating checkout', ['error' => $e->getMessage()]);
-            throw new RuntimeException('Chargily indisponible — merci de réessayer dans un instant.', previous: $e);
+            throw new RuntimeException('Payment service unavailable. Please try again in a moment.', previous: $e);
         }
 
         if (! $response->successful()) {
@@ -54,7 +54,7 @@ class ChargilyClient
                 'status' => $response->status(),
                 'body'   => $response->body(),
             ]);
-            throw new RuntimeException('Chargily a refusé la demande de paiement (' . $response->status() . ').');
+            throw new RuntimeException('The payment service declined the request (' . $response->status() . ').');
         }
 
         $body = $response->json();

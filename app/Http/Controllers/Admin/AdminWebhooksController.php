@@ -17,7 +17,7 @@ use Illuminate\View\View;
 class AdminWebhooksController extends Controller
 {
     public const AVAILABLE_EVENTS = [
-        // Événements de domaine « fins » (payload minimal : identifiants seulement).
+        // "Thin" domain events (minimal payload: identifiers only).
         'wed_request.submitted',
         'service_request.round_started',
         'service_request.round_timed_out',
@@ -27,11 +27,11 @@ class AdminWebhooksController extends Controller
         'provider.registered',
         'purchase.completed',
 
-        // Événements « enrichis » destinés au canal WhatsApp (App\Listeners\Whatsapp\*).
-        // Ils transportent les destinataires : téléphones E.164, langue préférée et
-        // charges utiles de boutons signées (Crypt::encryptString) que n8n ne peut pas
-        // fabriquer lui-même. Sans ces trois entrées, WebhookDispatcher::dispatch()
-        // filtrait ces événements et AUCUNE notification WhatsApp ne partait.
+        // "Rich" events meant for the WhatsApp channel (App\Listeners\Whatsapp\*).
+        // They carry the recipients: E.164 phone numbers, preferred language and
+        // signed button payloads (Crypt::encryptString) that n8n cannot build
+        // itself. Without these three entries, WebhookDispatcher::dispatch()
+        // filtered these events out and NO WhatsApp notification was sent.
         'round.started',
         'lead.accepted',
         'lead.opened_to_marketplace',
@@ -64,7 +64,7 @@ class AdminWebhooksController extends Controller
         $endpoint = WebhookEndpoint::create($data);
         $this->audit->log('webhook_endpoint.create', $endpoint, ['events' => $data['events']]);
 
-        return redirect()->route('admin.webhooks.index')->with('status', 'Webhook créé.');
+        return redirect()->route('admin.webhooks.index')->with('status', __('Webhook created.'));
     }
 
     public function edit(int $id): View
@@ -86,7 +86,7 @@ class AdminWebhooksController extends Controller
         $endpoint->update($data);
         $this->audit->log('webhook_endpoint.update', $endpoint, ['events' => $data['events'] ?? []]);
 
-        return redirect()->route('admin.webhooks.index')->with('status', 'Webhook mis à jour.');
+        return redirect()->route('admin.webhooks.index')->with('status', __('Webhook updated.'));
     }
 
     public function toggle(int $id): RedirectResponse
@@ -96,7 +96,7 @@ class AdminWebhooksController extends Controller
 
         $this->audit->log('webhook_endpoint.toggle', $endpoint, ['active' => $endpoint->active]);
 
-        return back()->with('status', $endpoint->active ? 'Activé.' : 'Désactivé.');
+        return back()->with('status', $endpoint->active ? __('Enabled.') : __('Disabled.'));
     }
 
     public function destroy(int $id): RedirectResponse
@@ -105,7 +105,7 @@ class AdminWebhooksController extends Controller
         $this->audit->log('webhook_endpoint.delete', $endpoint);
         $endpoint->delete();
 
-        return redirect()->route('admin.webhooks.index')->with('status', 'Webhook supprimé.');
+        return redirect()->route('admin.webhooks.index')->with('status', __('Webhook deleted.'));
     }
 
     public function deliveries(Request $request, int $id): View
@@ -142,7 +142,7 @@ class AdminWebhooksController extends Controller
 
         $this->audit->log('webhook_delivery.replay', $delivery);
 
-        return back()->with('status', 'Livraison remise en file.');
+        return back()->with('status', __('Delivery requeued.'));
     }
 
     private function validateForm(Request $request): array

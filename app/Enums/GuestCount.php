@@ -15,11 +15,11 @@ enum GuestCount: string
     public function label(): string
     {
         return match($this) {
-            self::Under100    => __('Moins de 100 invités'),
-            self::From100To200 => __('100 – 200 invités'),
-            self::From200To300 => __('200 – 300 invités'),
-            self::From300To500 => __('300 – 500 invités'),
-            self::Over500     => __('Plus de 500 invités'),
+            self::Under100    => __('Under 100 guests'),
+            self::From100To200 => __('100 – 200 guests'),
+            self::From200To300 => __('200 – 300 guests'),
+            self::From300To500 => __('300 – 500 guests'),
+            self::Over500     => __('Over 500 guests'),
         };
     }
 }

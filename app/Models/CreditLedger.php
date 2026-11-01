@@ -80,7 +80,7 @@ class CreditLedger extends Model
 
         switch ($this->type) {
             case 'purchase':
-                if (preg_match('/^Achat (.+) — (\S+)$/u', $notes, $m)) {
+                if (preg_match('/^Purchase (.+) — (\S+)$/u', $notes, $m)) {
                     return $line('credits.entry.purchase_pack', ['pack' => e(__($m[1])), 'uid' => $ltr($m[2])]);
                 }
 
@@ -94,16 +94,16 @@ class CreditLedger extends Model
                 return $notes === '' || $this->reference_type === ServiceRequest::class ? $line('credits.entry.unlock') : null;
 
             case 'refund':
-                if (preg_match('/^Remboursement litige (\S+)$/u', $notes, $m)) {
+                if (preg_match('/^Dispute refund (\S+)$/u', $notes, $m)) {
                     return $line('credits.entry.refund_request', ['uid' => $ltr($m[1])]);
                 }
 
-                return $notes === '' || $this->reference_type === LeadDispute::class || $notes === 'Remboursement litige'
+                return $notes === '' || $this->reference_type === LeadDispute::class || $notes === 'Dispute refund'
                     ? $line('credits.entry.refund')
                     : null;
 
             case 'bonus':
-                if ($notes === 'Bonus de bienvenue') {
+                if ($notes === 'Welcome bonus') {
                     return $line('credits.entry.welcome_bonus');
                 }
 
