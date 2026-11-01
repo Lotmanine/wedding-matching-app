@@ -38,11 +38,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-1.5">{{ __('provider.leads.filter_wilaya') }}</label>
-                    <select name="wilaya_code" class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-1.5">{{ __('provider.leads.filter_city') }}</label>
+                    <select name="city_code" class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
                         <option value="">{{ __('provider.leads.filter_all') }}</option>
-                        @foreach ($wilayaOptions as $w)
-                            <option value="{{ $w->code }}" @selected(($filters['wilaya_code'] ?? '') === $w->code)>{{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</option>
+                        @foreach ($cityOptions as $w)
+                            <option value="{{ $w->code }}" @selected(($filters['city_code'] ?? '') === $w->code)>{{ $w->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -52,7 +52,7 @@
                     <select name="budget_range" class="w-full px-3 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
                         <option value="">{{ __('provider.leads.filter_all') }}</option>
                         @foreach ($budgetOptions as $b)
-                            <option value="{{ $b->value }}" @selected(($filters['budget_range'] ?? '') === $b->value)>{{ $b->label() }}</option>
+                            <option value="{{ $b->value }}" @selected(($filters['budget_range'] ?? '') === $b->value)>{{ $b->label($profile?->currency()) }}</option>
                         @endforeach
                     </select>
                 </div>

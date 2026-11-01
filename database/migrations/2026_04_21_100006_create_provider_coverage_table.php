@@ -12,12 +12,12 @@ return new class extends Migration {
         Schema::create('provider_coverage', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->string('wilaya_code', 2);
-            $table->integer('travel_fee_dzd')->default(0);
+            $table->string('city_code', 2);
+            $table->integer('travel_fee')->default(0);
             $table->timestamps();
 
-            $table->unique(['user_id', 'wilaya_code'], 'prov_cov_unique');
-            $table->index('wilaya_code');
+            $table->unique(['user_id', 'city_code'], 'prov_cov_unique');
+            $table->index('city_code');
         });
     }
 

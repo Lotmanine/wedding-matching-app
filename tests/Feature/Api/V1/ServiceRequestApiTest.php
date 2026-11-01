@@ -13,7 +13,7 @@ use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -25,7 +25,7 @@ class ServiceRequestApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
@@ -44,22 +44,22 @@ class ServiceRequestApiTest extends TestCase
         $u->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $u->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'credit_balance'      => $balance,
         ]);
         ProviderService::create(['user_id' => $u->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $u->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $u->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $u->fresh(['providerProfile', 'providerServices', 'providerCoverage']);
     }
 
     private function makeLead(array $roundIds = [], string $status = 'round1'): ServiceRequest
     {
-        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16', 'services_needed' => ['photo']]);
+        $wr = WedRequest::factory()->create(['couple_city_code' => 'NY', 'services_needed' => ['photo']]);
 
         return ServiceRequest::create([
             'wed_request_id'       => $wr->id,

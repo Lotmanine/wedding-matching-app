@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
 
 class AdvanceTimedOutRounds extends Command
 {
-    protected $signature = 'zawaj:advance-rounds';
+    protected $signature = 'wedding:advance-rounds';
 
     protected $description = 'Advance service_requests whose current round has been open longer than the timeout';
 

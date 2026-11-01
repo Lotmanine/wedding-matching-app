@@ -24,7 +24,8 @@ class PurchaseService
         return Purchase::create([
             'user_id'        => $user->id,
             'unlock_pack_id' => $pack->id,
-            'amount_dzd'     => (int) $pack->price_dzd,
+            'amount'         => (int) $pack->price,
+            'currency'       => $user->providerProfile?->currency() ?? 'USD',
             'unlocks_count'  => (int) $pack->unlocks_count,
             'status'         => 'pending',
             'gateway'        => 'chargily',
@@ -42,7 +43,8 @@ class PurchaseService
         return Purchase::create([
             'user_id'           => $user->id,
             'unlock_pack_id'    => $pack->id,
-            'amount_dzd'        => (int) $pack->price_dzd,
+            'amount'            => (int) $pack->price,
+            'currency'          => $user->providerProfile?->currency() ?? 'USD',
             'unlocks_count'     => (int) $pack->unlocks_count,
             'status'            => 'pending_verification',
             'gateway'           => 'offline',

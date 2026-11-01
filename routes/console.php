@@ -11,17 +11,17 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('zawaj:cleanup-expired')
+Schedule::command('wedding:cleanup-expired')
     ->dailyAt('03:00')
     ->timezone('Africa/Algiers')
     ->onOneServer();
 
-Schedule::command('zawaj:advance-rounds')
+Schedule::command('wedding:advance-rounds')
     ->everyFiveMinutes()
     ->timezone('Africa/Algiers')
     ->onOneServer();
 
-Schedule::command('zawaj:cleanup-orphan-uploads')
+Schedule::command('wedding:cleanup-orphan-uploads')
     ->hourly()
     ->timezone('Africa/Algiers')
     ->onOneServer();

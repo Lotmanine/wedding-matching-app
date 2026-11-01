@@ -53,7 +53,7 @@
                     ['label' => __('admin.dashboard.kpi_verified'),    'value' => $stats['providers_verified'],   'icon' => 'verified'],
                     ['label' => __('admin.dashboard.kpi_pending'),     'value' => $stats['providers_pending'],    'icon' => 'pending'],
                     ['label' => __('admin.dashboard.kpi_suspended'),   'value' => $stats['providers_suspended'],  'icon' => 'block'],
-                    ['label' => __('admin.dashboard.kpi_revenue'),     'value' => number_format($stats['revenue_dzd'], 0, ',', ' '), 'icon' => 'payments'],
+                    ['label' => __('admin.dashboard.kpi_revenue'),     'value' => number_format($stats['revenue'], 0, ',', ' '), 'icon' => 'payments'],
                     ['label' => __('admin.dashboard.kpi_credits_out'), 'value' => $stats['credits_outstanding'], 'icon' => 'toll'],
                     ['label' => __('admin.dashboard.kpi_match_rate'),  'value' => $stats['match_rate'] . '%',    'icon' => 'percent'],
                     ['label' => __('admin.dashboard.kpi_avg_accept'),  'value' => $stats['avg_time_to_accept'] ?? 'Non renseigné', 'icon' => 'timer'],

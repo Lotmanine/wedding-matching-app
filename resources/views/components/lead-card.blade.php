@@ -15,25 +15,25 @@
     $serviceIcon = match ($lead->service_type?->value) {
         'photo'      => 'camera_alt',
         'video'      => 'videocam',
-        'traiteur'   => 'restaurant',
+        'catering'   => 'restaurant',
         'decoration' => 'local_florist',
-        'patisserie' => 'cake',
-        'salle'      => 'villa',
-        'musique'    => 'music_note',
-        'machta'     => 'face_retouching_natural',
+        'pastry' => 'cake',
+        'venue'      => 'villa',
+        'music'    => 'music_note',
+        'beauty'     => 'face_retouching_natural',
         default      => 'category',
     };
 
     $serviceLabel = $lead->service_type?->label() ?? (string) $lead->service_type;
-    $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
-    $locationLine = $wilayaLabel . ($wr->couple_commune ? ' · ' . $wr->communeLabel() : '');
+    $cityLabel = \App\Models\City::where('code', (string) $wr->couple_city_code)->value('name') ?? $wr->couple_city_code;
+    $locationLine = $cityLabel . ($wr->couple_district ? ' · ' . $wr->couple_district : '');
 
     $dateLine = $wr->wedding_date
         ? $wr->wedding_date->isoFormat('LL')
         : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
 
     $guestLabel = $wr->guest_count?->label() ?? __('Non renseigné');
-    $budgetLabel = $wr->budget_range?->label() ?? __('Non renseigné');
+    $budgetLabel = $wr->budget_range?->label($wr->currency()) ?? __('Non renseigné');
 
     $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
     $excerpt = $wr->description ? \Illuminate\Support\Str::limit($wr->description, 120) : '';
@@ -72,8 +72,8 @@
     @endif
 
     <div class="flex items-center justify-between pt-3 border-t border-[#D4CFC7]/30 text-xs text-[#9A958D]">
-        <span>{{ __('provider.leads.card_couple_initial', ['initial' => $initial, 'wilaya' => $wilayaLabel]) }}</span>
-        <span class="text-[#1A1A1A] font-bold flex items-center gap-1 group-hover:text-[#C8956C] transition-colors">{{ __('provider.leads.card_see_details') }} <x-z.icon name="arrow_forward" class="text-sm rtl:-scale-x-100" /></span>
+        <span>{{ __('provider.leads.card_couple_initial', ['initial' => $initial, 'city' => $cityLabel]) }}</span>
+        <span class="text-[#1A1A1A] font-bold flex items-center gap-1 group-hover:text-[#C8956C] transition-colors">{{ __('provider.leads.card_see_details') }} <x-z.icon name="arrow_forward" class="text-sm" /></span>
     </div>
 
     <p class="text-[11px] text-[#9A958D]">{{ __('provider.leads.card_time_ago', ['when' => $lead->created_at->diffForHumans()]) }}</p>

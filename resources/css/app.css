@@ -34,23 +34,6 @@
         font-family: 'Noto Serif', Georgia, serif;
     }
 
-    /* Arabic (right-to-left) pages. Letter-spacing and italics break the
-       joined Arabic script, and Arabic needs a little more line height. */
-    [dir="rtl"] * { letter-spacing: 0 !important; }
-    [dir="rtl"] .italic,
-    [dir="rtl"] em { font-style: normal; }
-    [dir="rtl"] body { line-height: 1.7; }
-    [dir="rtl"] .leading-none,
-    [dir="rtl"] .leading-tight,
-    [dir="rtl"] .leading-snug { line-height: 1.45; }
-    [dir="rtl"] h1,
-    [dir="rtl"] h2,
-    [dir="rtl"] h3,
-    [dir="rtl"] [class*="leading-["] { line-height: 1.4; }
-    [dir="rtl"] .material-symbols-outlined { line-height: 1; }
-    /* Dropdown arrow on the left, where an Arabic reader expects it. */
-    :where([dir="rtl"]) select { background-position: left 0.5rem center; padding-left: 2.5rem; padding-right: 0.75rem; }
-
     /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #F7F4F0; }

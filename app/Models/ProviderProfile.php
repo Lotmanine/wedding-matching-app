@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Money;
 use Database\Factories\ProviderProfileFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +22,7 @@ class ProviderProfile extends Model
         'business_description',
         'business_type',
         'trade_register',
-        'primary_wilaya_code',
+        'primary_city_code',
         'price_tier',
         'min_price',
         'max_price',
@@ -67,6 +68,12 @@ class ProviderProfile extends Model
     public function creditLedger(): HasMany
     {
         return $this->hasMany(CreditLedger::class, 'user_id', 'user_id');
+    }
+
+    /** The currency of this provider's packs and travel fees, from their primary city. */
+    public function currency(): string
+    {
+        return Money::currencyForCity($this->primary_city_code);
     }
 
     public function recalculateStats(): void

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,7 +31,7 @@
         </form>
 
         <p class="mt-6 text-center text-sm">
-            <a href="{{ route('provider.login') }}" class="inline-flex items-center gap-1 text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base rtl:-scale-x-100" /> {{ __('provider.auth.btn_login') }}</a>
+            <a href="{{ route('provider.login') }}" class="inline-flex items-center gap-1 text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('provider.auth.btn_login') }}</a>
         </p>
     </div>
 </body>

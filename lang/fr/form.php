@@ -41,8 +41,8 @@ return [
     // Field labels
     'label_first_name'     => 'Prénom',
     'label_whatsapp'       => 'Numéro WhatsApp',
-    'label_wilaya'         => 'Wilaya',
-    'label_commune'        => 'Commune',
+    'label_city'         => 'Wilaya',
+    'label_district'        => 'Commune',
     'label_wedding_date'   => 'Date du mariage',
     'label_guest_count'    => 'Nombre d\'invités',
     'label_budget'         => 'Budget total du mariage (DA)',
@@ -55,16 +55,16 @@ return [
 
     // Placeholders / helpers
     'placeholder_first_name'  => 'Ex. : Amina',
-    'placeholder_whatsapp'    => '+213661234567',
-    'placeholder_wilaya'      => 'Choisir une wilaya…',
-    'placeholder_commune'     => 'Choisir une commune…',
+    'placeholder_whatsapp'    => '+12125550123',
+    'placeholder_city'      => 'Choisir une wilaya…',
+    'placeholder_district'     => 'Choisir une commune…',
     'placeholder_guest_count' => 'Choisir le nombre d\'invités',
     'placeholder_budget'      => 'Quel est le budget total de votre mariage ?',
     'placeholder_description' => 'Ex. : style des photos, menu ou décoration souhaités.',
 
-    'help_whatsapp'      => 'Avec +213, sans le premier 0 ni espaces. Exemple : +213661234567.',
+    'help_whatsapp'      => 'Au format international, sans espaces. Exemple : +12125550123 ou +33612345678.',
     'help_whatsapp_use'  => 'Le prestataire qui accepte votre demande vous contacte sur ce numéro.',
-    'help_commune'       => 'Choisissez d\'abord la wilaya.',
+    'help_district'       => 'Choisissez d\'abord la wilaya.',
     'help_services'      => 'Choisissez au moins un service.',
     'help_guest_count'   => 'Nécessaire pour le traiteur ou la salle des fêtes.',
     'help_char_count'    => ':count / :max caractères',
@@ -95,7 +95,6 @@ return [
     'landing_hero_sub'      => 'Indiquez vos besoins. Nous envoyons votre demande aux prestataires vérifiés de votre wilaya. Pour chaque service, le premier qui accepte vous contacte sur WhatsApp.',
     'landing_trust_free'    => 'Gratuit pour les futurs mariés',
     'landing_trust_verified' => 'Prestataires vérifiés',
-    'landing_trust_wilayas' => 'Alger, Blida et Médéa pour commencer',
     'landing_secondary_cta' => 'Je suis un prestataire',
     'landing_secondary_notice' => 'L\'espace prestataires arrive très prochainement, restez à l\'écoute !',
 

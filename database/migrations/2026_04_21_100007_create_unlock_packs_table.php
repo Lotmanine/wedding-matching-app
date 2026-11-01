@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
             $table->integer('unlocks_count');
-            $table->integer('price_dzd');
+            $table->integer('price');
             $table->boolean('is_popular')->default(false);
             $table->integer('sort_order')->default(0);
             $table->boolean('active')->default(true);

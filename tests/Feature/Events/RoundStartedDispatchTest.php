@@ -15,7 +15,7 @@ use App\Models\WebhookEndpoint;
 use App\Models\WedRequest;
 use App\Support\Whatsapp\SignedButtonPayload;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -27,13 +27,13 @@ class RoundStartedDispatchTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
 
         // Subscribe an active webhook to round.started so WebhookDispatcher queues a job
         WebhookEndpoint::create([
             'name'   => 'test-n8n',
-            'url'    => 'https://n8n.test/webhook/zawaj-whatsapp-outbound',
+            'url'    => 'https://n8n.test/webhook/wedding-whatsapp-outbound',
             'secret' => 'test-secret',
             'events' => ['round.started', 'lead.accepted', 'lead.opened_to_marketplace'],
             'active' => true,
@@ -45,20 +45,20 @@ class RoundStartedDispatchTest extends TestCase
         $u = User::factory()->create([
             'role'     => 'provider',
             'status'   => 'active',
-            'phone'    => '+213555111222',
-            'whatsapp' => '+213555111222',
+            'phone'    => '+12125551222',
+            'whatsapp' => '+12125551222',
         ]);
         $u->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $u->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
-            'languages'           => ['ar', 'fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'languages'           => ['en', 'fr'],
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
         ]);
         ProviderService::create(['user_id' => $u->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $u->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $u->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $u->fresh(['providerProfile']);
     }
@@ -67,9 +67,9 @@ class RoundStartedDispatchTest extends TestCase
     {
         $wr = WedRequest::factory()->create([
             'couple_first_name'  => 'Fatima',
-            'couple_whatsapp'    => '+213555000111',
-            'couple_wilaya_code' => '16',
-            'couple_commune'     => 'Bab Ezzouar',
+            'couple_whatsapp'    => '+12125550111',
+            'couple_city_code' => 'NY',
+            'couple_district'     => 'Brooklyn',
             'wedding_date'       => '2026-07-15',
             'services_needed'    => ['photo'],
         ]);

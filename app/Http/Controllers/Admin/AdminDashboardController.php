@@ -36,7 +36,7 @@ class AdminDashboardController extends Controller
 
                 'unique_couples'        => WedRequest::withTrashed()->distinct('couple_whatsapp')->count('couple_whatsapp'),
 
-                'revenue_dzd'           => (int) Purchase::where('status', 'paid')->sum('amount_dzd'),
+                'revenue'           => (int) Purchase::where('status', 'paid')->sum('amount'),
                 'purchases_pending_old' => Purchase::where('status', 'pending')->where('created_at', '<', now()->subHour())->count(),
                 'credits_outstanding'   => (int) ProviderProfile::sum('credit_balance'),
 

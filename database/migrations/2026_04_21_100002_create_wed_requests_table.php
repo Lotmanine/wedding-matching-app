@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->string('status', 30)->default('new');
             $table->string('couple_first_name', 80);
             $table->string('couple_whatsapp', 20);
-            $table->string('couple_wilaya_code', 2);
-            $table->string('couple_commune', 100)->nullable();
+            $table->string('couple_city_code', 2);
+            $table->string('couple_district', 100)->nullable();
             $table->date('wedding_date')->nullable();
             $table->string('wedding_season', 20)->nullable();
             $table->string('guest_count', 30);
@@ -32,7 +32,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index('status');
-            $table->index('couple_wilaya_code');
+            $table->index('couple_city_code');
             $table->index('wedding_date');
             $table->index('expires_at');
         });

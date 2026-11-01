@@ -1,8 +1,7 @@
 {{-- Public footer — clay/ink identity (ported from claude-design PublicFooter) --}}
 @php
-    $footerIsArabic = app()->getLocale() === 'ar';
-    $footerWilayas = \App\Models\Wilaya::active()->pluck($footerIsArabic ? 'name_ar' : 'name_fr');
-    $footerWilayasText = $footerIsArabic ? $footerWilayas->join(' و') : $footerWilayas->join(', ', ' et ');
+    $footerCities = \App\Models\City::active()->pluck('name');
+    $footerCitiesText = $footerCities->join(', ', ' et ');
 @endphp
 <footer class="bg-[#1A1A1A] pt-14 pb-8">
     <div class="max-w-7xl mx-auto px-6 md:px-8">
@@ -66,7 +65,7 @@
                 <span class="text-xs text-white/25 flex items-center gap-1.5">
                     <x-z.icon name="shield" class="text-[#C8956C] text-sm" /> {{ __('Protection des données personnelles') }}
                 </span>
-                <span class="text-xs text-white/25">🇩🇿 {{ __('Disponible à :wilayas', ['wilayas' => $footerWilayasText]) }}</span>
+                <span class="text-xs text-white/25">🇩🇿 {{ __('Disponible à :cities', ['cities' => $footerCitiesText]) }}</span>
             </div>
         </div>
     </div>

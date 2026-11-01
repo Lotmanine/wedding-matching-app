@@ -3,7 +3,8 @@
 @section('content')
     @php
         $balance = (int) ($profile?->credit_balance ?? 0);
-        $unlockCost = (int) config('zawaj.credits.unlock_cost', 1);
+        $unlockCost = (int) config('wedding.credits.unlock_cost', 1);
+        $currency = $profile?->currency() ?? \App\Support\Money::currencyForCity(null);
     @endphp
 
     <div class="max-w-6xl mx-auto">
@@ -53,7 +54,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:pt-3">
                 @foreach ($packs as $pack)
-                    @php $perUnlock = $pack->unlocks_count > 0 ? (int) round($pack->price_dzd / $pack->unlocks_count) : 0; @endphp
+                    @php $perUnlock = $pack->unlocks_count > 0 ? (int) round($pack->price / $pack->unlocks_count) : 0; @endphp
                     <div @class([
                         'relative rounded-2xl border bg-gradient-to-b p-6 flex flex-col shadow-sm',
                         'from-[#F0D9B5]/50 to-white border-[#C8956C] shadow-lg shadow-[#C8956C]/10' => $pack->is_popular,
@@ -63,8 +64,8 @@
                         <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ __($pack->name) }}</p>
                         <div class="font-serif text-5xl font-bold text-[#1A1A1A] mb-1">{{ $pack->unlocks_count }}</div>
                         <p class="text-sm text-[#6B665E] mb-1">{{ trans_choice('credits.unit', (int) $pack->unlocks_count) }}</p>
-                        <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1"><bdi>{{ number_format($pack->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
-                        <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', "\u{00A0}")]) }}</p>
+                        <p class="font-serif text-xl font-bold text-[#1A1A1A] mt-3 mb-1">{{ \App\Support\Money::format($pack->price, $currency) }}</p>
+                        <p class="text-xs text-[#9A958D] mb-6">{{ __('credits.pack_per_unlock', ['price' => \App\Support\Money::format($perUnlock, $currency)]) }}</p>
 
                         @if ($canBuy)
                             <x-z.btn :href="route('provider.credits.pay', $pack->slug)" :variant="$pack->is_popular ? 'primary' : 'outline'" size="md" class="mt-auto w-full justify-center">
@@ -86,7 +87,7 @@
             <div class="px-6 py-4 border-b border-[#D4CFC7]/30 flex items-center justify-between">
                 <h2 class="font-semibold text-[#1A1A1A]">{{ __('credits.recent_title') }}</h2>
                 <a href="{{ route('provider.credits.history') }}" class="text-sm text-[#C8956C] font-semibold hover:underline flex items-center gap-1">
-                    {{ __('credits.full_history') }} <x-z.icon name="arrow_forward" class="text-sm rtl:-scale-x-100" />
+                    {{ __('credits.full_history') }} <x-z.icon name="arrow_forward" class="text-sm" />
                 </a>
             </div>
 
@@ -104,7 +105,7 @@
                                     @if ($entryDescription !== null)
                                         {{ $entryDescription }} ·
                                     @elseif (filled($entry->notes))
-                                        <span dir="auto">{{ $entry->notes }}</span> ·
+                                        <span>{{ $entry->notes }}</span> ·
                                     @endif
                                     {{ $entry->created_at->diffForHumans() }}
                                 </p>

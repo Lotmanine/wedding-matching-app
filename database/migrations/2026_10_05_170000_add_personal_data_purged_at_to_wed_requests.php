@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Marks couple requests whose personal data has been erased by
- * `zawaj:cleanup-expired` (soft-deleting the row alone left the first name
+ * `wedding:cleanup-expired` (soft-deleting the row alone left the first name
  * and WhatsApp number in the database).
  */
 return new class extends Migration

@@ -36,7 +36,7 @@
                 <div class="bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm p-6">
                     <h2 class="font-serif text-lg font-bold text-[#1A1A1A] mb-4">Profil</h2>
                     <dl class="grid grid-cols-2 gap-4 text-sm">
-                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Wilaya</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->primary_wilaya_code }}</dd></div>
+                        <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Wilaya</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->primary_city_code }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Type</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->business_type }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Tarif</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->price_tier }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Expérience</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $prof?->years_experience ?? 'Non renseigné' }} ans</dd></div>
@@ -61,7 +61,7 @@
                         </thead>
                         <tbody class="divide-y divide-[#D4CFC7]/20">
                             @foreach ($user->providerCoverage as $cov)
-                                <tr><td class="py-2 text-[#1A1A1A]">{{ $cov->wilaya_code }}</td><td class="text-right font-mono text-[#6B665E]">{{ $cov->travel_fee_dzd }}</td></tr>
+                                <tr><td class="py-2 text-[#1A1A1A]">{{ $cov->city_code }}</td><td class="text-right font-mono text-[#6B665E]">{{ $cov->travel_fee }}</td></tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -76,7 +76,7 @@
                                     <tr>
                                         <td class="py-2 font-mono text-[#6B665E]">{{ $p->purchase_uid }}</td>
                                         <td class="py-2 text-[#1A1A1A]">{{ $p->unlockPack?->name ?? 'Non renseigné' }}</td>
-                                        <td class="py-2 text-[#1A1A1A]">{{ number_format($p->amount_dzd, 0, ',', ' ') }} DA</td>
+                                        <td class="py-2 text-[#1A1A1A]">{{ \App\Support\Money::format($p->amount, $p->currency) }}</td>
                                         <td class="py-2"><x-z.badge variant="default">{{ $p->status }}</x-z.badge></td>
                                         <td class="py-2 text-[#9A958D] text-right">{{ $p->created_at?->diffForHumans() }}</td>
                                     </tr>

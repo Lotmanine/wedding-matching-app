@@ -23,33 +23,33 @@ class UnlockPackFactory extends Factory
             'name'          => $name,
             'slug'          => Str::slug($name) . '-' . $this->faker->unique()->numerify('###'),
             'unlocks_count' => $this->faker->numberBetween(1, 20),
-            'price_dzd'     => $this->faker->numberBetween(1000, 20000),
+            'price'         => $this->faker->numberBetween(29, 199),
             'is_popular'    => false,
             'sort_order'    => 0,
             'active'        => true,
         ];
     }
 
-    public function decouverte(): static
+    public function starter(): static
     {
         return $this->state(fn () => [
-            'name'          => 'Pack Découverte',
-            'slug'          => 'pack-decouverte',
+            'name'          => 'Starter',
+            'slug'          => 'starter',
             'unlocks_count' => 3,
-            'price_dzd'     => 4500,
+            'price'         => 59,
             'is_popular'    => false,
             'sort_order'    => 1,
             'active'        => true,
         ]);
     }
 
-    public function essentiel(): static
+    public function essential(): static
     {
         return $this->state(fn () => [
-            'name'          => 'Pack Essentiel',
-            'slug'          => 'pack-essentiel',
+            'name'          => 'Essential',
+            'slug'          => 'essential',
             'unlocks_count' => 6,
-            'price_dzd'     => 7650,
+            'price'         => 99,
             'is_popular'    => true,
             'sort_order'    => 2,
             'active'        => true,
@@ -59,10 +59,10 @@ class UnlockPackFactory extends Factory
     public function premium(): static
     {
         return $this->state(fn () => [
-            'name'          => 'Pack Premium',
-            'slug'          => 'pack-premium',
+            'name'          => 'Premium',
+            'slug'          => 'premium',
             'unlocks_count' => 10,
-            'price_dzd'     => 11250,
+            'price'         => 149,
             'is_popular'    => false,
             'sort_order'    => 3,
             'active'        => true,

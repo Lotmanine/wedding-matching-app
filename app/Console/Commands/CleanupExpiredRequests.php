@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Log;
 
 class CleanupExpiredRequests extends Command
 {
-    protected $signature = 'zawaj:cleanup-expired';
+    protected $signature = 'wedding:cleanup-expired';
 
-    protected $description = 'Expire wed_requests past their validity, then erase the couple\'s personal data (ANPDP compliance)';
+    protected $description = 'Expire wed_requests past their validity, then erase the couple\'s personal data (privacy compliance)';
 
     public function handle(): int
     {
@@ -59,7 +59,7 @@ class CleanupExpiredRequests extends Command
 
     /**
      * Hiding an expired request is not deleting it: this erases what
-     * identifies the couple and keeps only anonymous figures (wilaya,
+     * identifies the couple and keeps only anonymous figures (city,
      * services, budget range) for statistics.
      *
      * A request accepted by a provider is erased once that provider's own
@@ -70,7 +70,7 @@ class CleanupExpiredRequests extends Command
      */
     private function purgePersonalData(): array
     {
-        $days = (int) config('zawaj.anpdp.retention_days', 14);
+        $days = (int) config('wedding.privacy.retention_days', 14);
         $cutoff = now()->subDays($days);
 
         $requests = WedRequest::withTrashed()
@@ -84,7 +84,7 @@ class CleanupExpiredRequests extends Command
             DB::table('wed_requests')->where('id', $wr->id)->update([
                 'couple_first_name'       => 'Supprimé',
                 'couple_whatsapp'         => '',
-                'couple_commune'          => null,
+                'couple_district'          => null,
                 'description'             => null,
                 'ip_address'              => null,
                 'user_agent'              => null,

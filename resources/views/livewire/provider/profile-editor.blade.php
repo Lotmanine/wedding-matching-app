@@ -22,19 +22,19 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.phone') }}</label>
-                    <input type="tel" dir="ltr" wire:model="phone" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
-                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '<span dir="ltr">+213</span>', 'example' => '<span dir="ltr">+213661234567</span>']) !!}</p>
+                    <input type="tel" wire:model="phone" placeholder="+12125550123" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '+1 / +33', 'example' => '<span>+12125550123</span>']) !!}</p>
                     @error('phone') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.whatsapp') }}</label>
-                    <input type="tel" dir="ltr" wire:model="whatsapp" placeholder="+213661234567" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
-                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '<span dir="ltr">+213</span>', 'example' => '<span dir="ltr">+213661234567</span>']) !!}</p>
+                    <input type="tel" wire:model="whatsapp" placeholder="+12125550123" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
+                    <p class="mt-1 text-xs text-[#9A958D]">{!! __('provider.registration.phone_hint', ['prefix' => '+1 / +33', 'example' => '<span>+12125550123</span>']) !!}</p>
                     @error('whatsapp') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-[#9A958D] mb-1.5">{{ __('provider.auth.email') }}</label>
-                    <input type="email" dir="ltr" value="{{ $email }}" disabled class="w-full px-4 py-3.5 bg-[#F7F4F0] border border-[#D4CFC7]/60 rounded-lg text-sm text-[#9A958D]" />
+                    <input type="email" value="{{ $email }}" disabled class="w-full px-4 py-3.5 bg-[#F7F4F0] border border-[#D4CFC7]/60 rounded-lg text-sm text-[#9A958D]" />
                 </div>
             </div>
         </section>
@@ -69,11 +69,11 @@
                     <input type="number" wire:model="years_experience" min="0" max="60" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.primary_wilaya') }}</label>
-                    <select wire:model.live="primary_wilaya_code" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.primary_city') }}</label>
+                    <select wire:model.live="primary_city_code" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all">
                         <option value="">{{ __('Sélectionner…') }}</option>
-                        @foreach ($this->wilayas as $w)
-                            <option value="{{ $w->code }}">{{ $w->code }} · {{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</option>
+                        @foreach ($this->cities as $w)
+                            <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -141,22 +141,22 @@
             </div>
             <p class="text-sm text-[#6B665E] mb-3">{{ __('provider.registration.coverage_hint') }}</p>
             <div class="max-h-96 overflow-y-auto border border-[#D4CFC7]/60 rounded-xl divide-y divide-[#D4CFC7]/30">
-                @foreach ($this->wilayas as $w)
-                    @php $isPrimary = $w->code === $primary_wilaya_code; $isSelected = in_array($w->code, $coverage_wilayas, true); @endphp
+                @foreach ($this->cities as $w)
+                    @php $isPrimary = $w->code === $primary_city_code; $isSelected = in_array($w->code, $coverage_cities, true); @endphp
                     <div class="flex items-center justify-between gap-4 px-4 py-3 {{ $isSelected ? 'bg-[#F0D9B5]/20' : '' }}">
                         <label class="flex items-center gap-3 flex-1 cursor-pointer">
                             <input type="checkbox"
-                                   wire:click="toggleCoverageWilaya('{{ $w->code }}')"
+                                   wire:click="toggleCoverageCity('{{ $w->code }}')"
                                    @checked($isSelected || $isPrimary)
                                    @disabled($isPrimary)
                                    class="w-5 h-5 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-[#C8956C]/30" />
-                            <span class="text-sm font-medium text-[#1A1A1A]">{{ $w->code }} · {{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</span>
+                            <span class="text-sm font-medium text-[#1A1A1A]">{{ $w->code }} · {{ $w->name }}</span>
                             @if ($isPrimary)
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-[#7A5530] bg-[#F0D9B5] px-2 py-0.5 rounded-full">{{ __('provider.registration.coverage_primary_badge') }}</span>
                             @endif
                         </label>
                         @if ($isSelected && ! $isPrimary)
-                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="{{ __('DA') }}" aria-label="{{ __('provider.registration.coverage_travel_fee') }}" title="{{ __('provider.registration.coverage_travel_fee') }}" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
+                            <input type="number" min="0" step="10" wire:model="travel_fees.{{ $w->code }}" placeholder="{{ \App\Support\Money::symbol(\App\Support\Money::currencyForCity($primary_city_code ?: null)) }}" aria-label="{{ __('provider.registration.coverage_travel_fee') }}" title="{{ __('provider.registration.coverage_travel_fee') }}" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
                         @endif
                     </div>
                 @endforeach
@@ -178,7 +178,7 @@
                         <div wire:key="p-url-{{ $i }}" class="flex gap-2">
                             <div class="flex-1 relative">
                                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#9A958D] text-lg pointer-events-none" aria-hidden="true">link</span>
-                                <input type="url" dir="ltr" wire:model="portfolio_urls.{{ $i }}" placeholder="{{ __('provider.registration.portfolio_url_placeholder') }}"
+                                <input type="url" wire:model="portfolio_urls.{{ $i }}" placeholder="{{ __('provider.registration.portfolio_url_placeholder') }}"
                                        class="w-full pl-10 pr-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                             </div>
                             <button type="button" wire:click="removePortfolioUrl({{ $i }})" aria-label="{{ __('provider.registration.remove_url') }}" title="{{ __('provider.registration.remove_url') }}" class="w-10 h-[46px] rounded-lg flex items-center justify-center shrink-0 text-[#9A958D] hover:text-[#A84936] hover:bg-red-50 transition-colors">

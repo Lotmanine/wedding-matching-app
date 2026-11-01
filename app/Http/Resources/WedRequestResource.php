@@ -16,8 +16,8 @@ class WedRequestResource extends JsonResource
             'couple' => [
                 'first_name'   => $this->couple_first_name,
                 'whatsapp'     => $this->couple_whatsapp,
-                'wilaya_code'  => (string) $this->couple_wilaya_code,
-                'commune'      => $this->couple_commune,
+                'city_code'  => (string) $this->couple_city_code,
+                'district'      => $this->couple_district,
             ],
             'wedding' => [
                 'date'          => $this->wedding_date?->toDateString(),

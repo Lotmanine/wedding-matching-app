@@ -12,7 +12,7 @@
                 <dl class="grid grid-cols-2 gap-4 text-sm">
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Statut</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->status }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Pack</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->unlockPack?->name }}</dd></div>
-                    <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Montant</dt><dd class="text-[#1A1A1A] mt-0.5">{{ number_format($purchase->amount_dzd, 0, ',', ' ') }} DA</dd></div>
+                    <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Montant</dt><dd class="text-[#1A1A1A] mt-0.5">{{ \App\Support\Money::format($purchase->amount, $purchase->currency) }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Crédits</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->unlocks_count }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Checkout ID</dt><dd class="font-mono text-xs text-[#6B665E] mt-0.5">{{ $purchase->gateway_checkout_id ?? 'Non renseigné' }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Payment ID</dt><dd class="font-mono text-xs text-[#6B665E] mt-0.5">{{ $purchase->gateway_payment_id ?? 'Non renseigné' }}</dd></div>

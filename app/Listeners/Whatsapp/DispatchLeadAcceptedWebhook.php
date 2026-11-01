@@ -52,13 +52,13 @@ class DispatchLeadAcceptedWebhook implements ShouldQueue
 
     private function pickLanguage(array $langs): string
     {
-        if (in_array('ar', $langs, true)) {
-            return 'ar';
+        if (in_array('en', $langs, true)) {
+            return 'en';
         }
         if (in_array('fr', $langs, true)) {
             return 'fr';
         }
 
-        return $langs[0] ?? 'ar';
+        return $langs[0] ?? 'en';
     }
 }

@@ -34,13 +34,13 @@ class DispatchLeadOpenedToMarketplaceWebhook implements ShouldQueue
         ));
 
         $serviceTypeValue = $sr->service_type?->value ?? (string) $sr->service_type;
-        $coupleWilaya = (string) $wr->couple_wilaya_code;
+        $coupleCity = (string) $wr->couple_city_code;
 
         $providers = User::with(['providerProfile'])
             ->where('status', 'active')
             ->whereHas('providerProfile', fn ($q) => $q->where('verified', true)->whereNull('suspended_at'))
             ->whereHas('providerServices', fn ($q) => $q->where('service_type', $serviceTypeValue))
-            ->whereHas('providerCoverage', fn ($q) => $q->where('wilaya_code', $coupleWilaya))
+            ->whereHas('providerCoverage', fn ($q) => $q->where('city_code', $coupleCity))
             ->when(! empty($excludeIds), fn ($q) => $q->whereNotIn('id', $excludeIds))
             ->get();
 

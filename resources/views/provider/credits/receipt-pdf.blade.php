@@ -53,7 +53,7 @@
         </tr>
         <tr class="total-row">
             <td class="value">{{ __('credits.receipt.amount') }}</td>
-            <td class="amount">{{ number_format($purchase->amount_dzd, 0, ',', ' ') }} DA</td>
+            <td class="amount">{{ \App\Support\Money::format($purchase->amount, $purchase->currency) }}</td>
         </tr>
     </table>
 

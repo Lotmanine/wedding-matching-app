@@ -16,10 +16,10 @@ class ProviderResource extends JsonResource
             'id'                => $this->id,
             'name'              => $this->name,
             'business_name'     => $profile?->business_name,
-            'primary_wilaya_code' => $profile ? (string) $profile->primary_wilaya_code : null,
+            'primary_city_code' => $profile ? (string) $profile->primary_city_code : null,
             'price_tier'        => $profile?->price_tier,
-            'min_price_dzd'     => $profile?->min_price,
-            'max_price_dzd'     => $profile?->max_price,
+            'min_price'     => $profile?->min_price,
+            'max_price'     => $profile?->max_price,
             'rating' => [
                 'average' => (float) ($profile?->rating_avg ?? 0),
                 'count'   => (int) ($profile?->rating_count ?? 0),
@@ -38,8 +38,8 @@ class ProviderResource extends JsonResource
             ),
             'coverage'          => $this->whenLoaded('providerCoverage', fn () =>
                 $this->providerCoverage->map(fn ($c) => [
-                    'wilaya_code' => (string) $c->wilaya_code,
-                    'travel_fee_dzd' => (int) $c->travel_fee_dzd,
+                    'city_code' => (string) $c->city_code,
+                    'travel_fee' => (int) $c->travel_fee,
                 ])->values()
             ),
         ];

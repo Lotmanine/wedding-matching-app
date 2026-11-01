@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\BudgetRange;
 use App\Enums\GuestCount;
 use App\Enums\RequestStatus;
+use App\Support\Money;
 use Database\Factories\WedRequestFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WedRequest extends Model
 {
+    public const SEASONS = ['spring', 'summer', 'autumn', 'winter'];
+
     /** @use HasFactory<WedRequestFactory> */
     use HasFactory, SoftDeletes;
 
@@ -24,8 +27,8 @@ class WedRequest extends Model
         'status',
         'couple_first_name',
         'couple_whatsapp',
-        'couple_wilaya_code',
-        'couple_commune',
+        'couple_city_code',
+        'couple_district',
         'wedding_date',
         'wedding_season',
         'guest_count',
@@ -59,7 +62,7 @@ class WedRequest extends Model
                 $wr->wed_uid = self::generateUid();
             }
             if (empty($wr->expires_at)) {
-                $wr->expires_at = now()->addDays((int) config('zawaj.anpdp.retention_days', 14));
+                $wr->expires_at = now()->addDays((int) config('wedding.privacy.retention_days', 14));
             }
         });
 
@@ -102,28 +105,26 @@ class WedRequest extends Model
         return $query->where('expires_at', '<=', now());
     }
 
-    /**
-     * The commune as shown to the reader. It is stored under its French name;
-     * Arabic pages show the Arabic name of the same commune.
-     */
-    public function communeLabel(): ?string
+    /** The currency of this wedding's amounts (budget), from its city. */
+    public function currency(): string
     {
-        if (! $this->couple_commune || app()->getLocale() !== 'ar') {
-            return $this->couple_commune;
-        }
-
-        $communes = Commune::query()->where('name_fr', $this->couple_commune);
-
-        $nameAr = (clone $communes)
-            ->whereHas('wilaya', fn (Builder $q) => $q->where('code', (string) $this->couple_wilaya_code))
-            ->value('name_ar') ?: $communes->value('name_ar');
-
-        return $nameAr ?: $this->couple_commune;
+        return Money::currencyForCity($this->couple_city_code);
     }
 
-    /** The season (stored in French: Printemps, Été…) in the reader's language. */
+    /** The season in the reader's language. */
     public function seasonLabel(): ?string
     {
-        return $this->wedding_season ? __($this->wedding_season) : null;
+        return self::labelForSeason($this->wedding_season);
+    }
+
+    public static function labelForSeason(?string $season): ?string
+    {
+        return match ($season) {
+            'spring' => __('Printemps'),
+            'summer' => __('Été'),
+            'autumn' => __('Automne'),
+            'winter' => __('Hiver'),
+            default  => null,
+        };
     }
 }

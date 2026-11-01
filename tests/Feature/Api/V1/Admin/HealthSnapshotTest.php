@@ -6,7 +6,7 @@ namespace Tests\Feature\Api\V1\Admin;
 
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -18,7 +18,7 @@ class HealthSnapshotTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 

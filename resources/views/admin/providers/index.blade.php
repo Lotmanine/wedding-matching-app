@@ -21,11 +21,11 @@
                 </select>
             </div>
             <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.providers.filter_wilaya') }}</label>
-                <select name="wilaya" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.providers.filter_city') }}</label>
+                <select name="city" class="px-4 py-2.5 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors">
                     <option value="">Toutes</option>
-                    @foreach ($wilayas as $w)
-                        <option value="{{ $w->code }}" @selected($wilaya === $w->code)>{{ $w->code }} · {{ $w->name_fr }}</option>
+                    @foreach ($cities as $w)
+                        <option value="{{ $w->code }}" @selected($city === $w->code)>{{ $w->code }} · {{ $w->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -39,7 +39,7 @@
                         <tr class="bg-[#F7F4F0] text-[#9A958D] text-[10px] font-bold uppercase tracking-wider border-b border-[#D4CFC7]/40">
                             <th class="text-left px-5 py-4">{{ __('admin.providers.col_business') }}</th>
                             <th class="text-left px-5 py-4">{{ __('admin.providers.col_email') }}</th>
-                            <th class="text-left px-5 py-4">{{ __('admin.providers.col_wilaya') }}</th>
+                            <th class="text-left px-5 py-4">{{ __('admin.providers.col_city') }}</th>
                             <th class="text-left px-5 py-4">{{ __('admin.providers.col_status') }}</th>
                             <th class="text-right px-5 py-4">{{ __('admin.providers.col_credits') }}</th>
                             <th class="text-right px-5 py-4">{{ __('admin.providers.col_stats') }}</th>
@@ -63,7 +63,7 @@
                                     <div class="text-[#1A1A1A]">{{ $p->email }}</div>
                                     <div class="text-[#9A958D] font-mono">{{ $p->phone }}</div>
                                 </td>
-                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_wilaya_code ?? 'Non renseigné' }}</td>
+                                <td class="px-5 py-4 text-xs text-[#6B665E]">{{ $prof?->primary_city_code ?? 'Non renseigné' }}</td>
                                 <td class="px-5 py-4">
                                     @if ($prof?->suspended_at)
                                         <x-z.badge variant="danger">Suspendu</x-z.badge>

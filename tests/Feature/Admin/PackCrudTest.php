@@ -35,7 +35,7 @@ class PackCrudTest extends TestCase
             ->post(route('admin.packs.store'), [
                 'name'          => 'Pack XL',
                 'unlocks_count' => 20,
-                'price_dzd'     => 20000,
+                'price'     => 20000,
                 'is_popular'    => false,
                 'active'        => true,
                 'sort_order'    => 5,
@@ -51,7 +51,7 @@ class PackCrudTest extends TestCase
     public function test_update_pack(): void
     {
         $pack = UnlockPack::create([
-            'name' => 'Old', 'slug' => 'old-test', 'unlocks_count' => 5, 'price_dzd' => 5000,
+            'name' => 'Old', 'slug' => 'old-test', 'unlocks_count' => 5, 'price' => 5000,
             'is_popular' => false, 'active' => true, 'sort_order' => 1,
         ]);
 
@@ -59,7 +59,7 @@ class PackCrudTest extends TestCase
             ->put(route('admin.packs.update', $pack->id), [
                 'name'          => 'Updated',
                 'unlocks_count' => 6,
-                'price_dzd'     => 6000,
+                'price'     => 6000,
             ])
             ->assertRedirect();
 
@@ -71,7 +71,7 @@ class PackCrudTest extends TestCase
     public function test_toggle_pack(): void
     {
         $pack = UnlockPack::create([
-            'name' => 'X', 'slug' => 'x-test', 'unlocks_count' => 1, 'price_dzd' => 100,
+            'name' => 'X', 'slug' => 'x-test', 'unlocks_count' => 1, 'price' => 100,
             'is_popular' => false, 'active' => true, 'sort_order' => 0,
         ]);
 

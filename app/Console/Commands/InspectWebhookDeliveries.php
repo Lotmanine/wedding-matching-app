@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 class InspectWebhookDeliveries extends Command
 {
-    protected $signature = 'zawaj:webhook-deliveries {--failed} {--event=} {--limit=20}';
+    protected $signature = 'wedding:webhook-deliveries {--failed} {--event=} {--limit=20}';
 
     protected $description = 'Inspect recent webhook deliveries (optionally failed-only or filtered by event_type)';
 

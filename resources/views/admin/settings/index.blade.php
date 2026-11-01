@@ -13,7 +13,7 @@
                     'credits_unlock_cost'            => 'credits.unlock_cost',
                     'matching_round_timeout_minutes' => 'matching.round_timeout_minutes',
                     'matching_providers_per_round'   => 'matching.providers_per_round',
-                    'anpdp_retention_days'           => 'anpdp.retention_days',
+                    'privacy_retention_days'           => 'privacy.retention_days',
                 ];
             @endphp
 

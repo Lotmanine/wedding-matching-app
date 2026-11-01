@@ -7,7 +7,6 @@ namespace Database\Seeders;
 use App\Enums\RequestStatus;
 use App\Enums\ServiceType;
 use App\Enums\UserRole;
-use App\Models\Commune;
 use App\Models\CreditLedger;
 use App\Models\ProviderCoverage;
 use App\Models\ProviderProfile;
@@ -15,44 +14,40 @@ use App\Models\ProviderService;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WedRequest;
-use App\Models\Wilaya;
+use App\Models\City;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DevDataSeeder extends Seeder
 {
-    /** Major-city wilaya codes for seeded providers: Alger, Oran, Constantine, Annaba, Blida, Sétif. */
-    private const MAJOR_WILAYA_CODES = ['16', '31', '25', '23', '09', '19'];
-
     public function run(): void
     {
-        $majorWilayas = Wilaya::whereIn('code', self::MAJOR_WILAYA_CODES)->get()->keyBy('code');
-        if ($majorWilayas->isEmpty()) {
-            $this->command?->warn('No wilayas seeded — skipping DevDataSeeder. Did WilayaSeeder run first?');
+        $cities = City::all()->keyBy('code');
+        if ($cities->isEmpty()) {
+            $this->command?->warn('No cities seeded — skipping DevDataSeeder. Did CitySeeder run first?');
 
             return;
         }
 
-        $this->seedProviders(20, $majorWilayas);
+        $this->seedProviders(20, $cities);
         $this->seedWedRequests(10);
     }
 
-    private function seedProviders(int $count, $majorWilayas): void
+    private function seedProviders(int $count, $cities): void
     {
         $serviceTypes = collect(ServiceType::cases())->map(fn ($s) => $s->value)->all();
 
         for ($i = 1; $i <= $count; $i++) {
-            $wilaya = $majorWilayas->random();
-            $commune = Commune::forWilaya($wilaya->id)->inRandomOrder()->first();
+            $city = $cities->random();
 
             $user = User::create([
                 'name'              => "Provider Dev {$i}",
-                'email'             => "provider{$i}@zawajpro.dz",
+                'email'             => "provider{$i}@example.com",
                 'password'          => Hash::make('password'),
                 'role'              => UserRole::Provider->value,
-                'phone'             => '+213' . str_pad((string) random_int(500000000, 799999999), 9, '0'),
-                'whatsapp'          => '+213' . str_pad((string) random_int(500000000, 799999999), 9, '0'),
-                'wilaya_code'       => $wilaya->code,
+                'phone'             => '+1212555' . random_int(1000, 9999),
+                'whatsapp'          => '+1212555' . random_int(1000, 9999),
+                'city_code'       => $city->code,
                 'status'            => 'active',
                 'email_verified_at' => now(),
             ]);
@@ -61,7 +56,7 @@ class DevDataSeeder extends Seeder
             $verified = random_int(1, 100) <= 60;
             ProviderProfile::factory()->create([
                 'user_id'             => $user->id,
-                'primary_wilaya_code' => $wilaya->code,
+                'primary_city_code' => $city->code,
                 'verified'            => $verified,
                 'verified_at'         => $verified ? now()->subDays(random_int(1, 90)) : null,
                 'portfolio_images'    => [
@@ -81,14 +76,14 @@ class DevDataSeeder extends Seeder
             }
 
             ProviderCoverage::firstOrCreate(
-                ['user_id' => $user->id, 'wilaya_code' => $wilaya->code],
-                ['travel_fee_dzd' => 0]
+                ['user_id' => $user->id, 'city_code' => $city->code],
+                ['travel_fee' => 0]
             );
-            $extraCodes = $majorWilayas->except($wilaya->code)->pluck('code')->shuffle()->take(random_int(1, 2));
+            $extraCodes = $cities->except($city->code)->pluck('code')->shuffle()->take(random_int(1, 2));
             foreach ($extraCodes as $code) {
                 ProviderCoverage::firstOrCreate(
-                    ['user_id' => $user->id, 'wilaya_code' => $code],
-                    ['travel_fee_dzd' => random_int(1000, 8000)]
+                    ['user_id' => $user->id, 'city_code' => $code],
+                    ['travel_fee' => random_int(50, 300)]
                 );
             }
 
@@ -98,7 +93,7 @@ class DevDataSeeder extends Seeder
                 'delta'         => 3,
                 'balance_after' => $balance,
                 'type'          => 'bonus',
-                'notes'         => 'Bonus de bienvenue',
+                'notes'         => 'Welcome bonus',
             ]);
 
             $txCount = random_int(0, 4);

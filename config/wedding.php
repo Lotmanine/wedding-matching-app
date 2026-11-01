@@ -5,17 +5,17 @@ declare(strict_types=1);
 return [
 
     'credits' => [
-        'unlock_cost' => (int) env('ZAWAJ_UNLOCK_COST', 1),
+        'unlock_cost' => (int) env('WEDDING_UNLOCK_COST', 1),
     ],
 
     'matching' => [
-        'round_timeout_minutes' => (int) env('ZAWAJ_ROUND_TIMEOUT_MINUTES', 120),
-        'providers_per_round' => (int) env('ZAWAJ_PROVIDERS_PER_ROUND', 3),
+        'round_timeout_minutes' => (int) env('WEDDING_ROUND_TIMEOUT_MINUTES', 120),
+        'providers_per_round' => (int) env('WEDDING_PROVIDERS_PER_ROUND', 3),
         'max_rounds' => 3,
     ],
 
-    'anpdp' => [
-        'retention_days' => (int) env('ZAWAJ_RETENTION_DAYS', 14),
+    'privacy' => [
+        'retention_days' => (int) env('WEDDING_RETENTION_DAYS', 14),
     ],
 
     'whatsapp' => [
@@ -24,9 +24,9 @@ return [
 
     'n8n' => [
         // Shared secret guarding the public n8n -> Laravel error webhook.
-        // When set, the request must carry a matching X-Zawaj-Token header.
-        // Reuses the same secret n8n already holds (ZAWAJ_WEBHOOK_SECRET).
-        'webhook_secret' => env('ZAWAJ_WEBHOOK_SECRET'),
+        // When set, the request must carry a matching X-Wedding-Token header.
+        // Reuses the same secret n8n already holds (WEDDING_WEBHOOK_SECRET).
+        'webhook_secret' => env('WEDDING_WEBHOOK_SECRET'),
     ],
 
     'chargily' => [

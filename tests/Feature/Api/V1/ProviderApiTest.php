@@ -9,7 +9,7 @@ use App\Models\ProviderProfile;
 use App\Models\ProviderService;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -21,7 +21,7 @@ class ProviderApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
@@ -32,27 +32,27 @@ class ProviderApiTest extends TestCase
         Sanctum::actingAs($user, ['n8n-service']);
     }
 
-    private function makeProvider(bool $verified = true, string $wilaya = '16', string $service = 'photo'): User
+    private function makeProvider(bool $verified = true, string $city = 'NY', string $service = 'photo'): User
     {
         $u = User::factory()->create([
             'role'     => 'provider',
             'status'   => 'active',
-            'phone'    => '+213661234567',
-            'whatsapp' => '+213661234567',
+            'phone'    => '+12125554567',
+            'whatsapp' => '+12125554567',
         ]);
         $u->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $u->id,
-            'primary_wilaya_code' => $wilaya,
+            'primary_city_code' => $city,
             'verified'            => $verified,
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'acceptance_rate'     => 50,
             'rating_avg'          => 4.5,
         ]);
         ProviderService::create(['user_id' => $u->id, 'service_type' => $service]);
-        ProviderCoverage::create(['user_id' => $u->id, 'wilaya_code' => $wilaya, 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $u->id, 'city_code' => $city, 'travel_fee' => 0]);
 
         return $u;
     }
@@ -63,7 +63,7 @@ class ProviderApiTest extends TestCase
         $ok = $this->makeProvider(verified: true);
         $unverified = $this->makeProvider(verified: false);
 
-        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&wilaya_code=16');
+        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&city_code=NY');
         $resp->assertOk();
         $ids = array_column($resp->json('data'), 'id');
         $this->assertContains($ok->id, $ids);
@@ -76,22 +76,22 @@ class ProviderApiTest extends TestCase
         $a = $this->makeProvider();
         $b = $this->makeProvider();
 
-        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&wilaya_code=16&exclude_ids[]=' . $a->id);
+        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&city_code=NY&exclude_ids[]=' . $a->id);
         $ids = array_column($resp->json('data'), 'id');
         $this->assertNotContains($a->id, $ids);
         $this->assertContains($b->id, $ids);
     }
 
-    public function test_eligible_respects_service_and_wilaya_filters(): void
+    public function test_eligible_respects_service_and_city_filters(): void
     {
         $this->asN8n();
-        $photoAlger = $this->makeProvider(wilaya: '16', service: 'photo');
-        $traiteurOran = $this->makeProvider(wilaya: '31', service: 'traiteur');
+        $photoNewYork = $this->makeProvider(city: 'NY', service: 'photo');
+        $cateringLosAngeles = $this->makeProvider(city: 'LA', service: 'catering');
 
-        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&wilaya_code=16');
+        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&city_code=NY');
         $ids = array_column($resp->json('data'), 'id');
-        $this->assertContains($photoAlger->id, $ids);
-        $this->assertNotContains($traiteurOran->id, $ids);
+        $this->assertContains($photoNewYork->id, $ids);
+        $this->assertNotContains($cateringLosAngeles->id, $ids);
     }
 
     public function test_response_excludes_email_and_phone(): void
@@ -99,7 +99,7 @@ class ProviderApiTest extends TestCase
         $this->asN8n();
         $p = $this->makeProvider();
 
-        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&wilaya_code=16');
+        $resp = $this->getJson('/api/v1/providers/eligible?service_type=photo&city_code=NY');
         $body = $resp->getContent();
         $this->assertStringNotContainsString($p->email, $body, 'Email must not leak via API');
         $this->assertStringNotContainsString((string) $p->phone, $body, 'Phone must not leak via API');

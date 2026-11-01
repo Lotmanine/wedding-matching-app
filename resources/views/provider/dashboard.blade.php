@@ -1,7 +1,7 @@
 @extends('layouts.provider')
 
 @section('content')
-    @php $unlockCost = (int) config('zawaj.credits.unlock_cost', 1); @endphp
+    @php $unlockCost = (int) config('wedding.credits.unlock_cost', 1); @endphp
     <div class="max-w-6xl mx-auto">
         {{-- Greeting --}}
         <div class="mb-8">
@@ -70,7 +70,7 @@
                     <span class="text-[10px] font-bold tracking-widest text-[#9A958D] uppercase">{{ __('Demandes récentes') }}</span>
                     <div class="h-px flex-1 bg-[#D4CFC7]/40"></div>
                     <a href="{{ route('provider.leads.index') }}" class="text-sm text-[#C8956C] font-semibold hover:underline whitespace-nowrap flex items-center gap-1">
-                        {{ __('Voir toutes les demandes') }} <x-z.icon name="arrow_forward" class="text-sm rtl:-scale-x-100" />
+                        {{ __('Voir toutes les demandes') }} <x-z.icon name="arrow_forward" class="text-sm" />
                     </a>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

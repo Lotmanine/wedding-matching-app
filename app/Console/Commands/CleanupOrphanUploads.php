@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CleanupOrphanUploads extends Command
 {
-    protected $signature = 'zawaj:cleanup-orphan-uploads {--dry-run}';
+    protected $signature = 'wedding:cleanup-orphan-uploads {--dry-run}';
 
     protected $description = 'Remove provider upload files whose owning User no longer exists, or whose parent temp dir is older than 1 hour.';
 

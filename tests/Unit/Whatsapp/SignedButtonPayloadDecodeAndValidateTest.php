@@ -12,7 +12,7 @@ use App\Support\Whatsapp\InboundButtonContext;
 use App\Support\Whatsapp\InboundButtonException;
 use App\Support\Whatsapp\SignedButtonPayload;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
@@ -24,11 +24,11 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
-    private function makeProvider(string $whatsapp = '+213555111222'): User
+    private function makeProvider(string $whatsapp = '+12125551222'): User
     {
         $u = User::factory()->create([
             'role'     => 'provider',
@@ -39,10 +39,10 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
         $u->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $u->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
-            'languages'           => ['ar', 'fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'languages'           => ['en', 'fr'],
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
         ]);
 
@@ -53,7 +53,7 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
     {
         $wr = WedRequest::factory()->create([
             'couple_first_name'  => 'Fatima',
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
 
@@ -70,11 +70,11 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
     public function test_happy_path_returns_context(): void
     {
         $sr = $this->makeServiceRequest();
-        $p  = $this->makeProvider('+213555111222');
+        $p  = $this->makeProvider('+12125551222');
 
         $token = SignedButtonPayload::encode($sr->service_uid, $p->id, 'accept');
 
-        $ctx = SignedButtonPayload::decodeAndValidate($token, '+213555111222');
+        $ctx = SignedButtonPayload::decodeAndValidate($token, '+12125551222');
 
         $this->assertInstanceOf(InboundButtonContext::class, $ctx);
         $this->assertSame($sr->id, $ctx->serviceRequest->id);
@@ -102,12 +102,12 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
     public function test_mismatched_phone_throws(): void
     {
         $sr = $this->makeServiceRequest();
-        $p  = $this->makeProvider('+213555111222');
+        $p  = $this->makeProvider('+12125551222');
 
         $token = SignedButtonPayload::encode($sr->service_uid, $p->id, 'accept');
 
         try {
-            SignedButtonPayload::decodeAndValidate($token, '+213999000000');
+            SignedButtonPayload::decodeAndValidate($token, '+12125550000');
             $this->fail('Expected InboundButtonException');
         } catch (InboundButtonException $e) {
             $this->assertSame(InboundButtonException::REASON_MISMATCHED_PHONE, $e->reason);
@@ -117,12 +117,12 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
     public function test_round_closed_throws(): void
     {
         $sr = $this->makeServiceRequest(status: 'expired');
-        $p  = $this->makeProvider('+213555111222');
+        $p  = $this->makeProvider('+12125551222');
 
         $token = SignedButtonPayload::encode($sr->service_uid, $p->id, 'accept');
 
         try {
-            SignedButtonPayload::decodeAndValidate($token, '+213555111222');
+            SignedButtonPayload::decodeAndValidate($token, '+12125551222');
             $this->fail('Expected InboundButtonException');
         } catch (InboundButtonException $e) {
             $this->assertSame(InboundButtonException::REASON_ROUND_CLOSED, $e->reason);
@@ -134,13 +134,13 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
         $other = User::factory()->create(['role' => 'provider', 'status' => 'active']);
         $other->assignRole('provider');
 
-        $p = $this->makeProvider('+213555111222');
+        $p = $this->makeProvider('+12125551222');
         $sr = $this->makeServiceRequest(status: 'accepted', unlockedBy: $other->id);
 
         $token = SignedButtonPayload::encode($sr->service_uid, $p->id, 'accept');
 
         try {
-            SignedButtonPayload::decodeAndValidate($token, '+213555111222');
+            SignedButtonPayload::decodeAndValidate($token, '+12125551222');
             $this->fail('Expected InboundButtonException');
         } catch (InboundButtonException $e) {
             $this->assertSame(InboundButtonException::REASON_ALREADY_WON, $e->reason);
@@ -150,7 +150,7 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
     public function test_expired_token_throws(): void
     {
         $sr = $this->makeServiceRequest();
-        $p  = $this->makeProvider('+213555111222');
+        $p  = $this->makeProvider('+12125551222');
 
         // Encode 8 days ago
         Carbon::setTestNow(now()->subDays(8));
@@ -158,7 +158,7 @@ class SignedButtonPayloadDecodeAndValidateTest extends TestCase
         Carbon::setTestNow();
 
         try {
-            SignedButtonPayload::decodeAndValidate($oldToken, '+213555111222');
+            SignedButtonPayload::decodeAndValidate($oldToken, '+12125551222');
             $this->fail('Expected InboundButtonException');
         } catch (InboundButtonException $e) {
             $this->assertSame(InboundButtonException::REASON_EXPIRED, $e->reason);

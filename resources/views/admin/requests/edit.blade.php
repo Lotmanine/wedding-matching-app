@@ -33,19 +33,19 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Numéro WhatsApp</label>
-                    <input type="text" name="couple_whatsapp" value="{{ old('couple_whatsapp', $wr->couple_whatsapp) }}" required placeholder="+2136XXXXXXXX" class="{{ $inputClass }}" />
+                    <input type="text" name="couple_whatsapp" value="{{ old('couple_whatsapp', $wr->couple_whatsapp) }}" required placeholder="+12125550123" class="{{ $inputClass }}" />
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Wilaya</label>
-                    <select name="couple_wilaya_code" required class="{{ $inputClass }}">
-                        @foreach ($wilayas as $w)
-                            <option value="{{ $w->code }}" @selected(old('couple_wilaya_code', $wr->couple_wilaya_code) === $w->code)>{{ $w->code }} · {{ $w->name_fr }}</option>
+                    <select name="couple_city_code" required class="{{ $inputClass }}">
+                        @foreach ($cities as $w)
+                            <option value="{{ $w->code }}" @selected(old('couple_city_code', $wr->couple_city_code) === $w->code)>{{ $w->code }} · {{ $w->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Commune <span class="text-[#9A958D] font-normal">(facultatif)</span></label>
-                    <input type="text" name="couple_commune" value="{{ old('couple_commune', $wr->couple_commune) }}" class="{{ $inputClass }}" />
+                    <input type="text" name="couple_district" value="{{ old('couple_district', $wr->couple_district) }}" class="{{ $inputClass }}" />
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Date du mariage</label>
@@ -55,8 +55,8 @@
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Saison</label>
                     <select name="wedding_season" class="{{ $inputClass }}">
                         <option value="">Aucune</option>
-                        @foreach (['Printemps', 'Été', 'Automne', 'Hiver'] as $s)
-                            <option value="{{ $s }}" @selected(old('wedding_season', $wr->wedding_season) === $s)>{{ $s }}</option>
+                        @foreach (\App\Models\WedRequest::SEASONS as $s)
+                            <option value="{{ $s }}" @selected(old('wedding_season', $wr->wedding_season) === $s)>{{ \App\Models\WedRequest::labelForSeason($s) }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -74,7 +74,7 @@
                     <select name="budget_range" class="{{ $inputClass }}">
                         <option value="">Non renseigné</option>
                         @foreach ($budgetRanges as $b)
-                            <option value="{{ $b->value }}" @selected(old('budget_range', $wr->budget_range?->value) === $b->value)>{{ $b->label() }}</option>
+                            <option value="{{ $b->value }}" @selected(old('budget_range', $wr->budget_range?->value) === $b->value)>{{ $b->label($wr->currency()) }}</option>
                         @endforeach
                     </select>
                 </div>

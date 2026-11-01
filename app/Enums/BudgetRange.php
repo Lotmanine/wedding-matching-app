@@ -4,24 +4,33 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use App\Support\Money;
+
 enum BudgetRange: string
 {
-    case Under500k    = 'under_500k';
-    case From500kTo1m = 'from_500k_to_1m';
-    case From1mTo2m   = 'from_1m_to_2m';
-    case From2mTo3m   = 'from_2m_to_3m';
-    case From3mTo5m   = 'from_3m_to_5m';
-    case Over5m       = 'over_5m';
+    case Under10k      = 'under_10k';
+    case From10kTo20k  = 'from_10k_to_20k';
+    case From20kTo35k  = 'from_20k_to_35k';
+    case From35kTo50k  = 'from_35k_to_50k';
+    case From50kTo100k = 'from_50k_to_100k';
+    case Over100k      = 'over_100k';
 
-    public function label(): string
+    /**
+     * @param  string|null  $currency  The wedding's currency; without one, the
+     *                                 default for the visitor's language.
+     */
+    public function label(?string $currency = null): string
     {
+        $currency ??= Money::currencyForCity(null);
+        $money = fn (int $amount) => Money::format($amount, $currency);
+
         return match($this) {
-            self::Under500k    => __('Moins de 500 000 DA'),
-            self::From500kTo1m => __('500 000 – 1 000 000 DA'),
-            self::From1mTo2m   => __('1 000 000 – 2 000 000 DA'),
-            self::From2mTo3m   => __('2 000 000 – 3 000 000 DA'),
-            self::From3mTo5m   => __('3 000 000 – 5 000 000 DA'),
-            self::Over5m       => __('Plus de 5 000 000 DA'),
+            self::Under10k      => __('Under :amount', ['amount' => $money(10_000)]),
+            self::From10kTo20k  => $money(10_000) . ' – ' . $money(20_000),
+            self::From20kTo35k  => $money(20_000) . ' – ' . $money(35_000),
+            self::From35kTo50k  => $money(35_000) . ' – ' . $money(50_000),
+            self::From50kTo100k => $money(50_000) . ' – ' . $money(100_000),
+            self::Over100k      => __('Over :amount', ['amount' => $money(100_000)]),
         };
     }
 }

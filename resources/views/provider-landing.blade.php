@@ -14,14 +14,14 @@
 @php
     // Figures shown on this page come from the real configuration, never from
     // marketing estimates: what we print here is what the platform does.
-    $roundHours   = max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60));
-    $perRound     = (int) config('zawaj.matching.providers_per_round', 3);
-    $maxRounds    = (int) config('zawaj.matching.max_rounds', 3);
-    $validityDays = (int) config('zawaj.anpdp.retention_days', 14);
-    $unlockCost   = max(1, (int) config('zawaj.credits.unlock_cost', 1));
-    $isArabic     = app()->getLocale() === 'ar';
-    $openWilayas  = \App\Models\Wilaya::active()->pluck($isArabic ? 'name_ar' : 'name_fr');
-    $openWilayasText = $isArabic ? $openWilayas->join('، ', ' و') : $openWilayas->join(', ', ' et ');
+    $roundHours   = max(1, intdiv((int) config('wedding.matching.round_timeout_minutes', 120), 60));
+    $perRound     = (int) config('wedding.matching.providers_per_round', 3);
+    $maxRounds    = (int) config('wedding.matching.max_rounds', 3);
+    $validityDays = (int) config('wedding.privacy.retention_days', 14);
+    $unlockCost   = max(1, (int) config('wedding.credits.unlock_cost', 1));
+    $openCities   = \App\Models\City::active()->pluck('name');
+    $openCitiesText = $openCities->join(', ', ' et ');
+    $currency     = \App\Support\Money::currencyForCity(null);
 
     // Buttons that open registration: /provider/register is guest-only, so a
     // signed-in visitor is redirected to their own space. Label accordingly.
@@ -32,12 +32,12 @@
     $serviceIcons = [
         'photo'      => 'camera_alt',
         'video'      => 'videocam',
-        'traiteur'   => 'restaurant',
+        'catering'   => 'restaurant',
         'decoration' => 'local_florist',
-        'patisserie' => 'cake',
-        'salle'      => 'villa',
-        'musique'    => 'music_note',
-        'machta'     => 'face_retouching_natural',
+        'pastry' => 'cake',
+        'venue'      => 'villa',
+        'music'    => 'music_note',
+        'beauty'     => 'face_retouching_natural',
     ];
     $services = array_map(
         fn (\App\Enums\ServiceType $svc) => ['icon' => $serviceIcons[$svc->value] ?? 'check_circle', 'label' => $svc->label()],
@@ -72,7 +72,7 @@
             {{-- Left: text --}}
             <div>
                 <x-z.badge variant="dark" class="mb-6">
-                    <x-z.icon name="storefront" class="text-sm" /> {{ __('Disponible à :wilayas', ['wilayas' => $openWilayasText]) }}
+                    <x-z.icon name="storefront" class="text-sm" /> {{ __('Disponible à :cities', ['cities' => $openCitiesText]) }}
                 </x-z.badge>
                 <h1 class="font-serif text-5xl md:text-6xl lg:text-[68px] text-[#1A1A1A] font-bold leading-[1.05] mb-6 text-balance">
                     {{ __('Recevez des demandes de mariage') }}
@@ -82,7 +82,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <x-z.btn :href="route('provider.register')" size="lg" variant="accent" class="shadow-xl shadow-[#C8956C]/20">
-                        {{ $ctaLabel }} <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" />
+                        {{ $ctaLabel }} <x-z.icon name="arrow_forward" class="text-lg" />
                     </x-z.btn>
                     @guest
                         <x-z.btn :href="route('provider.login')" size="lg" variant="outline">
@@ -228,7 +228,7 @@
     {{-- ── Trust bar ─────────────────────────────────────── --}}
     <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
         <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-12">
-            @foreach ([[__('0 DA'), __('inscription')], [$unlockCost, $unlockCost === 1 ? __('crédit par demande acceptée') : __('crédits par demande acceptée')], [$openWilayas->count(), __('wilayas ouvertes actuellement')], [__(':hours h', ['hours' => \App\Support\LocaleCount::hours($roundHours, standalone: true)]), __('pour accepter une demande proposée en priorité')]] as $stat)
+            @foreach ([[\App\Support\Money::format(0, $currency), __('inscription')], [$unlockCost, $unlockCost === 1 ? __('crédit par demande acceptée') : __('crédits par demande acceptée')], [$openCities->count(), __('wilayas ouvertes actuellement')], [__(':hours h', ['hours' => $roundHours]), __('pour accepter une demande proposée en priorité')]] as $stat)
                 <div class="flex items-center gap-3">
                     <span class="font-serif text-2xl font-bold text-[#C8956C]">{{ $stat[0] }}</span>
                     <span class="text-sm text-[#6B665E] font-medium">{{ $stat[1] }}</span>
@@ -249,7 +249,7 @@
                 @foreach ($steps as $i => $s)
                     <div class="relative">
                         @if ($i < count($steps) - 1)
-                            <div class="hidden md:block absolute top-10 start-[calc(50%+2rem)] end-[-50%] h-px bg-gradient-to-r rtl:bg-gradient-to-l from-[#D4CFC7] to-transparent z-0"></div>
+                            <div class="hidden md:block absolute top-10 start-[calc(50%+2rem)] end-[-50%] h-px bg-gradient-to-r from-[#D4CFC7] to-transparent z-0"></div>
                         @endif
                         <div class="relative z-10 bg-white rounded-2xl p-8 border border-[#D4CFC7]/50 shadow-sm hover:shadow-md hover:border-[#C8956C]/40 transition-all duration-300 group h-full">
                             <div class="flex items-center justify-between mb-7">
@@ -337,14 +337,14 @@
                 @foreach ($packs as $p)
                     @php
                         // Price of one unlocked request: a request costs $unlockCost credits.
-                        $perLead = $p->unlocks_count > 0 ? (int) round($p->price_dzd * $unlockCost / $p->unlocks_count) : 0;
+                        $perLead = $p->unlocks_count > 0 ? (int) round($p->price * $unlockCost / $p->unlocks_count) : 0;
                     @endphp
                     <div class="relative rounded-2xl p-7 flex flex-col border transition-all {{ $p->is_popular ? 'bg-[#1A1A1A] border-transparent shadow-2xl shadow-black/10 scale-[1.02]' : 'bg-white border-[#D4CFC7]/50 shadow-sm hover:shadow-md' }}">
                         <p class="text-xs font-bold uppercase tracking-widest mb-4 {{ $p->is_popular ? 'text-white/50' : 'text-[#9A958D]' }}">{{ __($p->name) }}</p>
                         <p class="font-serif text-5xl font-bold mb-1 {{ $p->is_popular ? 'text-white' : 'text-[#1A1A1A]' }}">{{ $p->unlocks_count }}</p>
                         <p class="text-sm mb-1 {{ $p->is_popular ? 'text-white/60' : 'text-[#6B665E]' }}">{{ trans_choice('credits.unit', (int) $p->unlocks_count) }} · {{ $unlockCost === 1 ? __('1 crédit = 1 demande') : __(':count crédits = 1 demande', ['count' => $unlockCost]) }}</p>
-                        <p class="font-serif text-2xl font-bold mt-4 mb-0.5 {{ $p->is_popular ? 'text-[#C8956C]' : 'text-[#1A1A1A]' }}"><bdi>{{ number_format($p->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
-                        <p class="text-xs mb-8 {{ $p->is_popular ? 'text-white/40' : 'text-[#9A958D]' }}">{{ __(':price DA par demande acceptée', ['price' => number_format($perLead, 0, ',', "\u{00A0}")]) }}</p>
+                        <p class="font-serif text-2xl font-bold mt-4 mb-0.5 {{ $p->is_popular ? 'text-[#C8956C]' : 'text-[#1A1A1A]' }}">{{ \App\Support\Money::format($p->price, $currency) }}</p>
+                        <p class="text-xs mb-8 {{ $p->is_popular ? 'text-white/40' : 'text-[#9A958D]' }}">{{ __(':price par demande acceptée', ['price' => \App\Support\Money::format($perLead, $currency)]) }}</p>
                         <x-z.btn :href="route('provider.register')" :variant="$p->is_popular ? 'accent' : 'outline'" class="w-full justify-center mt-auto">
                             {{ $ctaLabel }}
                         </x-z.btn>
@@ -389,7 +389,7 @@
                 </h2>
                 <p class="text-white/60 text-lg mb-10 max-w-lg mx-auto">{{ __('Inscription gratuite. Accès aux demandes après validation de votre profil.') }}</p>
                 <x-z.btn :href="route('provider.register')" size="lg" variant="accent">
-                    {{ $ctaLabel }} <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" />
+                    {{ $ctaLabel }} <x-z.icon name="arrow_forward" class="text-lg" />
                 </x-z.btn>
             </div>
         </div>

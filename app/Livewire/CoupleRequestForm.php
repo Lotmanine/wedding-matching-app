@@ -11,7 +11,8 @@ use App\Enums\ServiceType;
 use App\Events\WedRequestSubmitted;
 use App\Models\ServiceRequest;
 use App\Models\WedRequest;
-use App\Models\Wilaya;
+use App\Models\City;
+use App\Support\PhoneFormat;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +27,8 @@ class CoupleRequestForm extends Component
 
     public string $couple_first_name = '';
     public string $couple_whatsapp = '';
-    public string $couple_wilaya_code = '';
-    public string $couple_commune = '';
+    public string $couple_city_code = '';
+    public string $couple_district = '';
     public ?string $wedding_date = null;
     public ?string $wedding_season = null;
     public string $guest_count = '';
@@ -40,22 +41,22 @@ class CoupleRequestForm extends Component
     public bool $acceptTerms = false;
 
     #[Computed]
-    public function wilayas(): Collection
+    public function cities(): Collection
     {
-        return Wilaya::active()->get();
+        return City::active()->get();
     }
 
     #[Computed]
-    public function availableCommunes(): Collection
+    public function availableDistricts(): Collection
     {
-        if ($this->couple_wilaya_code === '') {
+        if ($this->couple_city_code === '') {
             return collect();
         }
 
-        $wilaya = Wilaya::where('code', $this->couple_wilaya_code)->first();
+        $city = City::where('code', $this->couple_city_code)->first();
 
-        return $wilaya
-            ? $wilaya->communes()->orderBy('name_fr')->get()
+        return $city
+            ? $city->districts()->orderBy('name')->get()
             : collect();
     }
 
@@ -85,7 +86,7 @@ class CoupleRequestForm extends Component
      *
      * @var list<string>
      */
-    public const GUEST_COUNT_SERVICES = ['traiteur', 'salle'];
+    public const GUEST_COUNT_SERVICES = ['catering', 'venue'];
 
     #[Computed]
     public function needsGuestCount(): bool
@@ -93,9 +94,9 @@ class CoupleRequestForm extends Component
         return count(array_intersect($this->services_needed, self::GUEST_COUNT_SERVICES)) > 0;
     }
 
-    public function updatedCoupleWilayaCode(): void
+    public function updatedCoupleCityCode(): void
     {
-        $this->couple_commune = '';
+        $this->couple_district = '';
     }
 
     public function updatedWeddingDate(): void
@@ -119,10 +120,10 @@ class CoupleRequestForm extends Component
         $month = (int) Carbon::parse($date)->format('n');
 
         return match (true) {
-            in_array($month, [12, 1, 2], true)  => 'Hiver',
-            in_array($month, [3, 4, 5], true)   => 'Printemps',
-            in_array($month, [6, 7, 8], true)   => 'Été',
-            default                             => 'Automne',
+            in_array($month, [12, 1, 2], true)  => 'winter',
+            in_array($month, [3, 4, 5], true)   => 'spring',
+            in_array($month, [6, 7, 8], true)   => 'summer',
+            default                             => 'autumn',
         };
     }
 
@@ -131,8 +132,7 @@ class CoupleRequestForm extends Component
      */
     protected function rulesForStep(int $step): array
     {
-        $whatsappRegex = '/^\+213[567]\d{8}$/';
-        $wilayaCodes = Wilaya::active()->pluck('code')->all();
+        $cityCodes = City::active()->pluck('code')->all();
         $svcValues = ServiceType::activeValues();
         $gcValues = collect(GuestCount::cases())->pluck('value')->all();
         $brValues = collect(BudgetRange::cases())->pluck('value')->all();
@@ -140,11 +140,11 @@ class CoupleRequestForm extends Component
         return match ($step) {
             1 => [
                 'couple_first_name' => ['required', 'string', 'min:2', 'max:50'],
-                'couple_whatsapp'   => ['required', 'string', 'regex:' . $whatsappRegex],
+                'couple_whatsapp'   => ['required', 'string', 'regex:' . PhoneFormat::REGEX],
             ],
             2 => [
-                'couple_wilaya_code' => ['required', 'string', 'in:' . implode(',', $wilayaCodes)],
-                'couple_commune'     => ['nullable', 'string', 'max:120'],
+                'couple_city_code' => ['required', 'string', 'in:' . implode(',', $cityCodes)],
+                'couple_district'     => ['nullable', 'string', 'max:120'],
             ],
             3 => [
                 'budget_range'       => ['required', 'in:' . implode(',', $brValues)],
@@ -153,9 +153,9 @@ class CoupleRequestForm extends Component
             ],
             4 => [
                 // Wedding date is now required. Guest count is required only when
-                // a headcount-dependent service (traiteur / salle) is selected.
+                // a headcount-dependent service (catering / venue) is selected.
                 'wedding_date'   => ['required', 'date', 'after_or_equal:today', 'before:' . now()->addYears(2)->toDateString()],
-                'wedding_season' => ['nullable', 'in:Printemps,Été,Automne,Hiver'],
+                'wedding_season' => ['nullable', 'in:' . implode(',', WedRequest::SEASONS)],
                 'guest_count'    => [$this->needsGuestCount() ? 'required' : 'nullable', 'in:' . implode(',', $gcValues)],
             ],
             5 => [
@@ -218,8 +218,8 @@ class CoupleRequestForm extends Component
                     'status'             => RequestStatus::New->value,
                     'couple_first_name'  => $this->couple_first_name,
                     'couple_whatsapp'    => $this->couple_whatsapp,
-                    'couple_wilaya_code' => $this->couple_wilaya_code,
-                    'couple_commune'     => $this->couple_commune !== '' ? $this->couple_commune : null,
+                    'couple_city_code' => $this->couple_city_code,
+                    'couple_district'     => $this->couple_district !== '' ? $this->couple_district : null,
                     'wedding_date'       => $this->wedding_date ?: null,
                     'wedding_season'     => $this->wedding_season ?: null,
                     'guest_count'        => $this->guest_count !== '' ? $this->guest_count : null,

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,7 +21,7 @@
             </div>
 
             <a href="{{ route('home') }}" class="mt-6 text-xs text-[#9A958D] hover:text-[#1A1A1A] transition-colors flex items-center gap-1">
-                <x-z.icon name="arrow_back" class="text-sm rtl:-scale-x-100" /> {{ __('Retour au site') }}
+                <x-z.icon name="arrow_back" class="text-sm" /> {{ __('Retour au site') }}
             </a>
         </div>
     </body>

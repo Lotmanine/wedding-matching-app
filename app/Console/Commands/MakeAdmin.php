@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 
 class MakeAdmin extends Command
 {
-    protected $signature = 'zawaj:make-admin {email}';
+    protected $signature = 'wedding:make-admin {email}';
 
     protected $description = 'Promote an existing user to admin (assigns Spatie role + sets role column).';
 

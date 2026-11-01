@@ -13,13 +13,13 @@ return new class extends Migration {
             $table->string('role', 20)->default('couple')->after('password');
             $table->string('phone', 20)->nullable()->after('role');
             $table->string('whatsapp', 20)->nullable()->after('phone');
-            $table->string('wilaya_code', 2)->nullable()->after('whatsapp');
-            $table->string('status', 30)->default('active')->after('wilaya_code');
+            $table->string('city_code', 2)->nullable()->after('whatsapp');
+            $table->string('status', 30)->default('active')->after('city_code');
             $table->timestamp('last_active_at')->nullable()->after('status');
 
             $table->index('role');
             $table->index('status');
-            $table->index('wilaya_code');
+            $table->index('city_code');
         });
     }
 
@@ -28,8 +28,8 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->dropIndex(['role']);
             $table->dropIndex(['status']);
-            $table->dropIndex(['wilaya_code']);
-            $table->dropColumn(['role', 'phone', 'whatsapp', 'wilaya_code', 'status', 'last_active_at']);
+            $table->dropIndex(['city_code']);
+            $table->dropColumn(['role', 'phone', 'whatsapp', 'city_code', 'status', 'last_active_at']);
         });
     }
 };

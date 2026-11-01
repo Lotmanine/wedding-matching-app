@@ -18,7 +18,7 @@ class UnlockPack extends Model
         'name',
         'slug',
         'unlocks_count',
-        'price_dzd',
+        'price',
         'is_popular',
         'sort_order',
         'active',
@@ -30,7 +30,7 @@ class UnlockPack extends Model
             'is_popular'    => 'boolean',
             'active'        => 'boolean',
             'unlocks_count' => 'integer',
-            'price_dzd'     => 'integer',
+            'price'     => 'integer',
             'sort_order'    => 'integer',
         ];
     }

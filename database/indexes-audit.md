@@ -1,6 +1,6 @@
 # Expected indexes per table
 
-Run `php artisan zawaj:audit-indexes` to verify these exist.
+Run `php artisan wedding:audit-indexes` to verify these exist.
 
 ## users
 
@@ -8,14 +8,14 @@ Run `php artisan zawaj:audit-indexes` to verify these exist.
 - UNIQUE `email`
 - INDEX `role`
 - INDEX `status`
-- INDEX `wilaya_code`
+- INDEX `city_code`
 
 ## wed_requests
 
 - PRIMARY `id`
 - UNIQUE `wed_uid`
 - INDEX `status`
-- INDEX `couple_wilaya_code`
+- INDEX `couple_city_code`
 - INDEX `wedding_date`
 - INDEX `expires_at`
 - INDEX `deleted_at` (from SoftDeletes)
@@ -37,7 +37,7 @@ Run `php artisan zawaj:audit-indexes` to verify these exist.
 
 - PRIMARY `id`
 - UNIQUE `user_id`
-- INDEX `primary_wilaya_code`
+- INDEX `primary_city_code`
 - INDEX `price_tier`
 - INDEX `verified`
 - INDEX `rating_avg`
@@ -51,8 +51,8 @@ Run `php artisan zawaj:audit-indexes` to verify these exist.
 ## provider_coverage
 
 - PRIMARY `id`
-- UNIQUE `prov_cov_unique (user_id, wilaya_code)`
-- INDEX `wilaya_code`
+- UNIQUE `prov_cov_unique (user_id, city_code)`
+- INDEX `city_code`
 
 ## credit_ledger
 
@@ -74,11 +74,11 @@ Run `php artisan zawaj:audit-indexes` to verify these exist.
 - PRIMARY `id`
 - UNIQUE `slug`
 
-## wilayas / communes
+## cities / districts
 
 - PRIMARY `id` (explicit, not auto-increment)
-- UNIQUE `wilayas.code`
-- FK INDEX `communes.wilaya_id`
+- UNIQUE `cities.code`
+- FK INDEX `districts.city_id`
 
 ## webhook_endpoints / webhook_deliveries
 

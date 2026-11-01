@@ -6,7 +6,7 @@
     <div class="bg-[#1A1A1A] pt-16 pb-16 px-5 md:px-8">
         <div class="max-w-3xl mx-auto">
             <a href="{{ route('home') }}" class="flex items-center gap-2 text-white/40 hover:text-white/70 text-sm mb-6 transition-colors w-max">
-                <x-z.icon name="arrow_back" class="text-base rtl:-scale-x-100" /> {{ __('Retour') }}
+                <x-z.icon name="arrow_back" class="text-base" /> {{ __('Retour') }}
             </a>
             <p class="text-[#C8956C] text-xs font-bold uppercase tracking-widest mb-3">{{ __('Documents légaux') }}</p>
             <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-3">{{ $title }}</h1>

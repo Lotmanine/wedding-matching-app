@@ -8,24 +8,24 @@ enum ServiceType: string
 {
     case Photo      = 'photo';
     case Video      = 'video';
-    case Traiteur   = 'traiteur';
+    case Catering   = 'catering';
     case Decoration = 'decoration';
-    case Patisserie = 'patisserie';
-    case Salle      = 'salle';
-    case Musique    = 'musique';
-    case Machta     = 'machta';
+    case Pastry     = 'pastry';
+    case Venue      = 'venue';
+    case Music      = 'music';
+    case Beauty     = 'beauty';
 
     public function label(): string
     {
         return match($this) {
             self::Photo      => __('Photographe'),
             self::Video      => __('Vidéaste'),
-            self::Traiteur   => __('Traiteur'),
+            self::Catering   => __('Traiteur'),
             self::Decoration => __('Décoration'),
-            self::Patisserie => __('Gâteaux et pâtisseries'),
-            self::Salle      => __('Salle des fêtes'),
-            self::Musique    => __('Musiciens / DJ'),
-            self::Machta     => __('Machta / Coiffure'),
+            self::Pastry     => __('Gâteaux et pâtisseries'),
+            self::Venue      => __('Salle des fêtes'),
+            self::Music      => __('Musiciens / DJ'),
+            self::Beauty     => __('Machta / Coiffure'),
         };
     }
 

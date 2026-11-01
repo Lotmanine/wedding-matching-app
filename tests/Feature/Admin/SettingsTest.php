@@ -34,7 +34,7 @@ class SettingsTest extends TestCase
             'credits_unlock_cost'            => 2,
             'matching_round_timeout_minutes' => 180,
             'matching_providers_per_round'   => 4,
-            'anpdp_retention_days'           => 21,
+            'privacy_retention_days'           => 21,
         ])->assertRedirect();
 
         $this->assertSame('2',   Setting::where('key', 'credits.unlock_cost')->value('value'));
@@ -52,18 +52,18 @@ class SettingsTest extends TestCase
             'credits_unlock_cost'            => 1,
             'matching_round_timeout_minutes' => 120,
             'matching_providers_per_round'   => 3,
-            'anpdp_retention_days'           => 14,
+            'privacy_retention_days'           => 14,
         ];
 
-        $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => 'alerts@zawajpro.dz'])
+        $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => 'alerts@example.com'])
             ->assertRedirect()->assertSessionHasNoErrors();
-        $this->assertSame('alerts@zawajpro.dz', Setting::get('feedback.alert_email'));
+        $this->assertSame('alerts@example.com', Setting::get('feedback.alert_email'));
 
-        $this->actingAs($admin)->get(route('admin.settings.index'))->assertOk()->assertSee('alerts@zawajpro.dz');
+        $this->actingAs($admin)->get(route('admin.settings.index'))->assertOk()->assertSee('alerts@example.com');
 
         $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => 'not-an-email'])
             ->assertSessionHasErrors('feedback_alert_email');
-        $this->assertSame('alerts@zawajpro.dz', Setting::get('feedback.alert_email'));
+        $this->assertSame('alerts@example.com', Setting::get('feedback.alert_email'));
 
         $this->actingAs($admin)->put(route('admin.settings.update'), $numbers + ['feedback_alert_email' => ''])
             ->assertRedirect()->assertSessionHasNoErrors();
@@ -79,18 +79,18 @@ class SettingsTest extends TestCase
             'credits_unlock_cost'            => 2,
             'matching_round_timeout_minutes' => 180,
             'matching_providers_per_round'   => 4,
-            'anpdp_retention_days'           => 21,
+            'privacy_retention_days'           => 21,
         ])->assertRedirect();
 
-        $this->assertSame(2, config('zawaj.credits.unlock_cost'));
-        $this->assertSame(180, config('zawaj.matching.round_timeout_minutes'));
-        $this->assertSame(4, config('zawaj.matching.providers_per_round'));
-        $this->assertSame(21, config('zawaj.anpdp.retention_days'));
+        $this->assertSame(2, config('wedding.credits.unlock_cost'));
+        $this->assertSame(180, config('wedding.matching.round_timeout_minutes'));
+        $this->assertSame(4, config('wedding.matching.providers_per_round'));
+        $this->assertSame(21, config('wedding.privacy.retention_days'));
         $this->assertSame(180, \App\Services\Matching\RoundStateMachine::roundTimeoutMinutes());
 
         // A new request is valid for the configured number of days.
-        $this->seed(\Database\Seeders\WilayaSeeder::class);
-        $wr = \App\Models\WedRequest::factory()->create(['couple_wilaya_code' => '16']);
+        $this->seed(\Database\Seeders\CitySeeder::class);
+        $wr = \App\Models\WedRequest::factory()->create(['couple_city_code' => 'NY']);
         $this->assertEqualsWithDelta(21, now()->diffInDays($wr->expires_at), 0.01);
     }
 

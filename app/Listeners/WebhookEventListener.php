@@ -30,8 +30,8 @@ class WebhookEventListener
             'couple' => [
                 'first_name'  => $wr->couple_first_name,
                 'whatsapp'    => $wr->couple_whatsapp,
-                'wilaya_code' => (string) $wr->couple_wilaya_code,
-                'commune'     => $wr->couple_commune,
+                'city_code' => (string) $wr->couple_city_code,
+                'district'     => $wr->couple_district,
             ],
             'wedding' => [
                 'date'         => $wr->wedding_date?->toDateString(),
@@ -100,7 +100,7 @@ class WebhookEventListener
             'user_id'       => $event->user->id,
             'business_name' => $event->profile->business_name,
             'email'         => $event->user->email,
-            'wilaya_code'   => (string) $event->profile->primary_wilaya_code,
+            'city_code'   => (string) $event->profile->primary_city_code,
         ]);
     }
 
@@ -117,7 +117,7 @@ class WebhookEventListener
         $profile = $user?->providerProfile;
 
         $langs = (array) ($profile?->languages ?? []);
-        $preferredLanguage = in_array('ar', $langs, true) ? 'ar' : 'fr';
+        $preferredLanguage = in_array('fr', $langs, true) && ! in_array('en', $langs, true) ? 'fr' : 'en';
 
         $receiptUrl = url("/api/v1/n8n/receipts/{$event->purchase->purchase_uid}.pdf");
 
@@ -129,7 +129,7 @@ class WebhookEventListener
             'provider_name'      => $profile?->business_name ?? $user?->name,
             'preferred_language' => $preferredLanguage,
             'pack_name'          => $purchase?->unlockPack?->name,
-            'amount_dzd'         => (int) $event->purchase->amount_dzd,
+            'amount'         => (int) $event->purchase->amount,
             'credits_granted'    => (int) $event->purchase->unlocks_count,
             'unlocks'            => (int) $event->purchase->unlocks_count, // backwards-compat for any older subscriber
             'completed_at'       => ($purchase?->credits_granted_at ?? $purchase?->paid_at ?? now())->toAtomString(),

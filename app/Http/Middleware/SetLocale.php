@@ -9,22 +9,22 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Applies the visitor's language (French or Arabic) to the public site and
- * the provider area. The choice is made with the FR/AR switch in the header
- * and kept in a cookie. The back-office stays in French.
+ * Applies the visitor's language (English or French). The choice is made with
+ * the EN/FR switch in the header and kept in a cookie; without one, the
+ * application locale applies.
  */
 class SetLocale
 {
-    public const COOKIE = 'zawaj_locale';
+    public const COOKIE = 'app_locale';
 
-    public const SUPPORTED = ['fr', 'ar'];
+    public const SUPPORTED = ['en', 'fr'];
 
     public function handle(Request $request, Closure $next): Response
     {
         $locale = $request->cookie(self::COOKIE);
 
-        if (! is_string($locale) || ! in_array($locale, self::SUPPORTED, true) || $request->is('admin', 'admin/*')) {
-            $locale = 'fr';
+        if (! is_string($locale) || ! in_array($locale, self::SUPPORTED, true)) {
+            $locale = config('app.locale');
         }
 
         app()->setLocale($locale);

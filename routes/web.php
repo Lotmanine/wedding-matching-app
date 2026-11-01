@@ -54,7 +54,7 @@ Route::get('/devenir-prestataire', function () {
     ]);
 })->name('provider.landing');
 
-// Legal / ANPDP pages (public)
+// Legal / privacy pages (public)
 Route::view('/confidentialite', 'legal.privacy')->name('legal.privacy');
 Route::view('/conditions-utilisation', 'legal.terms')->name('legal.terms');
 

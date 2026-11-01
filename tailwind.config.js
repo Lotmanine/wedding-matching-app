@@ -13,7 +13,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Zawaj Pro design tokens (clay / ink editorial identity)
+                // Design tokens (clay / ink editorial identity)
                 'z-bg':          '#FDFAF6',
                 'z-surface':     '#FFFFFF',
                 'z-low':         '#F7F4F0',

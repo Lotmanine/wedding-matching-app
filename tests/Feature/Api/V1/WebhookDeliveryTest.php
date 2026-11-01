@@ -13,7 +13,7 @@ use App\Models\WebhookDelivery;
 use App\Models\WebhookEndpoint;
 use App\Models\WedRequest;
 use App\Services\Webhooks\WebhookDispatcher;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
@@ -55,17 +55,17 @@ class WebhookDeliveryTest extends TestCase
     public function test_domain_event_queues_exactly_one_delivery_per_endpoint(): void
     {
         Bus::fake([DeliverWebhookJob::class]);
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
 
         WebhookEndpoint::create([
             'name'   => 'n8n Core',
-            'url'    => 'https://n8n.example.com/webhook/zawaj-core',
+            'url'    => 'https://n8n.example.com/webhook/wedding-core',
             'secret' => 'sekret',
             'events' => ['wed_request.submitted'],
             'active' => true,
         ]);
 
-        WedRequestSubmitted::dispatch(WedRequest::factory()->create(['couple_wilaya_code' => '16']));
+        WedRequestSubmitted::dispatch(WedRequest::factory()->create(['couple_city_code' => 'NY']));
 
         // Regression: listeners used to be registered twice (explicitly + by
         // auto-discovery), so every webhook went out in duplicate.
@@ -75,9 +75,9 @@ class WebhookDeliveryTest extends TestCase
     public function test_round_started_queues_the_enriched_whatsapp_listener_once(): void
     {
         Queue::fake();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
 
-        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16']);
+        $wr = WedRequest::factory()->create(['couple_city_code' => 'NY']);
         $sr = ServiceRequest::create([
             'wed_request_id' => $wr->id,
             'service_type'   => 'photo',
@@ -117,8 +117,8 @@ class WebhookDeliveryTest extends TestCase
 
         $expectedSig = hash_hmac('sha256', json_encode($payload, JSON_UNESCAPED_UNICODE), 'sekret');
         Http::assertSent(function ($request) use ($expectedSig) {
-            return $request->header('X-Zawaj-Signature')[0] === $expectedSig
-                && $request->header('X-Zawaj-Event')[0] === 'service_request.accepted';
+            return $request->header('X-Wedding-Signature')[0] === $expectedSig
+                && $request->header('X-Wedding-Event')[0] === 'service_request.accepted';
         });
     }
 

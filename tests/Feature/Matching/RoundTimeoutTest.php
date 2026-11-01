@@ -10,7 +10,7 @@ use App\Events\RoundTimedOut;
 use App\Models\ServiceRequest;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
@@ -23,7 +23,7 @@ class RoundTimeoutTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
@@ -54,7 +54,7 @@ class RoundTimeoutTest extends TestCase
 
         $lead = $this->makeLeadAtRound(1);
 
-        Artisan::call('zawaj:advance-rounds');
+        Artisan::call('wedding:advance-rounds');
 
         $lead->refresh();
         $this->assertSame(RequestStatus::Matching, $lead->status);
@@ -70,7 +70,7 @@ class RoundTimeoutTest extends TestCase
 
         $lead = $this->makeLeadAtRound(3);
 
-        Artisan::call('zawaj:advance-rounds');
+        Artisan::call('wedding:advance-rounds');
 
         $lead->refresh();
         $this->assertSame(RequestStatus::OpenMarketplace, $lead->status);
@@ -84,7 +84,7 @@ class RoundTimeoutTest extends TestCase
     {
         $lead = $this->makeLeadAtRound(1, now()->subMinutes(10));
 
-        Artisan::call('zawaj:advance-rounds');
+        Artisan::call('wedding:advance-rounds');
 
         $lead->refresh();
         $this->assertSame(RequestStatus::Round1, $lead->status);
@@ -97,7 +97,7 @@ class RoundTimeoutTest extends TestCase
         $lead = $this->makeLeadAtRound(3);
         $lead->forceFill(['unlocked_by_user_id' => $user->id, 'unlocked_at' => now()])->save();
 
-        Artisan::call('zawaj:advance-rounds');
+        Artisan::call('wedding:advance-rounds');
 
         $lead->refresh();
         $this->assertSame(RequestStatus::Round3, $lead->status);

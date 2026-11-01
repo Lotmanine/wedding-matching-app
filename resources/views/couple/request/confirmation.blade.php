@@ -18,7 +18,7 @@
         <div class="bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-6" x-data="{ copied: false }">
             <p class="text-[11px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('form.confirm_reference') }}</p>
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <code dir="ltr" class="font-serif text-2xl font-bold text-[#1A1A1A] tracking-wider select-all">{{ $wedRequest->wed_uid }}</code>
+                <code class="font-serif text-2xl font-bold text-[#1A1A1A] tracking-wider select-all">{{ $wedRequest->wed_uid }}</code>
                 <button
                     type="button"
                     @click="navigator.clipboard.writeText(@js($wedRequest->wed_uid)); copied = true; setTimeout(() => copied = false, 2000)"
@@ -44,8 +44,8 @@
             @php
                 $steps = [
                     __('form.confirm_step_1', [
-                        'per_round' => (int) config('zawaj.matching.providers_per_round', 3),
-                        'hours'     => \App\Support\LocaleCount::hours(max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60))),
+                        'per_round' => (int) config('wedding.matching.providers_per_round', 3),
+                        'hours'     => max(1, intdiv((int) config('wedding.matching.round_timeout_minutes', 120), 60)),
                     ]),
                     __('form.confirm_step_2'),
                     __('form.confirm_step_3'),
@@ -101,7 +101,7 @@
         <div class="flex gap-3 px-4 py-3 bg-[#F7F4F0] rounded-xl border border-[#D4CFC7]/40">
             <x-z.icon name="shield" :filled="true" class="text-[#9A958D] text-lg shrink-0 mt-0.5" />
             <p class="text-xs text-[#9A958D] leading-relaxed">
-                {{ __('form.confirm_expiry', ['date' => $wedRequest->expires_at->isoFormat('LL'), 'days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}
+                {{ __('form.confirm_expiry', ['date' => $wedRequest->expires_at->isoFormat('LL'), 'days' => (int) config('wedding.privacy.retention_days', 14)]) }}
             </p>
         </div>
 

@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ProviderProfile;
 use App\Models\User;
-use App\Models\Wilaya;
+use App\Models\City;
 use App\Services\AuditLogger;
 use App\Services\Credits\CreditsService;
 use Illuminate\Http\RedirectResponse;
@@ -26,7 +26,7 @@ class AdminProvidersController extends Controller
     public function index(Request $request): View
     {
         $status = (string) $request->query('status', 'all');
-        $wilaya = (string) $request->query('wilaya', '');
+        $city = (string) $request->query('city', '');
         $service = (string) $request->query('service', '');
         $search = (string) $request->query('q', '');
 
@@ -49,8 +49,8 @@ class AdminProvidersController extends Controller
             };
         }
 
-        if ($wilaya !== '') {
-            $query->whereHas('providerProfile', fn ($q) => $q->where('primary_wilaya_code', $wilaya));
+        if ($city !== '') {
+            $query->whereHas('providerProfile', fn ($q) => $q->where('primary_city_code', $city));
         }
 
         if ($service !== '') {
@@ -58,9 +58,9 @@ class AdminProvidersController extends Controller
         }
 
         $providers = $query->latest('id')->paginate(25)->withQueryString();
-        $wilayas = Wilaya::active()->get();
+        $cities = City::active()->get();
 
-        return view('admin.providers.index', compact('providers', 'status', 'wilaya', 'service', 'search', 'wilayas'));
+        return view('admin.providers.index', compact('providers', 'status', 'city', 'service', 'search', 'cities'));
     }
 
     public function show(int $id): View

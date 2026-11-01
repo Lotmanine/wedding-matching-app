@@ -37,8 +37,8 @@ class ServiceRequestController extends Controller
         if ($t = $request->query('service_type')) {
             $query->where('service_type', $t);
         }
-        if ($w = $request->query('wilaya_code')) {
-            $query->whereHas('wedRequest', fn ($q) => $q->where('couple_wilaya_code', $w));
+        if ($w = $request->query('city_code')) {
+            $query->whereHas('wedRequest', fn ($q) => $q->where('couple_city_code', $w));
         }
 
         $limit = min((int) $request->query('limit', 25), 100);

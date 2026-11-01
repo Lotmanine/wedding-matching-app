@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 
 class CreateApiToken extends Command
 {
-    protected $signature = 'zawaj:create-api-token {--name=n8n-service} {--abilities=n8n-service} {--email=n8n@zawajpro.internal}';
+    protected $signature = 'wedding:create-api-token {--name=n8n-service} {--abilities=n8n-service} {--email=n8n@example.com}';
 
     protected $description = 'Create (or upsert) a service-account user and issue a Sanctum API token with the given abilities. Prints the plaintext token once.';
 

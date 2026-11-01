@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Crypt;
  * Reads/writes the admin-configurable Meta WhatsApp Cloud API configuration,
  * stored in the generic settings table under the `whatsapp.*` keys.
  *
- * Laravel never calls Meta itself: the n8n `zawaj-whatsapp` workflow fetches
+ * Laravel never calls Meta itself: the n8n `wedding-whatsapp` workflow fetches
  * these values through GET /api/v1/n8n/whatsapp-config, so a super-admin can
  * plug the Meta account in from /admin/whatsapp without touching n8n.
  *

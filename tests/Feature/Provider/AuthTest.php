@@ -30,14 +30,14 @@ class AuthTest extends TestCase
     public function test_login_with_valid_provider_credentials_succeeds(): void
     {
         $user = User::factory()->create([
-            'email'    => 'p@provider.dz',
+            'email'    => 'p@provider.example.com',
             'password' => Hash::make('secret123'),
             'role'     => 'provider',
         ]);
         $user->assignRole('provider');
 
         $this->post('/provider/login', [
-            'email'    => 'p@provider.dz',
+            'email'    => 'p@provider.example.com',
             'password' => 'secret123',
         ])->assertRedirect(route('provider.dashboard', absolute: false));
 
@@ -47,7 +47,7 @@ class AuthTest extends TestCase
     public function test_login_rejects_non_provider_account(): void
     {
         $user = User::factory()->create([
-            'email'    => 'c@couple.dz',
+            'email'    => 'c@couple.example.com',
             'password' => Hash::make('secret123'),
             'role'     => 'couple',
         ]);
@@ -55,7 +55,7 @@ class AuthTest extends TestCase
 
         $this->from('/provider/login')
             ->post('/provider/login', [
-                'email'    => 'c@couple.dz',
+                'email'    => 'c@couple.example.com',
                 'password' => 'secret123',
             ])
             ->assertRedirect('/provider/login')
@@ -77,10 +77,10 @@ class AuthTest extends TestCase
     {
         Notification::fake();
 
-        $user = User::factory()->create(['email' => 'reset@provider.dz', 'role' => 'provider']);
+        $user = User::factory()->create(['email' => 'reset@provider.example.com', 'role' => 'provider']);
         $user->assignRole('provider');
 
-        $this->post('/provider/forgot-password', ['email' => 'reset@provider.dz'])
+        $this->post('/provider/forgot-password', ['email' => 'reset@provider.example.com'])
             ->assertSessionHas('status');
 
         Notification::assertSentTo($user, ResetPassword::class);

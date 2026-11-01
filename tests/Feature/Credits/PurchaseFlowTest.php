@@ -33,10 +33,10 @@ class PurchaseFlowTest extends TestCase
         $user->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'credit_balance'      => 0,
         ]);
@@ -47,13 +47,13 @@ class PurchaseFlowTest extends TestCase
     public function test_initiate_creates_pending_purchase(): void
     {
         $user = $this->makeProvider();
-        $pack = UnlockPack::where('slug', 'pack-essentiel')->first();
+        $pack = UnlockPack::where('slug', 'essential')->first();
 
         $purchase = app(PurchaseService::class)->initiate($user, $pack);
 
         $this->assertSame('pending', $purchase->status);
         $this->assertSame(6, $purchase->unlocks_count);
-        $this->assertSame(7650, $purchase->amount_dzd);
+        $this->assertSame(99, $purchase->amount);
         $this->assertMatchesRegularExpression('/^PUR-\d{8}-\d{4}$/', $purchase->purchase_uid);
     }
 
@@ -71,7 +71,7 @@ class PurchaseFlowTest extends TestCase
             ]);
         $this->app->instance(ChargilyClient::class, $mock);
 
-        $response = $this->actingAs($user)->post(route('provider.credits.checkout', 'pack-essentiel'));
+        $response = $this->actingAs($user)->post(route('provider.credits.checkout', 'essential'));
 
         $response->assertRedirect('https://pay.chargily.net/checkout/chk_mock_123');
 
@@ -83,7 +83,7 @@ class PurchaseFlowTest extends TestCase
     public function test_success_page_shows_pending_before_webhook(): void
     {
         $user = $this->makeProvider();
-        $pack = UnlockPack::where('slug', 'pack-decouverte')->first();
+        $pack = UnlockPack::where('slug', 'starter')->first();
         $purchase = app(PurchaseService::class)->initiate($user, $pack);
 
         $this->actingAs($user)
@@ -95,7 +95,7 @@ class PurchaseFlowTest extends TestCase
     public function test_success_page_shows_paid_after_markPaid(): void
     {
         $user = $this->makeProvider();
-        $pack = UnlockPack::where('slug', 'pack-decouverte')->first();
+        $pack = UnlockPack::where('slug', 'starter')->first();
         $svc = app(PurchaseService::class);
         $purchase = $svc->initiate($user, $pack);
         $svc->markPaid($purchase, ['id' => 'chk_x', 'payment_id' => 'pay_x']);
@@ -111,7 +111,7 @@ class PurchaseFlowTest extends TestCase
         $user = $this->makeProvider();
         $other = $this->makeProvider();
 
-        $pack = UnlockPack::where('slug', 'pack-decouverte')->first();
+        $pack = UnlockPack::where('slug', 'starter')->first();
         $purchase = app(PurchaseService::class)->initiate($other, $pack);
 
         $this->actingAs($user)
@@ -122,10 +122,10 @@ class PurchaseFlowTest extends TestCase
     public function test_checkout_throws_404_for_inactive_pack(): void
     {
         $user = $this->makeProvider();
-        UnlockPack::where('slug', 'pack-decouverte')->update(['active' => false]);
+        UnlockPack::where('slug', 'starter')->update(['active' => false]);
 
         $this->actingAs($user)
-            ->post(route('provider.credits.checkout', 'pack-decouverte'))
+            ->post(route('provider.credits.checkout', 'starter'))
             ->assertNotFound();
     }
 

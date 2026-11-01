@@ -14,7 +14,7 @@ use App\Models\User;
 use App\Models\WebhookEndpoint;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -26,12 +26,12 @@ class LeadOpenedToMarketplaceDispatchTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
 
         WebhookEndpoint::create([
             'name'   => 'test-n8n',
-            'url'    => 'https://n8n.test/webhook/zawaj-whatsapp-outbound',
+            'url'    => 'https://n8n.test/webhook/wedding-whatsapp-outbound',
             'secret' => 'test-secret',
             'events' => ['lead.opened_to_marketplace'],
             'active' => true,
@@ -43,19 +43,19 @@ class LeadOpenedToMarketplaceDispatchTest extends TestCase
         $u = User::factory()->create([
             'role'     => 'provider',
             'status'   => 'active',
-            'whatsapp' => '+213' . str_pad((string) random_int(500000000, 799999999), 9, '0'),
+            'whatsapp' => '+1212555' . random_int(1000, 9999),
         ]);
         $u->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $u->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => $verified,
-            'languages'           => ['ar'],
-            'business_type'       => 'auto-entrepreneur',
+            'languages'           => ['en'],
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
         ]);
         ProviderService::create(['user_id' => $u->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $u->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $u->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $u->fresh('providerProfile');
     }
@@ -64,7 +64,7 @@ class LeadOpenedToMarketplaceDispatchTest extends TestCase
     {
         $wr = WedRequest::factory()->create([
             'couple_first_name'  => 'Sara',
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
         $sr = ServiceRequest::create([

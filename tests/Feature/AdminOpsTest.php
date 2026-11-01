@@ -13,7 +13,7 @@ use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,7 +29,7 @@ class AdminOpsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
@@ -52,7 +52,7 @@ class AdminOpsTest extends TestCase
     private function makeProvider(bool $verified = true, int $credits = 0, string $status = 'active'): User
     {
         $user = User::factory()->create([
-            'email'  => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@zawajpro.dz',
+            'email'  => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@example.com',
             'role'   => 'provider',
             'status' => $status,
         ]);
@@ -60,13 +60,13 @@ class AdminOpsTest extends TestCase
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => $verified,
             'verified_at'         => $verified ? now()->subDay() : null,
             'credit_balance'      => $credits,
         ]);
         ProviderService::create(['user_id' => $user->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $user->fresh(['providerProfile']);
     }
@@ -141,12 +141,12 @@ class AdminOpsTest extends TestCase
         $this->actingAs($admin)
             ->post(route('admin.users.store'), [
                 'name'  => 'Ops Manager',
-                'email' => 'manager@zawajpro.dz',
+                'email' => 'manager@example.com',
                 'role'  => 'manager',
             ])
             ->assertRedirect();
 
-        $user = User::where('email', 'manager@zawajpro.dz')->first();
+        $user = User::where('email', 'manager@example.com')->first();
         $this->assertNotNull($user);
         $this->assertTrue($user->hasRole('manager'));
         $this->assertSame('active', $user->status);
@@ -159,14 +159,14 @@ class AdminOpsTest extends TestCase
         $this->actingAs($admin)
             ->post(route('admin.users.store'), [
                 'name'                => 'Studio Nour',
-                'email'               => 'studio@zawajpro.dz',
+                'email'               => 'studio@example.com',
                 'role'                => 'provider',
                 'business_name'       => 'Studio Nour Photography',
-                'primary_wilaya_code' => '16',
+                'primary_city_code' => 'NY',
             ])
             ->assertRedirect();
 
-        $user = User::where('email', 'studio@zawajpro.dz')->first();
+        $user = User::where('email', 'studio@example.com')->first();
         $this->assertNotNull($user);
         $this->assertTrue($user->hasRole('provider'));
         $this->assertSame('active', $user->status);
@@ -180,10 +180,10 @@ class AdminOpsTest extends TestCase
     {
         $admin = $this->makeAdmin();
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '16',
-            'services_needed'    => ['photo', 'traiteur'],
+            'couple_city_code' => 'NY',
+            'services_needed'    => ['photo', 'catering'],
         ]);
-        foreach (['photo', 'traiteur'] as $svc) {
+        foreach (['photo', 'catering'] as $svc) {
             ServiceRequest::create([
                 'wed_request_id' => $wr->id,
                 'service_type'   => $svc,
@@ -192,30 +192,30 @@ class AdminOpsTest extends TestCase
             ]);
         }
 
-        // Remove traiteur, add salle.
+        // Remove catering, add venue.
         $this->actingAs($admin)
             ->put(route('admin.requests.update', $wr->wed_uid), [
                 'couple_first_name'  => $wr->couple_first_name,
-                'couple_whatsapp'    => '+213661234567',
-                'couple_wilaya_code' => '16',
+                'couple_whatsapp'    => '+12125554567',
+                'couple_city_code' => 'NY',
                 'status'             => 'new',
-                'services_needed'    => ['photo', 'salle'],
+                'services_needed'    => ['photo', 'venue'],
             ])
             ->assertRedirect(route('admin.requests.show', $wr->wed_uid));
 
         $wr->refresh();
-        $this->assertEqualsCanonicalizing(['photo', 'salle'], (array) $wr->services_needed);
+        $this->assertEqualsCanonicalizing(['photo', 'venue'], (array) $wr->services_needed);
 
         $types = ServiceRequest::where('wed_request_id', $wr->id)
             ->get()
             ->map(fn ($sr) => $sr->service_type?->value ?? (string) $sr->service_type);
-        $this->assertContains('salle', $types, 'added service must create a child request');
+        $this->assertContains('venue', $types, 'added service must create a child request');
 
-        $traiteur = ServiceRequest::withTrashed()
+        $catering = ServiceRequest::withTrashed()
             ->where('wed_request_id', $wr->id)
             ->get()
-            ->first(fn ($sr) => ($sr->service_type?->value ?? '') === 'traiteur');
-        $this->assertNotNull($traiteur->deleted_at, 'removed service child must be soft-deleted');
+            ->first(fn ($sr) => ($sr->service_type?->value ?? '') === 'catering');
+        $this->assertNotNull($catering->deleted_at, 'removed service child must be soft-deleted');
     }
 
     public function test_demande_edit_blocks_removing_accepted_service(): void
@@ -223,7 +223,7 @@ class AdminOpsTest extends TestCase
         $admin = $this->makeAdmin();
         $provider = $this->makeProvider();
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
         ServiceRequest::create([
@@ -238,10 +238,10 @@ class AdminOpsTest extends TestCase
         $this->actingAs($admin)
             ->put(route('admin.requests.update', $wr->wed_uid), [
                 'couple_first_name'  => $wr->couple_first_name,
-                'couple_whatsapp'    => '+213661234567',
-                'couple_wilaya_code' => '16',
+                'couple_whatsapp'    => '+12125554567',
+                'couple_city_code' => 'NY',
                 'status'             => 'accepted',
-                'services_needed'    => ['salle'], // tries to drop accepted photo
+                'services_needed'    => ['venue'], // tries to drop accepted photo
             ])
             ->assertSessionHasErrors('services_needed');
     }
@@ -252,7 +252,7 @@ class AdminOpsTest extends TestCase
         // is strictly typed (?int) and blew up with a TypeError.
         $admin = $this->makeAdmin();
         $provider = $this->makeProvider();
-        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16', 'services_needed' => ['photo']]);
+        $wr = WedRequest::factory()->create(['couple_city_code' => 'NY', 'services_needed' => ['photo']]);
         $sr = ServiceRequest::create([
             'wed_request_id' => $wr->id,
             'service_type'   => 'photo',
@@ -277,7 +277,7 @@ class AdminOpsTest extends TestCase
     private function makeUnlockedLead(User $provider): ServiceRequest
     {
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
 

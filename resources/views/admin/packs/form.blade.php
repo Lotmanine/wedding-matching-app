@@ -22,7 +22,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-wider text-[#9A958D] mb-1.5">{{ __('admin.packs.field_price') }}</label>
-                    <input type="number" name="price_dzd" value="{{ old('price_dzd', $pack->price_dzd ?? 1000) }}" min="0" required class="w-full px-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
+                    <input type="number" name="price" value="{{ old('price', $pack->price ?? 99) }}" min="0" required class="w-full px-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-colors" />
                 </div>
             </div>
 

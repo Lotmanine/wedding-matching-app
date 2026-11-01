@@ -68,7 +68,7 @@ class ServiceRequest extends Model
                 }
             }
             if (empty($sr->expires_at)) {
-                $sr->expires_at = now()->addDays((int) config('zawaj.anpdp.retention_days', 14));
+                $sr->expires_at = now()->addDays((int) config('wedding.privacy.retention_days', 14));
             }
         });
     }
@@ -97,10 +97,10 @@ class ServiceRequest extends Model
     }
 
     /**
-     * ANPDP display anonymization: the couple's contact details stop being
+     * privacy display anonymization: the couple's contact details stop being
      * shown to the provider N days after acceptance (retention_days, 14 by
      * default). This masks the UI only — actual data erasure stays with the
-     * scheduled zawaj:cleanup-* commands.
+     * scheduled wedding:cleanup-* commands.
      */
     public function anonymizeAt(): ?\Illuminate\Support\Carbon
     {
@@ -108,7 +108,7 @@ class ServiceRequest extends Model
             return null;
         }
 
-        return $this->unlocked_at->copy()->addDays((int) config('zawaj.anpdp.retention_days', 14));
+        return $this->unlocked_at->copy()->addDays((int) config('wedding.privacy.retention_days', 14));
     }
 
     public function isAnonymized(): bool
@@ -137,7 +137,7 @@ class ServiceRequest extends Model
             ->values()
             ->all();
 
-        $coverage = $provider->providerCoverage->pluck('wilaya_code')
+        $coverage = $provider->providerCoverage->pluck('city_code')
             ->map(fn ($v) => is_object($v) && property_exists($v, 'value') ? $v->value : (string) $v)
             ->values()
             ->all();
@@ -162,12 +162,12 @@ class ServiceRequest extends Model
                 $q->whereNull('refused_by_provider_ids')
                   ->orWhereJsonDoesntContain('refused_by_provider_ids', $providerId);
             })
-            // Wilaya coverage is required for automatic/marketplace visibility,
+            // City coverage is required for automatic/marketplace visibility,
             // BUT a provider explicitly placed in a round (e.g. an admin manual
             // assignment overriding geography) always sees that lead.
             ->where(function (Builder $q) use ($coverage, $providerId) {
                 $q->whereHas('wedRequest', function (Builder $q2) use ($coverage) {
-                    $q2->whereIn('couple_wilaya_code', $coverage);
+                    $q2->whereIn('couple_city_code', $coverage);
                 })
                     ->orWhereJsonContains('round_1_provider_ids', $providerId)
                     ->orWhereJsonContains('round_2_provider_ids', $providerId)

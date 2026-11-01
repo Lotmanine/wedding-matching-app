@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 
 class TestEmail extends Command
 {
-    protected $signature = 'zawaj:test-email {to}';
+    protected $signature = 'wedding:test-email {to}';
 
     protected $description = 'Send a test email to verify SMTP configuration.';
 
@@ -18,8 +18,8 @@ class TestEmail extends Command
         $to = (string) $this->argument('to');
 
         Mail::raw(
-            "Zawaj Pro — email test\n\nSent at " . now()->toDateTimeString() . " from " . config('app.url'),
-            fn ($m) => $m->to($to)->subject('[Zawaj Pro] Test email'),
+            "Wedding Matching App — email test\n\nSent at " . now()->toDateTimeString() . " from " . config('app.url'),
+            fn ($m) => $m->to($to)->subject('[Wedding Matching App] Test email'),
         );
 
         $this->info("Test email sent to {$to} via " . config('mail.default'));

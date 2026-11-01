@@ -31,14 +31,14 @@ class AdminSettingsController extends Controller
             'credits_unlock_cost'            => 'credits.unlock_cost',
             'matching_round_timeout_minutes' => 'matching.round_timeout_minutes',
             'matching_providers_per_round'   => 'matching.providers_per_round',
-            'anpdp_retention_days'           => 'anpdp.retention_days',
+            'privacy_retention_days'           => 'privacy.retention_days',
         ];
 
         $validated = $request->validate([
             'credits_unlock_cost'            => ['required', 'integer', 'min:1'],
             'matching_round_timeout_minutes' => ['required', 'integer', 'min:10'],
             'matching_providers_per_round'   => ['required', 'integer', 'min:1', 'max:10'],
-            'anpdp_retention_days'           => ['required', 'integer', 'min:1', 'max:365'],
+            'privacy_retention_days'           => ['required', 'integer', 'min:1', 'max:365'],
             'feedback_alert_email'           => ['nullable', 'email', 'max:255'],
         ]);
 

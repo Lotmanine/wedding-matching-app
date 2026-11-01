@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = env('ADMIN_EMAIL', 'admin@zawajpro.dz');
+        $email = env('ADMIN_EMAIL', 'admin@example.com');
 
         // Never ship a hardcoded password to production. Use ADMIN_PASSWORD when
         // provided; otherwise generate a strong random one and surface it once so
@@ -33,7 +33,7 @@ class AdminUserSeeder extends Seeder
         $user = User::updateOrCreate(
             ['email' => $email],
             [
-                'name' => env('ADMIN_NAME', 'Admin Zawaj Pro'),
+                'name' => env('ADMIN_NAME', 'Wedding Matching Admin'),
                 'password' => Hash::make($password),
                 'role' => UserRole::Admin->value,
                 'status' => 'active',

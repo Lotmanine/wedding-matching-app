@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
 
 class SeedLeadsForProvider extends Command
 {
-    protected $signature = 'zawaj:seed-leads-for-provider {email} {count=5}';
+    protected $signature = 'wedding:seed-leads-for-provider {email} {count=5}';
 
     protected $description = 'Create N WedRequest+ServiceRequest pairs that are eligible (round_1) for the given provider';
 
@@ -35,7 +35,7 @@ class SeedLeadsForProvider extends Command
             ->filter()
             ->values()
             ->all();
-        $coverage = $user->providerCoverage->pluck('wilaya_code')
+        $coverage = $user->providerCoverage->pluck('city_code')
             ->map(fn ($v) => is_object($v) && property_exists($v, 'value') ? $v->value : (string) $v)
             ->filter()
             ->values()
@@ -56,10 +56,10 @@ class SeedLeadsForProvider extends Command
 
         for ($i = 0; $i < $count; $i++) {
             $service = $services[array_rand($services)];
-            $wilaya = $coverage[array_rand($coverage)];
+            $city = $coverage[array_rand($coverage)];
 
             $wr = WedRequest::factory()->create([
-                'couple_wilaya_code' => $wilaya,
+                'couple_city_code' => $city,
                 'services_needed'    => [$service],
                 'status'             => RequestStatus::New->value,
             ]);

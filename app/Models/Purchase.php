@@ -19,7 +19,8 @@ class Purchase extends Model
         'purchase_uid',
         'user_id',
         'unlock_pack_id',
-        'amount_dzd',
+        'amount',
+        'currency',
         'unlocks_count',
         'status',
         'gateway',
@@ -46,7 +47,7 @@ class Purchase extends Model
             'failed_at'           => 'datetime',
             'credits_granted_at'  => 'datetime',
             'receipt_emailed_at'  => 'datetime',
-            'amount_dzd'          => 'integer',
+            'amount'          => 'integer',
             'unlocks_count'       => 'integer',
         ];
     }

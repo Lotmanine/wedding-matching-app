@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -62,7 +62,7 @@
             </p>
         </div>
 
-        <a href="{{ route('home') }}" class="mt-6 inline-flex items-center gap-1 text-sm text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base rtl:-scale-x-100" /> {{ __('Retour au site') }}</a>
+        <a href="{{ route('home') }}" class="mt-6 inline-flex items-center gap-1 text-sm text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('Retour au site') }}</a>
     </main>
 </body>
 </html>

@@ -13,7 +13,7 @@ return [
     'unit'            => '[0,1] crédit|[2,*] crédits',
     'added_label'     => 'Crédits ajoutés',
     'packs_title'     => 'Acheter des crédits',
-    'pack_per_unlock' => ':price DA par crédit',
+    'pack_per_unlock' => ':price par crédit',
     'pack_cta'        => 'Choisir ce pack',
 
     'recent_title'    => 'Transactions récentes',

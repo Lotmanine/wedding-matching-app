@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
 
 class SimulateMatching extends Command
 {
-    protected $signature = 'zawaj:simulate-matching {service_uid}';
+    protected $signature = 'wedding:simulate-matching {service_uid}';
 
     protected $description = 'Walk a ServiceRequest through round 1 with random providers (interactive)';
 
@@ -36,13 +36,13 @@ class SimulateMatching extends Command
 
         $this->line("Lead: {$sr->service_uid} — {$sr->service_type?->label()} — status={$sr->status?->value}");
 
-        $coupleWilaya = $sr->wedRequest?->couple_wilaya_code;
+        $coupleCity = $sr->wedRequest?->couple_city_code;
         $candidates = User::role('provider')
             ->whereHas('providerServices', fn ($q) => $q->where('service_type', $sr->service_type?->value))
-            ->whereHas('providerCoverage', fn ($q) => $q->where('wilaya_code', (string) $coupleWilaya))
+            ->whereHas('providerCoverage', fn ($q) => $q->where('city_code', (string) $coupleCity))
             ->whereHas('providerProfile', fn ($q) => $q->where('verified', true))
             ->inRandomOrder()
-            ->limit((int) config('zawaj.matching.providers_per_round', 3))
+            ->limit((int) config('wedding.matching.providers_per_round', 3))
             ->get();
 
         if ($candidates->isEmpty()) {

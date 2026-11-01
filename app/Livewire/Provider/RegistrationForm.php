@@ -11,7 +11,8 @@ use App\Models\ProviderCoverage;
 use App\Models\ProviderProfile;
 use App\Models\ProviderService;
 use App\Models\User;
-use App\Models\Wilaya;
+use App\Support\PhoneFormat;
+use App\Models\City;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,7 @@ class RegistrationForm extends Component
     public string $phone = '';
     public string $whatsapp = '';
     public bool $accept_terms = false;
-    public bool $accept_anpdp = false;
+    public bool $accept_privacy = false;
 
     // Step 2 — Entreprise
     public string $business_name = '';
@@ -44,7 +45,7 @@ class RegistrationForm extends Component
     public ?string $trade_register = null;
     public ?int $years_experience = null;
     public string $business_description = '';
-    public string $primary_wilaya_code = '';
+    public string $primary_city_code = '';
     public string $price_tier = '';
     public ?int $min_price = null;
     public ?int $max_price = null;
@@ -58,7 +59,7 @@ class RegistrationForm extends Component
 
     // Step 4 — Couverture
     /** @var string[] */
-    public array $coverage_wilayas = [];
+    public array $coverage_cities = [];
 
     /** @var array<string, int> */
     public array $travel_fees = [];
@@ -78,11 +79,11 @@ class RegistrationForm extends Component
         }
     }
 
-    public function updatedPrimaryWilayaCode(): void
+    public function updatedPrimaryCityCode(): void
     {
-        if ($this->primary_wilaya_code !== '' && ! in_array($this->primary_wilaya_code, $this->coverage_wilayas, true)) {
-            $this->coverage_wilayas[] = $this->primary_wilaya_code;
-            $this->travel_fees[$this->primary_wilaya_code] = 0;
+        if ($this->primary_city_code !== '' && ! in_array($this->primary_city_code, $this->coverage_cities, true)) {
+            $this->coverage_cities[] = $this->primary_city_code;
+            $this->travel_fees[$this->primary_city_code] = 0;
         }
     }
 
@@ -101,25 +102,25 @@ class RegistrationForm extends Component
         }
     }
 
-    public function toggleCoverageWilaya(string $code): void
+    public function toggleCoverageCity(string $code): void
     {
-        if ($code === $this->primary_wilaya_code) {
+        if ($code === $this->primary_city_code) {
             return;
         }
 
-        if (in_array($code, $this->coverage_wilayas, true)) {
-            $this->coverage_wilayas = array_values(array_filter($this->coverage_wilayas, fn ($c) => $c !== $code));
+        if (in_array($code, $this->coverage_cities, true)) {
+            $this->coverage_cities = array_values(array_filter($this->coverage_cities, fn ($c) => $c !== $code));
             unset($this->travel_fees[$code]);
         } else {
-            $this->coverage_wilayas[] = $code;
+            $this->coverage_cities[] = $code;
             $this->travel_fees[$code] = $this->travel_fees[$code] ?? 0;
         }
     }
 
     #[Computed]
-    public function wilayas(): Collection
+    public function cities(): Collection
     {
-        return Wilaya::active()->get();
+        return City::active()->get();
     }
 
     #[Computed]
@@ -131,38 +132,36 @@ class RegistrationForm extends Component
 
     protected function rulesForStep(int $step): array
     {
-        $whatsappRegex = '/^\+213[567]\d{8}$/';
-
         return match ($step) {
             1 => [
                 'email'                 => ['required', 'email', 'max:255', 'unique:users,email'],
                 'password'              => ['required', 'string', 'min:8', 'confirmed'],
                 'full_name'             => ['required', 'string', 'min:2', 'max:100'],
-                'phone'                 => ['required', 'string', 'regex:' . $whatsappRegex],
-                'whatsapp'              => ['required', 'string', 'regex:' . $whatsappRegex],
+                'phone'                 => ['required', 'string', 'regex:' . PhoneFormat::REGEX],
+                'whatsapp'              => ['required', 'string', 'regex:' . PhoneFormat::REGEX],
                 'accept_terms'          => ['accepted'],
-                'accept_anpdp'          => ['accepted'],
+                'accept_privacy'          => ['accepted'],
             ],
             2 => [
                 'business_name'        => ['required', 'string', 'min:2', 'max:100'],
-                'business_type'        => ['required', 'in:auto-entrepreneur,sarl,eurl,particulier'],
+                'business_type'        => ['required', 'in:sole_proprietor,llc,corporation,individual'],
                 'trade_register'       => ['nullable', 'string', 'max:50'],
                 'years_experience'     => ['nullable', 'integer', 'min:0', 'max:60'],
                 'business_description' => ['nullable', 'string', 'max:500'],
-                'primary_wilaya_code'  => ['required', 'exists:wilayas,code'],
+                'primary_city_code'  => ['required', 'exists:cities,code'],
                 'price_tier'           => ['required', 'in:budget,mid,premium,luxury'],
                 'min_price'            => ['nullable', 'integer', 'min:0'],
                 'max_price'            => ['nullable', 'integer', 'min:0', 'gte:min_price'],
                 'languages'            => ['required', 'array', 'min:1'],
-                'languages.*'          => ['in:fr,ar,en,ber'],
+                'languages.*'          => ['in:en,fr,es'],
             ],
             3 => [
                 'services'   => ['required', 'array', 'min:1'],
                 'services.*' => ['in:' . implode(',', ServiceType::activeValues())],
             ],
             4 => [
-                'coverage_wilayas'   => ['required', 'array', 'min:1'],
-                'coverage_wilayas.*' => ['exists:wilayas,code'],
+                'coverage_cities'   => ['required', 'array', 'min:1'],
+                'coverage_cities.*' => ['exists:cities,code'],
                 'travel_fees'        => ['array'],
                 'travel_fees.*'      => ['integer', 'min:0'],
             ],
@@ -219,7 +218,7 @@ class RegistrationForm extends Component
                     'role'              => UserRole::Provider->value,
                     'phone'             => $this->phone,
                     'whatsapp'          => $this->whatsapp,
-                    'wilaya_code'       => $this->primary_wilaya_code,
+                    'city_code'       => $this->primary_city_code,
                     'status'            => 'pending_verification',
                 ]);
 
@@ -252,7 +251,7 @@ class RegistrationForm extends Component
                     'business_description' => $this->business_description ?: null,
                     'business_type'        => $this->business_type,
                     'trade_register'       => $this->trade_register ?: null,
-                    'primary_wilaya_code'  => $this->primary_wilaya_code,
+                    'primary_city_code'  => $this->primary_city_code,
                     'price_tier'           => $this->price_tier,
                     'min_price'            => $this->min_price,
                     'max_price'            => $this->max_price,
@@ -272,15 +271,15 @@ class RegistrationForm extends Component
                     ]);
                 }
 
-                if (! in_array($this->primary_wilaya_code, $this->coverage_wilayas, true)) {
-                    $this->coverage_wilayas[] = $this->primary_wilaya_code;
+                if (! in_array($this->primary_city_code, $this->coverage_cities, true)) {
+                    $this->coverage_cities[] = $this->primary_city_code;
                 }
 
-                foreach (array_unique($this->coverage_wilayas) as $code) {
-                    $fee = $code === $this->primary_wilaya_code ? 0 : (int) ($this->travel_fees[$code] ?? 0);
+                foreach (array_unique($this->coverage_cities) as $code) {
+                    $fee = $code === $this->primary_city_code ? 0 : (int) ($this->travel_fees[$code] ?? 0);
                     ProviderCoverage::updateOrCreate(
-                        ['user_id' => $user->id, 'wilaya_code' => $code],
-                        ['travel_fee_dzd' => $fee],
+                        ['user_id' => $user->id, 'city_code' => $code],
+                        ['travel_fee' => $fee],
                     );
                 }
 

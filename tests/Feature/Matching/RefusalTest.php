@@ -15,7 +15,7 @@ use App\Models\WedRequest;
 use App\Services\Matching\LeadAcceptanceService;
 use App\Services\Matching\Results\RefuseResult;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -27,14 +27,14 @@ class RefusalTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
     private function makeProvider(): User
     {
         $user = User::factory()->create([
-            'email'  => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@zawajpro.dz',
+            'email'  => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@example.com',
             'role'   => 'provider',
             'status' => 'active',
         ]);
@@ -42,9 +42,9 @@ class RefusalTest extends TestCase
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'languages'           => ['fr'],
             'leads_refused'       => 0,
@@ -53,7 +53,7 @@ class RefusalTest extends TestCase
         ]);
 
         ProviderService::create(['user_id' => $user->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $user->fresh(['providerProfile', 'providerServices', 'providerCoverage']);
     }
@@ -61,7 +61,7 @@ class RefusalTest extends TestCase
     private function makeLead(array $roundIds): ServiceRequest
     {
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
 

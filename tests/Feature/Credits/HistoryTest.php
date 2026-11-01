@@ -27,10 +27,10 @@ class HistoryTest extends TestCase
         $user->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
         ]);
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Commune extends Model
+class District extends Model
 {
     public $incrementing = false;
 
@@ -16,19 +16,18 @@ class Commune extends Model
 
     protected $fillable = [
         'id',
-        'wilaya_id',
-        'name_fr',
-        'name_ar',
+        'city_id',
+        'name',
         'postal_code',
     ];
 
-    public function wilaya(): BelongsTo
+    public function city(): BelongsTo
     {
-        return $this->belongsTo(Wilaya::class);
+        return $this->belongsTo(City::class);
     }
 
-    public function scopeForWilaya(Builder $query, int $wilayaId): Builder
+    public function scopeForCity(Builder $query, int $cityId): Builder
     {
-        return $query->where('wilaya_id', $wilayaId);
+        return $query->where('city_id', $cityId);
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 
 class ReplayWebhook extends Command
 {
-    protected $signature = 'zawaj:replay-webhook {deliveryId}';
+    protected $signature = 'wedding:replay-webhook {deliveryId}';
 
     protected $description = 'Re-queue a specific webhook delivery with its original payload.';
 

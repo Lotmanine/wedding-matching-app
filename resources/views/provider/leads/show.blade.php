@@ -11,11 +11,11 @@
             default            => ['label' => ucfirst((string) $lead->status?->value), 'variant' => 'muted'],
         };
         $serviceIcon = match ($lead->service_type?->value) {
-            'photo' => 'camera_alt', 'video' => 'videocam', 'traiteur' => 'restaurant', 'decoration' => 'local_florist',
-            'patisserie' => 'cake', 'salle' => 'villa', 'musique' => 'music_note', 'machta' => 'face_retouching_natural',
+            'photo' => 'camera_alt', 'video' => 'videocam', 'catering' => 'restaurant', 'decoration' => 'local_florist',
+            'pastry' => 'cake', 'venue' => 'villa', 'music' => 'music_note', 'beauty' => 'face_retouching_natural',
             default => 'category',
         };
-        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
+        $cityLabel = \App\Models\City::where('code', (string) $wr->couple_city_code)->value('name') ?? $wr->couple_city_code;
         $initial = mb_strtoupper(mb_substr((string) $wr->couple_first_name, 0, 1)) . '.';
         $dateLine = $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->wedding_season ? $wr->seasonLabel() . ' ' . $wr->created_at->year : __('Date flexible'));
         // Two different deadlines: the request itself expires on a fixed date;
@@ -28,14 +28,14 @@
         if ($roundDeadline && $roundDeadline->isPast()) {
             $roundDeadline = null;
         }
-        $cost = (int) config('zawaj.credits.unlock_cost', 1);
+        $cost = (int) config('wedding.credits.unlock_cost', 1);
         $balance = (int) (auth()->user()?->providerProfile?->credit_balance ?? 0);
     @endphp
 
     <div class="max-w-5xl mx-auto">
         <div class="flex items-center gap-3 mb-8">
             <a href="{{ route('provider.leads.index') }}" class="flex items-center gap-2 text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors font-medium">
-                <x-z.icon name="arrow_back" class="text-lg rtl:-scale-x-100" /> {{ __('provider.leads.breadcrumb') }}
+                <x-z.icon name="arrow_back" class="text-lg" /> {{ __('provider.leads.breadcrumb') }}
             </a>
             <x-z.badge :variant="$statusBadge['variant']">{{ $statusBadge['label'] }}</x-z.badge>
             <span class="text-xs text-[#9A958D] font-mono ms-auto">{{ $lead->service_uid }}</span>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="flex flex-wrap gap-3">
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->communeLabel() : '' }}
+                            <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $cityLabel }}{{ $wr->couple_district ? ' · ' . $wr->couple_district : '' }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
                             <x-z.icon name="calendar_month" class="text-[#C8956C] text-base" />{{ $dateLine }}
@@ -62,7 +62,7 @@
                             <x-z.icon name="group" class="text-[#C8956C] text-base" />{{ $wr->guest_count?->label() ?? __('Non renseigné') }}
                         </div>
                         <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label() ?? __('Non renseigné') }}
+                            <x-z.icon name="payments" class="text-[#C8956C] text-base" />{{ $wr->budget_range?->label($wr->currency()) ?? __('Non renseigné') }}
                         </div>
                     </div>
                 </div>
@@ -125,10 +125,10 @@
                     <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ __('provider.leads.couple_card') }}</p>
                     <div class="p-4 bg-[#F7F4F0] rounded-xl mb-5">
                         <p class="font-bold text-[#1A1A1A]">{{ $initial }} & ██████</p>
-                        <p class="text-[#6B665E] font-mono"><span dir="ltr">+213 6 ██ ██ ██ ██</span></p>
+                        <p class="text-[#6B665E] font-mono"><span>+•• ███ ███ ████</span></p>
                     </div>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('provider.leads.couple_wilaya') }}</p>
-                    <p class="text-[#1A1A1A]">{{ $wilayaLabel }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('provider.leads.couple_city') }}</p>
+                    <p class="text-[#1A1A1A]">{{ $cityLabel }}</p>
                 </div>
 
                 {{-- Centered overlay --}}

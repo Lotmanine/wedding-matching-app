@@ -19,8 +19,8 @@ class N8nWebhookController extends Controller
     {
         // Guard the public endpoint with a shared secret when configured, so an
         // anonymous caller can't pollute the audit log or trip ops alerts.
-        $secret = (string) config('zawaj.n8n.webhook_secret', '');
-        if ($secret !== '' && ! hash_equals($secret, (string) $request->header('X-Zawaj-Token', ''))) {
+        $secret = (string) config('wedding.n8n.webhook_secret', '');
+        if ($secret !== '' && ! hash_equals($secret, (string) $request->header('X-Wedding-Token', ''))) {
             return response()->json(['message' => 'Invalid token'], 401);
         }
 

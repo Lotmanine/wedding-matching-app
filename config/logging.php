@@ -65,9 +65,9 @@ return [
             'replace_placeholders' => true,
         ],
 
-        'zawaj_structured' => [
+        'app_structured' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/zawaj.log'),
+            'path' => storage_path('logs/app-structured.log'),
             'level' => env('LOG_LEVEL', 'info'),
             'days' => 14,
             'formatter' => \Monolog\Formatter\JsonFormatter::class,

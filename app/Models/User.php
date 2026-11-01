@@ -26,7 +26,7 @@ class User extends Authenticatable
         'role',
         'phone',
         'whatsapp',
-        'wilaya_code',
+        'city_code',
         'status',
         'last_active_at',
     ];

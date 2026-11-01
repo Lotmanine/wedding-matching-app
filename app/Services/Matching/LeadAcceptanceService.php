@@ -48,7 +48,7 @@ class LeadAcceptanceService
                 return AcceptResult::notEligible($locked);
             }
 
-            $cost = (int) config('zawaj.credits.unlock_cost', 1);
+            $cost = (int) config('wedding.credits.unlock_cost', 1);
             $available = (int) ($provider->providerProfile->credit_balance ?? 0);
             if ($available < $cost) {
                 return AcceptResult::insufficientCredits($locked, $cost, $available);

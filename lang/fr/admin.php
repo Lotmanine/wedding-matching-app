@@ -58,7 +58,7 @@ return [
     'providers' => [
         'title'             => 'Prestataires',
         'filter_status'     => 'Statut',
-        'filter_wilaya'     => 'Wilaya',
+        'filter_city'     => 'Wilaya',
         'filter_service'    => 'Service',
         'search_placeholder'=> 'Rechercher par nom ou e-mail…',
         'status_all'        => 'Tous',
@@ -67,7 +67,7 @@ return [
         'status_suspended'  => 'Suspendus',
         'col_business'      => 'Entreprise',
         'col_email'         => 'Contact',
-        'col_wilaya'        => 'Wilaya',
+        'col_city'        => 'Wilaya',
         'col_status'        => 'Statut',
         'col_credits'       => 'Crédits',
         'col_stats'         => 'Stats',
@@ -93,7 +93,7 @@ return [
         'title'        => 'Demandes de mariage',
         'col_uid'      => 'Référence',
         'col_couple'   => 'Couple',
-        'col_wilaya'   => 'Wilaya',
+        'col_city'   => 'Wilaya',
         'col_date'     => 'Date mariage',
         'col_status'   => 'Statut',
         'col_created'  => 'Créée',
@@ -168,14 +168,14 @@ return [
 
     'settings' => [
         'title'      => 'Paramètres',
-        'sub'        => 'Ces valeurs remplacent les valeurs par défaut de config/zawaj.php.',
+        'sub'        => 'Ces valeurs remplacent les valeurs par défaut de config/wedding.php.',
         'saved_ok'   => 'Paramètres enregistrés.',
         'save_btn'   => 'Enregistrer',
         'labels' => [
             'credits.unlock_cost'            => 'Coût d\'un déblocage (crédits)',
             'matching.round_timeout_minutes' => 'Délai de tour (minutes)',
             'matching.providers_per_round'   => 'Prestataires par tour',
-            'anpdp.retention_days'           => 'Rétention ANPDP (jours)',
+            'privacy.retention_days'           => 'Rétention ANPDP (jours)',
         ],
     ],
 ];

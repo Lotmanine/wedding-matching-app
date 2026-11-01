@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProviderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\User;
-use App\Models\Wilaya;
+use App\Models\City;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,7 +18,7 @@ class ProviderController extends Controller
     {
         $data = $request->validate([
             'service_type'   => ['required', 'string'],
-            'wilaya_code'    => ['required', 'string', 'size:2'],
+            'city_code'    => ['required', 'string', 'size:2'],
             'exclude_ids'    => ['nullable', 'array'],
             'exclude_ids.*'  => ['integer'],
             'limit'          => ['nullable', 'integer', 'min:1', 'max:20'],
@@ -31,7 +31,7 @@ class ProviderController extends Controller
             ->where('status', 'active')
             ->whereHas('providerProfile', fn ($q) => $q->where('verified', true)->whereNull('suspended_at'))
             ->whereHas('providerServices', fn ($q) => $q->where('service_type', $data['service_type']))
-            ->whereHas('providerCoverage', fn ($q) => $q->where('wilaya_code', $data['wilaya_code']))
+            ->whereHas('providerCoverage', fn ($q) => $q->where('city_code', $data['city_code']))
             ->with(['providerProfile', 'providerServices', 'providerCoverage'])
             ->leftJoin('provider_profiles', 'provider_profiles.user_id', '=', 'users.id')
             ->select('users.*')
@@ -64,14 +64,14 @@ class ProviderController extends Controller
 
     /**
      * Enriched ranking context for AI-driven matching (n8n → Claude).
-     * Includes couple context, wilaya name joins, adjacency classification,
+     * Includes couple context, city name joins, adjacency classification,
      * and richer provider attributes (business_description, portfolio, stats).
      */
     public function rankingCandidates(Request $request): JsonResponse
     {
         $data = $request->validate([
             'service_type'        => ['required', 'string'],
-            'wilaya_code'         => ['required', 'string', 'size:2'],
+            'city_code'         => ['required', 'string', 'size:2'],
             'exclude_ids'         => ['nullable'],
             'limit'               => ['nullable', 'integer', 'min:1', 'max:50'],
             'service_request_uid' => ['nullable', 'string'],
@@ -85,14 +85,14 @@ class ProviderController extends Controller
         $exclude = array_map('intval', (array) $exclude);
 
         $limit = (int) ($data['limit'] ?? 20);
-        $wilayaCode = (string) $data['wilaya_code'];
+        $cityCode = (string) $data['city_code'];
         $serviceType = (string) $data['service_type'];
 
         $candidatesQuery = User::role('provider')
             ->where('users.status', 'active')
             ->whereHas('providerProfile', fn ($q) => $q->where('verified', true)->whereNull('suspended_at'))
             ->whereHas('providerServices', fn ($q) => $q->where('service_type', $serviceType))
-            ->whereHas('providerCoverage', fn ($q) => $q->where('wilaya_code', $wilayaCode))
+            ->whereHas('providerCoverage', fn ($q) => $q->where('city_code', $cityCode))
             ->with(['providerProfile', 'providerServices', 'providerCoverage'])
             ->leftJoin('provider_profiles', 'provider_profiles.user_id', '=', 'users.id')
             ->select('users.*')
@@ -110,11 +110,11 @@ class ProviderController extends Controller
 
         $candidates = $candidatesQuery->limit($limit)->get();
 
-        $wilayaIndex = Wilaya::whereIn('code', $candidates->pluck('providerProfile.primary_wilaya_code')->push($wilayaCode)->filter()->unique())
+        $cityIndex = City::whereIn('code', $candidates->pluck('providerProfile.primary_city_code')->push($cityCode)->filter()->unique())
             ->get()->keyBy('code');
 
-        $adjacency = (array) config('wilaya-adjacency', []);
-        $neighbours = $adjacency[$wilayaCode] ?? [];
+        $adjacency = (array) config('city-adjacency', []);
+        $neighbours = $adjacency[$cityCode] ?? [];
 
         $context = [];
         if (! empty($data['service_request_uid'])) {
@@ -122,7 +122,7 @@ class ProviderController extends Controller
             if ($sr && $sr->wedRequest) {
                 $wr = $sr->wedRequest;
                 $context = [
-                    'couple_commune' => $wr->couple_commune,
+                    'couple_district' => $wr->couple_district,
                     'wedding_date'   => $wr->wedding_date?->toDateString(),
                     'guest_count'    => $wr->guest_count?->value,
                     'budget_range'   => $wr->budget_range?->value,
@@ -133,17 +133,17 @@ class ProviderController extends Controller
 
         $payload = array_merge([
             // How many providers n8n should put in a round (set in /admin/settings).
-            'providers_per_round' => (int) config('zawaj.matching.providers_per_round', 3),
+            'providers_per_round' => (int) config('wedding.matching.providers_per_round', 3),
             'service_type' => $serviceType,
-            'wilaya_code'  => $wilayaCode,
-            'wilaya_name'  => $wilayaIndex->get($wilayaCode)?->name_fr,
+            'city_code'  => $cityCode,
+            'city_name'  => $cityIndex->get($cityCode)?->name,
         ], $context, [
-            'candidates' => $candidates->map(function (User $u) use ($wilayaCode, $neighbours, $wilayaIndex) {
+            'candidates' => $candidates->map(function (User $u) use ($cityCode, $neighbours, $cityIndex) {
                 $p = $u->providerProfile;
-                $primary = is_string($p?->primary_wilaya_code) ? $p->primary_wilaya_code : (string) ($p?->getAttributes()['primary_wilaya_code'] ?? '');
+                $primary = is_string($p?->primary_city_code) ? $p->primary_city_code : (string) ($p?->getAttributes()['primary_city_code'] ?? '');
 
-                $distance = $primary === $wilayaCode
-                    ? 'same_wilaya'
+                $distance = $primary === $cityCode
+                    ? 'same_city'
                     : (in_array($primary, $neighbours, true) ? 'adjacent' : 'far');
 
                 return [
@@ -151,8 +151,8 @@ class ProviderController extends Controller
                     'business_name'        => $p?->business_name,
                     'business_description' => $p?->business_description,
                     'price_tier'           => $p?->price_tier,
-                    'min_price_dzd'        => $p?->min_price,
-                    'max_price_dzd'        => $p?->max_price,
+                    'min_price'        => $p?->min_price,
+                    'max_price'        => $p?->max_price,
                     'years_experience'     => $p?->years_experience,
                     'languages'            => (array) ($p?->languages ?? []),
                     'rating_avg'           => (float) ($p?->rating_avg ?? 0),
@@ -161,9 +161,9 @@ class ProviderController extends Controller
                     'leads_accepted'       => (int) ($p?->leads_accepted ?? 0),
                     'portfolio_url'        => $p?->portfolio_url,
                     'portfolio_images'     => (array) ($p?->portfolio_images ?? []),
-                    'primary_wilaya_code'  => $primary,
-                    'primary_wilaya_name'  => $wilayaIndex->get($primary)?->name_fr,
-                    'coverage_wilayas'     => $u->providerCoverage->pluck('wilaya_code')->map(fn ($v) => (string) $v)->values()->all(),
+                    'primary_city_code'  => $primary,
+                    'primary_city_name'  => $cityIndex->get($primary)?->name,
+                    'coverage_cities'     => $u->providerCoverage->pluck('city_code')->map(fn ($v) => (string) $v)->values()->all(),
                     'distance_from_couple' => $distance,
                 ];
             })->values(),

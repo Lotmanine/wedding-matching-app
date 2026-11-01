@@ -38,7 +38,7 @@ class DispatchRoundStartedWebhook implements ShouldQueue
         }
 
         $expiresAt = $sr->round_started_at
-            ? $sr->round_started_at->copy()->addMinutes((int) config('zawaj.matching.round_timeout_minutes', 120))
+            ? $sr->round_started_at->copy()->addMinutes((int) config('wedding.matching.round_timeout_minutes', 120))
             : now()->addHours(2);
 
         $payload = [

@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 /**
  * Serves the admin-configured Meta WhatsApp credentials to the n8n
- * `zawaj-whatsapp` workflow (Sanctum, ability `n8n-service`). This is the
+ * `wedding-whatsapp` workflow (Sanctum, ability `n8n-service`). This is the
  * only place the decrypted secrets leave Laravel.
  */
 class WhatsappConfigController extends Controller

@@ -27,14 +27,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // Arabic pages show dates the Algerian way (جانفي، فيفري… rather than يناير، فبراير).
-        Event::listen(\Illuminate\Foundation\Events\LocaleUpdated::class, function ($event): void {
-            if ($event->locale === 'ar') {
-                \Illuminate\Support\Carbon::setLocale('ar_DZ');
-            }
-        });
-
-        // Values saved in /admin/settings override config/zawaj.php.
+        // Values saved in /admin/settings override config/wedding.php.
         try {
             SettingsConfig::apply();
         } catch (\Throwable) {

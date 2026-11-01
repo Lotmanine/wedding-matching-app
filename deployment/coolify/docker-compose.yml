@@ -17,8 +17,8 @@ services:
   mysql:
     image: mariadb:11
     environment:
-      MARIADB_DATABASE: zawaj_prod
-      MARIADB_USER: zawaj
+      MARIADB_DATABASE: wedding_prod
+      MARIADB_USER: wedding
       MARIADB_PASSWORD: secret
       MARIADB_ROOT_PASSWORD: rootsecret
     volumes:

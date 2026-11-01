@@ -8,7 +8,8 @@
 
 @section('content')
     @php
-        $perUnlock = $pack->unlocks_count > 0 ? (int) round($pack->price_dzd / $pack->unlocks_count) : 0;
+        $perUnlock = $pack->unlocks_count > 0 ? (int) round($pack->price / $pack->unlocks_count) : 0;
+        $currency = auth()->user()?->providerProfile?->currency() ?? \App\Support\Money::currencyForCity(null);
         $hasOnline = in_array(\App\Services\Payments\PaymentSettings::METHOD_ONLINE, $methods, true);
         $hasOffline = in_array(\App\Services\Payments\PaymentSettings::METHOD_OFFLINE, $methods, true);
     @endphp
@@ -16,7 +17,7 @@
     <div class="max-w-3xl mx-auto px-5 md:px-8 py-8 md:py-12" x-data="{ tab: '{{ $hasOnline ? 'online' : 'offline' }}' }">
 
         <a href="{{ route('provider.credits.index') }}" class="inline-flex items-center gap-1 text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors mb-6">
-            <x-z.icon name="arrow_back" class="text-base rtl:-scale-x-100" /> {{ __('Retour aux crédits') }}
+            <x-z.icon name="arrow_back" class="text-base" /> {{ __('Retour aux crédits') }}
         </a>
 
         {{-- Pack summary --}}
@@ -26,8 +27,8 @@
                 <p class="font-serif text-3xl font-bold text-[#1A1A1A]">{{ trans_choice('credits.count', (int) $pack->unlocks_count, ['count' => (int) $pack->unlocks_count]) }}</p>
             </div>
             <div class="text-end">
-                <p class="font-serif text-2xl font-bold text-[#1A1A1A]"><bdi>{{ number_format($pack->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</p>
-                <p class="text-xs text-[#9A958D]">{{ __('credits.pack_per_unlock', ['price' => number_format($perUnlock, 0, ',', "\u{00A0}")]) }}</p>
+                <p class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ \App\Support\Money::format($pack->price, $currency) }}</p>
+                <p class="text-xs text-[#9A958D]">{{ __('credits.pack_per_unlock', ['price' => \App\Support\Money::format($perUnlock, $currency)]) }}</p>
             </div>
         </div>
 
@@ -66,7 +67,7 @@
                         <form method="POST" action="{{ route('provider.credits.checkout', $pack->slug) }}">
                             @csrf
                             <x-z.btn type="submit" variant="primary" size="lg" class="w-full sm:w-auto justify-center">
-                                {{ __('Payer :price DA', ['price' => number_format($pack->price_dzd, 0, ',', "\u{00A0}")]) }} <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" />
+                                {{ __('Payer :price', ['price' => \App\Support\Money::format($pack->price, $currency)]) }} <x-z.icon name="arrow_forward" class="text-lg" />
                             </x-z.btn>
                         </form>
                     </div>
@@ -99,18 +100,18 @@
                     ]) as $label => $value)
                         <div class="flex items-center justify-between gap-4">
                             <span class="text-[#9A958D]">{{ $label }}</span>
-                            <span class="font-mono font-semibold text-[#1A1A1A] text-end select-all" dir="ltr">{{ $value }}</span>
+                            <span class="font-mono font-semibold text-[#1A1A1A] text-end select-all">{{ $value }}</span>
                         </div>
                     @empty
                         <p class="text-[#9A958D]">{{ __('Les coordonnées de paiement seront communiquées par notre équipe.') }}</p>
                     @endforelse
                     {{-- Free text saved by the admin at /admin/payments (setting payments.offline.instructions): shown as stored, never translated --}}
                     @if (! empty($offlineDetails['instructions']))
-                        <p class="text-xs text-[#6B665E] pt-2 border-t border-[#D4CFC7]/40 mt-2" dir="auto">{{ $offlineDetails['instructions'] }}</p>
+                        <p class="text-xs text-[#6B665E] pt-2 border-t border-[#D4CFC7]/40 mt-2">{{ $offlineDetails['instructions'] }}</p>
                     @endif
                     <p class="flex items-center justify-between gap-4 pt-2 border-t border-[#D4CFC7]/40 mt-2">
                         <span class="text-[#9A958D]">{{ __('Montant à verser') }}</span>
-                        <span class="font-serif text-lg font-bold text-[#C8956C]"><bdi>{{ number_format($pack->price_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</span>
+                        <span class="font-serif text-lg font-bold text-[#C8956C]">{{ \App\Support\Money::format($pack->price, $currency) }}</span>
                     </p>
                 </div>
 
@@ -122,8 +123,8 @@
                             {{ __('Référence du versement') }} <span class="text-[#C8956C]">*</span>
                         </label>
                         <input type="text" id="payment_reference" name="payment_reference" value="{{ old('payment_reference') }}" required
-                            placeholder="{{ __('N° de bordereau / référence de virement') }}" dir="ltr"
-                            class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none transition focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 rtl:text-right" />
+                            placeholder="{{ __('N° de bordereau / référence de virement') }}"
+                            class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none transition focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15" />
                         @error('payment_reference') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                     </div>
                     <div>

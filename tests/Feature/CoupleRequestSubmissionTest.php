@@ -8,7 +8,7 @@ use App\Enums\RequestStatus;
 use App\Livewire\CoupleRequestForm;
 use App\Models\ServiceRequest;
 use App\Models\WedRequest;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\RateLimiter;
@@ -23,7 +23,7 @@ class CoupleRequestSubmissionTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         RateLimiter::clear('couple-form:127.0.0.1');
     }
 
@@ -40,7 +40,7 @@ class CoupleRequestSubmissionTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk();
-        $response->assertSee('Zawaj Pro');
+        $response->assertSee(config('app.name'));
         $response->assertSee(route('couple.request.create'), false);
     }
 
@@ -48,10 +48,10 @@ class CoupleRequestSubmissionTest extends TestCase
     {
         Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '+213661234567')
-            ->set('couple_wilaya_code', '16')
+            ->set('couple_whatsapp', '+12125554567')
+            ->set('couple_city_code', 'NY')
             ->set('wedding_date', now()->addMonths(6)->toDateString())
-            ->set('budget_range', 'from_1m_to_2m')
+            ->set('budget_range', 'from_20k_to_35k')
             ->set('services_needed', ['photo'])
             ->set('acceptTerms', true)
             ->set('step', 5)
@@ -63,10 +63,10 @@ class CoupleRequestSubmissionTest extends TestCase
 
     public function test_confirmation_page_tells_the_couple_what_really_happens(): void
     {
-        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16']);
+        $wr = WedRequest::factory()->create(['couple_city_code' => 'NY']);
         ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'photo', 'status' => 'accepted', 'current_round' => 1]);
-        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'traiteur', 'status' => 'round1', 'current_round' => 1]);
-        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'machta', 'status' => 'open_marketplace', 'current_round' => 3]);
+        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'catering', 'status' => 'round1', 'current_round' => 1]);
+        ServiceRequest::create(['wed_request_id' => $wr->id, 'service_type' => 'beauty', 'status' => 'open_marketplace', 'current_round' => 3]);
 
         $this->get(route('couple.request.confirmation', ['wedUid' => $wr->wed_uid]))
             ->assertOk()
@@ -81,7 +81,7 @@ class CoupleRequestSubmissionTest extends TestCase
         foreach (['/', '/devenir-prestataire', '/conditions-utilisation', '/confidentialite'] as $url) {
             $this->get($url)->assertOk()
                 ->assertDontSee('2 000+')
-                ->assertDontSee('69 wilayas')
+                ->assertDontSee('69 cities')
                 ->assertDontSee('Témoignages');
         }
 
@@ -94,13 +94,13 @@ class CoupleRequestSubmissionTest extends TestCase
 
         $component = Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '+213661234567')
-            ->set('couple_wilaya_code', '16')
-            ->set('couple_commune', 'Alger Centre')
+            ->set('couple_whatsapp', '+12125554567')
+            ->set('couple_city_code', 'NY')
+            ->set('couple_district', 'Manhattan')
             ->set('wedding_date', now()->addMonths(6)->toDateString())
             ->set('guest_count', 'from_200_to_300')
-            ->set('budget_range', 'from_1m_to_2m')
-            ->set('services_needed', ['photo', 'traiteur', 'salle'])
+            ->set('budget_range', 'from_20k_to_35k')
+            ->set('services_needed', ['photo', 'catering', 'venue'])
             ->set('description', 'Mariage traditionnel.')
             ->set('acceptTerms', true)
             ->set('step', 5)
@@ -109,7 +109,7 @@ class CoupleRequestSubmissionTest extends TestCase
         $this->assertSame(1, WedRequest::count());
         $wr = WedRequest::first();
         $this->assertSame('Amina', $wr->couple_first_name);
-        $this->assertSame('+213661234567', $wr->couple_whatsapp);
+        $this->assertSame('+12125554567', $wr->couple_whatsapp);
         $this->assertSame(RequestStatus::New, $wr->status);
         $this->assertNotEmpty($wr->wed_uid);
         $this->assertSame(3, $wr->serviceRequests()->count());
@@ -123,7 +123,7 @@ class CoupleRequestSubmissionTest extends TestCase
         Livewire::test(CoupleRequestForm::class)
             ->set('step', 1)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '0661234567') // no +213 prefix
+            ->set('couple_whatsapp', '0661234567') // no country prefix
             ->call('nextStep')
             ->assertHasErrors(['couple_whatsapp' => 'regex']);
 
@@ -134,10 +134,10 @@ class CoupleRequestSubmissionTest extends TestCase
     {
         Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '+213661234567')
-            ->set('couple_wilaya_code', '16')
+            ->set('couple_whatsapp', '+12125554567')
+            ->set('couple_city_code', 'NY')
             ->set('guest_count', 'from_100_to_200')
-            ->set('budget_range', 'from_500k_to_1m')
+            ->set('budget_range', 'from_10k_to_20k')
             ->set('services_needed', ['photo'])
             ->set('acceptTerms', false)
             ->set('step', 5)
@@ -151,10 +151,10 @@ class CoupleRequestSubmissionTest extends TestCase
     {
         $payload = fn () => Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '+213661234567')
-            ->set('couple_wilaya_code', '16')
+            ->set('couple_whatsapp', '+12125554567')
+            ->set('couple_city_code', 'NY')
             ->set('wedding_date', now()->addMonths(6)->toDateString())
-            ->set('budget_range', 'from_500k_to_1m')
+            ->set('budget_range', 'from_10k_to_20k')
             ->set('services_needed', ['photo'])
             ->set('acceptTerms', true)
             ->set('step', 5)
@@ -176,7 +176,7 @@ class CoupleRequestSubmissionTest extends TestCase
     {
         $fresh = WedRequest::factory()->create(['couple_first_name' => 'Lina']);
 
-        $expired = WedRequest::factory()->create(['couple_first_name' => 'Amina', 'couple_whatsapp' => '+213661234567', 'description' => 'Texte libre']);
+        $expired = WedRequest::factory()->create(['couple_first_name' => 'Amina', 'couple_whatsapp' => '+12125554567', 'description' => 'Texte libre']);
         $expired->forceFill(['expires_at' => now()->subDay(), 'ip_address' => '10.0.0.0', 'user_agent' => 'UA'])->save();
 
         // Accepted 3 days ago: the provider's 14-day access window is still open.
@@ -185,7 +185,7 @@ class CoupleRequestSubmissionTest extends TestCase
         ServiceRequest::factory()->create(['wed_request_id' => $stillInUse->id, 'service_type' => 'photo'])
             ->forceFill(['unlocked_at' => now()->subDays(3)])->save();
 
-        Artisan::call('zawaj:cleanup-expired');
+        Artisan::call('wedding:cleanup-expired');
 
         $row = WedRequest::withTrashed()->find($expired->id);
         $this->assertSame('Supprimé', $row->couple_first_name);
@@ -200,7 +200,7 @@ class CoupleRequestSubmissionTest extends TestCase
 
         // Once the provider's window has closed, the next run erases it too.
         $this->travel(12)->days();
-        Artisan::call('zawaj:cleanup-expired');
+        Artisan::call('wedding:cleanup-expired');
         $this->assertSame('Supprimé', WedRequest::withTrashed()->find($stillInUse->id)->couple_first_name);
     }
 
@@ -216,7 +216,7 @@ class CoupleRequestSubmissionTest extends TestCase
             'service_type'   => 'photo',
         ]);
 
-        Artisan::call('zawaj:cleanup-expired');
+        Artisan::call('wedding:cleanup-expired');
 
         $this->assertNotNull(WedRequest::withTrashed()->find($expired->id)->deleted_at);
         $this->assertNull(WedRequest::find($fresh->id)->deleted_at);

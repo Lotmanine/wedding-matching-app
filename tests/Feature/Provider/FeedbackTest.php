@@ -56,8 +56,8 @@ class FeedbackTest extends TestCase
 
     public function test_provider_can_send_feedback_and_the_alert_address_is_emailed(): void
     {
-        Setting::set('feedback.alert_email', 'alerts@zawajpro.dz');
-        $this->userWithRole('admin', ['email' => 'boss@zawajpro.dz']);
+        Setting::set('feedback.alert_email', 'alerts@example.com');
+        $this->userWithRole('admin', ['email' => 'boss@example.com']);
         $provider = $this->userWithRole('provider');
 
         $this->actingAs($provider)->post(route('provider.feedback.store'), [
@@ -73,14 +73,14 @@ class FeedbackTest extends TestCase
         $mails = $this->sentMails();
         $this->assertCount(1, $mails);
         $email = $mails->first()->getOriginalMessage();
-        $this->assertSame(['alerts@zawajpro.dz'], array_map(fn ($a) => $a->getAddress(), $email->getTo()));
+        $this->assertSame(['alerts@example.com'], array_map(fn ($a) => $a->getAddress(), $email->getTo()));
         $this->assertStringContainsString('Bouton cassé', $email->getSubject());
         $this->assertStringContainsString('Le bouton Accepter ne répond pas.', $email->getTextBody());
     }
 
     public function test_feedback_is_stored_but_not_emailed_when_no_alert_address_is_set(): void
     {
-        $this->userWithRole('admin', ['email' => 'boss@zawajpro.dz']);
+        $this->userWithRole('admin', ['email' => 'boss@example.com']);
 
         $this->actingAs($this->userWithRole('provider'))->post(route('provider.feedback.store'), [
             'subject' => 'Sans alerte',

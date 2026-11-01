@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->text('business_description')->nullable();
             $table->string('business_type', 30)->nullable();
             $table->string('trade_register', 50)->nullable();
-            $table->string('primary_wilaya_code', 2);
+            $table->string('primary_city_code', 2);
             $table->string('price_tier', 20);
             $table->integer('min_price')->nullable();
             $table->integer('max_price')->nullable();
@@ -37,7 +37,7 @@ return new class extends Migration {
             $table->boolean('onboarding_completed')->default(false);
             $table->timestamps();
 
-            $table->index('primary_wilaya_code');
+            $table->index('primary_city_code');
             $table->index('price_tier');
             $table->index('verified');
             $table->index('rating_avg');

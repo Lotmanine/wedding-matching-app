@@ -18,7 +18,7 @@ class RoundStateMachine
     /** Round duration, as set in /admin/settings (falls back to the default). */
     public static function roundTimeoutMinutes(): int
     {
-        return max(1, (int) config('zawaj.matching.round_timeout_minutes', self::ROUND_TIMEOUT_MINUTES));
+        return max(1, (int) config('wedding.matching.round_timeout_minutes', self::ROUND_TIMEOUT_MINUTES));
     }
 
     /**

@@ -35,7 +35,7 @@ class WhatsappDeliveryStatusTest extends TestCase
             'service_request_id' => 'SRV-20260422-T001',
             'results'            => [[
                 'role'                 => 'provider',
-                'recipient_phone_e164' => '+213555111222',
+                'recipient_phone_e164' => '+12125551222',
                 'template_intent'      => 'round_teaser',
                 'provider_id'          => 12,
                 'wa_message_id'        => 'wamid.HBgL12345',
@@ -88,7 +88,7 @@ class WhatsappDeliveryStatusTest extends TestCase
         $payload = $this->payload([
             'results' => [[
                 'role'                 => 'provider',
-                'recipient_phone_e164' => '+213555111222',
+                'recipient_phone_e164' => '+12125551222',
                 'template_intent'      => 'round_teaser',
                 'provider_id'          => 12,
                 'wa_message_id'        => null,
@@ -112,7 +112,7 @@ class WhatsappDeliveryStatusTest extends TestCase
         $payload = $this->payload([
             'results' => [[
                 'role'                 => 'provider',
-                'recipient_phone_e164' => '+213...',
+                'recipient_phone_e164' => '+1212555...',
                 'status'               => 'exploded',
             ]],
         ]);

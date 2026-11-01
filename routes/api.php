@@ -67,7 +67,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Meta WhatsApp credentials configured in /admin/whatsapp, fetched by
-        // the n8n zawaj-whatsapp workflow on every outbound + inbound run.
+        // the n8n wedding-whatsapp workflow on every outbound + inbound run.
         Route::middleware('throttle:600,1')->group(function () {
             Route::get('/n8n/whatsapp-config', WhatsappConfigController::class)
                 ->name('api.v1.n8n.whatsapp_config');

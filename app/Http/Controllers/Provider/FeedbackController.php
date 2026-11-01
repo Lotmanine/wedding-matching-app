@@ -62,14 +62,14 @@ class FeedbackController extends Controller
 
         $sender = $author->providerProfile?->business_name ?? $author->name;
 
-        $body = "Nouveau feedback prestataire sur Zawaj Pro\n\n"
+        $body = "Nouveau feedback prestataire sur Wedding Matching App\n\n"
             . "De : {$sender} ({$author->email})\n"
             . "Sujet : {$feedback->subject}\n\n"
             . "{$feedback->message}\n\n"
             . 'Boîte de réception : ' . route('admin.feedback.index');
 
         try {
-            Mail::raw($body, fn ($m) => $m->to($recipient)->subject('[Zawaj Pro] Feedback : ' . $feedback->subject));
+            Mail::raw($body, fn ($m) => $m->to($recipient)->subject('[Wedding Matching App] Feedback : ' . $feedback->subject));
         } catch (\Throwable $e) {
             Logger::warning('feedback.alert_email_failed', [
                 'feedback_id' => $feedback->id,

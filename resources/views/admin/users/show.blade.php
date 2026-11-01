@@ -13,7 +13,7 @@
                 <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Statut</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->status }}</dd></div>
                 <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Téléphone</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->phone ?? 'Non renseigné' }}</dd></div>
                 <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">WhatsApp</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->whatsapp ?? 'Non renseigné' }}</dd></div>
-                <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Wilaya</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->wilaya_code ?? 'Non renseigné' }}</dd></div>
+                <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Wilaya</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->city_code ?? 'Non renseigné' }}</dd></div>
                 <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Dernière activité</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->last_active_at?->diffForHumans() ?? 'Non renseigné' }}</dd></div>
                 <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">Inscrit</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $user->created_at?->isoFormat('LL') }}</dd></div>
             </dl>

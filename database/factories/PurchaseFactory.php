@@ -21,7 +21,8 @@ class PurchaseFactory extends Factory
         return [
             'user_id'        => User::factory(),
             'unlock_pack_id' => UnlockPack::factory(),
-            'amount_dzd'     => 7650,
+            'amount'         => 99,
+            'currency'       => 'USD',
             'unlocks_count'  => 6,
             'status'         => 'pending',
             'gateway'        => 'chargily',

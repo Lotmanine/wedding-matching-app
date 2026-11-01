@@ -24,7 +24,7 @@ class ChargilyWebhookTest extends TestCase
     {
         parent::setUp();
         $this->seed(RolesSeeder::class);
-        Config::set('zawaj.chargily.webhook_secret', 'test-webhook-secret');
+        Config::set('wedding.chargily.webhook_secret', 'test-webhook-secret');
     }
 
     private function seedPendingPurchase(int $balance = 0, string $checkoutId = 'chk_abc'): Purchase
@@ -34,23 +34,23 @@ class ChargilyWebhookTest extends TestCase
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'credit_balance'      => $balance,
         ]);
 
         $pack = UnlockPack::create([
-            'name' => 'Pack Essentiel', 'slug' => 'pack-essentiel-' . uniqid(),
-            'unlocks_count' => 6, 'price_dzd' => 7650, 'is_popular' => true, 'active' => true, 'sort_order' => 2,
+            'name' => 'Essential', 'slug' => 'essential-' . uniqid(),
+            'unlocks_count' => 6, 'price' => 99, 'is_popular' => true, 'active' => true, 'sort_order' => 2,
         ]);
 
         return Purchase::create([
             'user_id'             => $user->id,
             'unlock_pack_id'      => $pack->id,
-            'amount_dzd'          => $pack->price_dzd,
+            'amount'          => $pack->price,
             'unlocks_count'       => $pack->unlocks_count,
             'status'              => 'pending',
             'gateway'             => 'chargily',

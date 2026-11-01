@@ -30,7 +30,7 @@ class PurchaseCompletedDispatchTest extends TestCase
 
         WebhookEndpoint::create([
             'name'   => 'test-n8n',
-            'url'    => 'https://n8n.test/webhook/zawaj-ops',
+            'url'    => 'https://n8n.test/webhook/wedding-ops',
             'secret' => 'test-secret',
             'events' => ['purchase.completed'],
             'active' => true,
@@ -41,17 +41,17 @@ class PurchaseCompletedDispatchTest extends TestCase
     {
         $user = User::factory()->create([
             'role'   => 'provider',
-            'email'  => 'amine@studio.dz',
+            'email'  => 'amine@studio.example.com',
             'name'   => 'Amine',
         ]);
         $user->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
             'business_name'       => 'Studio Amine',
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
-            'languages'           => ['ar', 'fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'languages'           => ['en', 'fr'],
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
         ]);
 
@@ -59,7 +59,7 @@ class PurchaseCompletedDispatchTest extends TestCase
         $purchase = Purchase::create([
             'user_id'            => $user->id,
             'unlock_pack_id'     => $pack->id,
-            'amount_dzd'         => $pack->price_dzd,
+            'amount'         => $pack->price,
             'unlocks_count'      => $pack->unlocks_count,
             'status'             => 'paid',
             'gateway'            => 'chargily',
@@ -92,11 +92,11 @@ class PurchaseCompletedDispatchTest extends TestCase
 
             return $data['purchase_uid']        === $purchase->purchase_uid
                 && $data['provider_id']         === $user->id
-                && $data['provider_email']      === 'amine@studio.dz'
+                && $data['provider_email']      === 'amine@studio.example.com'
                 && $data['provider_name']       === 'Studio Amine'
-                && in_array($data['preferred_language'], ['ar', 'fr'], true)
+                && in_array($data['preferred_language'], ['en', 'fr'], true)
                 && ! empty($data['pack_name'])
-                && $data['amount_dzd']          === (int) $purchase->amount_dzd
+                && $data['amount']          === (int) $purchase->amount
                 && $data['credits_granted']     === (int) $purchase->unlocks_count
                 && str_ends_with($data['receipt_pdf_url'], "/api/v1/n8n/receipts/{$purchase->purchase_uid}.pdf");
         });

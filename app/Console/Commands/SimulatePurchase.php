@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 
 class SimulatePurchase extends Command
 {
-    protected $signature = 'zawaj:simulate-purchase {email} {pack_slug}';
+    protected $signature = 'wedding:simulate-purchase {email} {pack_slug}';
 
     protected $description = 'Bypass Chargily — create + mark-paid a purchase so credits land in the provider balance (local dev only).';
 

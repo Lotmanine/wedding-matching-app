@@ -9,7 +9,7 @@ use App\Enums\ServiceType;
 use App\Http\Controllers\Controller;
 use App\Models\LeadDispute;
 use App\Models\ServiceRequest;
-use App\Models\Wilaya;
+use App\Models\City;
 use App\Services\Matching\LeadAcceptanceService;
 use App\Services\Matching\LeadEligibilityService;
 use App\Services\Matching\Results\AcceptResult;
@@ -36,14 +36,14 @@ class ProviderLeadsController extends Controller
 
         $query = $this->eligibility->eligibleLeadsQuery($user);
 
-        $filters = $request->only(['service_type', 'wilaya_code', 'budget_range', 'sort']);
+        $filters = $request->only(['service_type', 'city_code', 'budget_range', 'sort']);
 
         if (! empty($filters['service_type'])) {
             $query->where('service_type', $filters['service_type']);
         }
 
-        if (! empty($filters['wilaya_code'])) {
-            $query->whereHas('wedRequest', fn ($q) => $q->where('couple_wilaya_code', $filters['wilaya_code']));
+        if (! empty($filters['city_code'])) {
+            $query->whereHas('wedRequest', fn ($q) => $q->where('couple_city_code', $filters['city_code']));
         }
 
         if (! empty($filters['budget_range'])) {
@@ -72,11 +72,11 @@ class ProviderLeadsController extends Controller
                 ->contains($case->value)
             )->values();
 
-        $coverageCodes = $user->providerCoverage->pluck('wilaya_code')
+        $coverageCodes = $user->providerCoverage->pluck('city_code')
             ->map(fn ($v) => is_object($v) && property_exists($v, 'value') ? $v->value : (string) $v)
             ->values()
             ->all();
-        $wilayaOptions = Wilaya::whereIn('code', $coverageCodes)->orderBy('name_fr')->get();
+        $cityOptions = City::whereIn('code', $coverageCodes)->orderBy('name')->get();
 
         $budgetOptions = BudgetRange::cases();
 
@@ -84,7 +84,7 @@ class ProviderLeadsController extends Controller
             'leads'              => $leads,
             'filters'            => $filters,
             'serviceTypeOptions' => $serviceTypeOptions,
-            'wilayaOptions'      => $wilayaOptions,
+            'cityOptions'      => $cityOptions,
             'budgetOptions'      => $budgetOptions,
             'canReceive'         => $canReceive,
             'profile'            => $profile,
@@ -93,7 +93,7 @@ class ProviderLeadsController extends Controller
 
     /**
      * "Mes demandes acceptées" — every lead this provider unlocked. Contact
-     * details are masked once the ANPDP anonymization window has passed.
+     * details are masked once the privacy anonymization window has passed.
      */
     public function accepted(Request $request)
     {

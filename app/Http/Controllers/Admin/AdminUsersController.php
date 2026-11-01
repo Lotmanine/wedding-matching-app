@@ -7,7 +7,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ProviderProfile;
 use App\Models\User;
-use App\Models\Wilaya;
+use App\Support\PhoneFormat;
+use App\Models\City;
 use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,7 +45,7 @@ class AdminUsersController extends Controller
     public function create(): View
     {
         return view('admin.users.create', [
-            'wilayas' => Wilaya::active()->get(),
+            'cities' => City::active()->get(),
         ]);
     }
 
@@ -60,10 +61,10 @@ class AdminUsersController extends Controller
             'email'               => ['required', 'email', 'max:255', 'unique:users,email'],
             'role'                => ['required', 'in:admin,manager,provider'],
             'password'            => ['nullable', 'string', 'min:10', 'max:100'],
-            'phone'               => ['nullable', 'string', 'regex:/^\+213[567]\d{8}$/'],
+            'phone'               => ['nullable', 'string', 'regex:' . PhoneFormat::REGEX],
             // Provider-only fields
             'business_name'       => ['required_if:role,provider', 'nullable', 'string', 'max:150'],
-            'primary_wilaya_code' => ['required_if:role,provider', 'nullable', 'in:' . Wilaya::pluck('code')->implode(',')],
+            'primary_city_code' => ['required_if:role,provider', 'nullable', 'in:' . City::pluck('code')->implode(',')],
         ]);
 
         // Auto-generate a strong password when none is provided; it is shown
@@ -92,7 +93,7 @@ class AdminUsersController extends Controller
                 ProviderProfile::create([
                     'user_id'             => $user->id,
                     'business_name'       => $validated['business_name'] ?: $validated['name'],
-                    'primary_wilaya_code' => $validated['primary_wilaya_code'],
+                    'primary_city_code' => $validated['primary_city_code'],
                     'price_tier'          => 'mid',
                     'verified'            => true,
                     'verified_at'         => now(),

@@ -16,7 +16,7 @@ use App\Models\WedRequest;
 use App\Services\Matching\LeadAcceptanceService;
 use App\Services\Matching\Results\AcceptResult;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -29,28 +29,28 @@ class AcceptanceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
     private function makeProvider(int $credits = 5, bool $verified = true): User
     {
         $user = User::factory()->create([
-            'email'    => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@zawajpro.dz',
+            'email'    => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@example.com',
             'role'     => 'provider',
             'status'   => 'active',
-            'phone'    => '+213661234567',
-            'whatsapp' => '+213661234567',
+            'phone'    => '+12125554567',
+            'whatsapp' => '+12125554567',
         ]);
         $user->assignRole('provider');
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => $verified,
             'verified_at'         => $verified ? now()->subDays(5) : null,
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'credit_balance'      => $credits,
             'leads_received'      => 0,
@@ -59,7 +59,7 @@ class AcceptanceTest extends TestCase
         ]);
 
         ProviderService::create(['user_id' => $user->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $user->fresh(['providerProfile', 'providerServices', 'providerCoverage']);
     }
@@ -67,7 +67,7 @@ class AcceptanceTest extends TestCase
     private function makeLead(array $roundIds = []): ServiceRequest
     {
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
 
@@ -157,11 +157,11 @@ class AcceptanceTest extends TestCase
 
     public function test_out_of_coverage_lead_rejected_when_not_assigned(): void
     {
-        // A provider who covers wilaya 16 must NOT be able to accept a lead in
-        // wilaya 31 that they were never placed in a round for (open marketplace).
+        // A provider who covers city 16 must NOT be able to accept a lead in
+        // city 31 that they were never placed in a round for (open marketplace).
         $user = $this->makeProvider(); // offers photo, covers 16
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '31', // outside coverage
+            'couple_city_code' => 'LA', // outside coverage
             'services_needed'    => ['photo'],
         ]);
         $lead = ServiceRequest::create([
@@ -185,7 +185,7 @@ class AcceptanceTest extends TestCase
         // geographic filter, so they can accept it.
         $user = $this->makeProvider(); // offers photo, covers 16
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '31', // outside coverage
+            'couple_city_code' => 'LA', // outside coverage
             'services_needed'    => ['photo'],
         ]);
         $lead = ServiceRequest::create([
@@ -209,7 +209,7 @@ class AcceptanceTest extends TestCase
         // Verification is still required even for a manually-assigned lead.
         $user = $this->makeProvider(verified: false); // covers 16, NOT verified
         $wr = WedRequest::factory()->create([
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
         $lead = ServiceRequest::create([
@@ -261,8 +261,8 @@ class AcceptanceTest extends TestCase
         $user = $this->makeProvider(credits: 2);
         $wr = WedRequest::factory()->create([
             'couple_first_name'  => 'Fatima',
-            'couple_whatsapp'    => '+213555123456',
-            'couple_wilaya_code' => '16',
+            'couple_whatsapp'    => '+12125553456',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
         $lead = ServiceRequest::create([
@@ -280,6 +280,6 @@ class AcceptanceTest extends TestCase
         $response = $this->actingAs($user)->get(route('provider.leads.show', $lead->service_uid));
         $response->assertOk();
         $response->assertSee('Fatima');
-        $response->assertSee('+213555123456');
+        $response->assertSee('+12125553456');
     }
 }

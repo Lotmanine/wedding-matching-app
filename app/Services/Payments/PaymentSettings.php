@@ -98,7 +98,7 @@ class PaymentSettings
 
         return in_array($mode, ['test', 'live'], true)
             ? $mode
-            : (string) config('zawaj.chargily.mode', 'test');
+            : (string) config('wedding.chargily.mode', 'test');
     }
 
     public function chargilyBaseUrl(): string
@@ -111,13 +111,13 @@ class PaymentSettings
     public function chargilySecretKey(): string
     {
         return $this->decryptedSetting('payments.chargily.secret_key')
-            ?? (string) config('zawaj.chargily.secret_key', '');
+            ?? (string) config('wedding.chargily.secret_key', '');
     }
 
     public function chargilyWebhookSecret(): string
     {
         return $this->decryptedSetting('payments.chargily.webhook_secret')
-            ?? (string) config('zawaj.chargily.webhook_secret', '');
+            ?? (string) config('wedding.chargily.webhook_secret', '');
     }
 
     /**

@@ -13,7 +13,7 @@ use App\Models\WedRequest;
 use App\Support\Ops\HealthSnapshot;
 use App\Support\Ops\HealthSnapshotBuilder;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,7 +24,7 @@ class HealthSnapshotBuilderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
@@ -75,7 +75,7 @@ class HealthSnapshotBuilderTest extends TestCase
         for ($i = 0; $i < $count; $i++) {
             AuditLog::create([
                 'action'     => 'n8n.error',
-                'metadata'   => ['workflow' => 'zawaj-matching', 'failed_node' => 'Claude Rank'],
+                'metadata'   => ['workflow' => 'wedding-matching', 'failed_node' => 'Claude Rank'],
                 'created_at' => now()->subHours(1),
             ]);
         }

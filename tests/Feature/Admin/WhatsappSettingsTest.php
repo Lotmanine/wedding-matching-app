@@ -106,7 +106,7 @@ class WhatsappSettingsTest extends TestCase
     public function test_phone_number_id_must_be_numeric(): void
     {
         $this->actingAs($this->userWithRole('admin'))
-            ->put(route('admin.whatsapp.update'), $this->validPayload(['phone_number_id' => '+213 661 23 45 67']))
+            ->put(route('admin.whatsapp.update'), $this->validPayload(['phone_number_id' => '+1 212 555 0123']))
             ->assertSessionHasErrors('phone_number_id');
     }
 

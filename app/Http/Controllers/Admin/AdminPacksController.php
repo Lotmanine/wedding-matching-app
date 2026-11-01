@@ -80,7 +80,7 @@ class AdminPacksController extends Controller
         return $request->validate([
             'name'          => ['required', 'string', 'min:2', 'max:100'],
             'unlocks_count' => ['required', 'integer', 'min:1'],
-            'price_dzd'     => ['required', 'integer', 'min:0'],
+            'price'     => ['required', 'integer', 'min:0'],
             'is_popular'    => ['nullable', 'boolean'],
             'sort_order'    => ['nullable', 'integer'],
             'active'        => ['nullable', 'boolean'],

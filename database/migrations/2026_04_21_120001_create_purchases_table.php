@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->string('purchase_uid', 25)->unique();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('unlock_pack_id')->constrained('unlock_packs');
-            $table->integer('amount_dzd');
+            $table->integer('amount');
+            $table->string('currency', 3)->default('USD');
             $table->integer('unlocks_count');
             $table->string('status', 20)->default('pending');
             $table->string('gateway', 20)->default('chargily');

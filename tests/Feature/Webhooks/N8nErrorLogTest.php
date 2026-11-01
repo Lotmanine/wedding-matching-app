@@ -19,20 +19,20 @@ class N8nErrorLogTest extends TestCase
     {
         parent::setUp();
         $this->seed(RolesSeeder::class);
-        config(['zawaj.n8n.webhook_secret' => self::SECRET]);
+        config(['wedding.n8n.webhook_secret' => self::SECRET]);
     }
 
     /** Post to the error webhook with the valid shared-secret header. */
     private function postError(array $payload)
     {
-        return $this->withHeaders(['X-Zawaj-Token' => self::SECRET])
+        return $this->withHeaders(['X-Wedding-Token' => self::SECRET])
             ->postJson('/api/webhooks/n8n/error', $payload);
     }
 
     public function test_error_payload_logged_and_audited(): void
     {
         $payload = [
-            'workflow' => 'zawaj-matching-orchestrator',
+            'workflow' => 'wedding-matching-orchestrator',
             'execution_id' => 'exec_abc123',
             'failed_node' => 'Claude AI Rank',
             'error_message' => 'Invalid JSON',
@@ -44,7 +44,7 @@ class N8nErrorLogTest extends TestCase
 
         $this->assertTrue(AuditLog::where('action', 'n8n.error')->exists());
         $log = AuditLog::where('action', 'n8n.error')->first();
-        $this->assertSame('zawaj-matching-orchestrator', $log->metadata['workflow']);
+        $this->assertSame('wedding-matching-orchestrator', $log->metadata['workflow']);
         $this->assertSame('Claude AI Rank', $log->metadata['failed_node']);
     }
 
@@ -55,7 +55,7 @@ class N8nErrorLogTest extends TestCase
             ->assertStatus(401);
 
         // Wrong token.
-        $this->withHeaders(['X-Zawaj-Token' => 'wrong'])
+        $this->withHeaders(['X-Wedding-Token' => 'wrong'])
             ->postJson('/api/webhooks/n8n/error', ['workflow' => 'x'])
             ->assertStatus(401);
 
@@ -64,7 +64,7 @@ class N8nErrorLogTest extends TestCase
 
     public function test_alert_threshold_fires_after_five_errors(): void
     {
-        $payload = ['workflow' => 'zawaj-matching-orchestrator', 'error_message' => 'x'];
+        $payload = ['workflow' => 'wedding-matching-orchestrator', 'error_message' => 'x'];
 
         for ($i = 0; $i < 4; $i++) {
             $this->postError($payload)->assertJsonPath('alert_threshold', false);

@@ -58,7 +58,7 @@
                                         @if ($entryDescription !== null)
                                             {{ $entryDescription }}
                                         @elseif (filled($e->notes))
-                                            <span dir="auto">{{ $e->notes }}</span>
+                                            <span>{{ $e->notes }}</span>
                                         @else
                                             {{ __('Non renseigné') }}
                                         @endif

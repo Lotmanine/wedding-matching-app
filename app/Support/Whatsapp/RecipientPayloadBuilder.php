@@ -35,13 +35,13 @@ class RecipientPayloadBuilder
                     [
                         'id'        => SignedButtonPayload::encode($sr->service_uid, $user->id, SignedButtonPayload::INTENT_ACCEPT),
                         'intent'    => 'accept',
-                        'label_ar'  => 'قبول',
+                        'label_en'  => 'Accept',
                         'label_fr'  => 'Accepter',
                     ],
                     [
                         'id'        => SignedButtonPayload::encode($sr->service_uid, $user->id, SignedButtonPayload::INTENT_REFUSE),
                         'intent'    => 'refuse',
-                        'label_ar'  => 'رفض',
+                        'label_en'  => 'Refuse',
                         'label_fr'  => 'Refuser',
                     ],
                 ],
@@ -56,9 +56,9 @@ class RecipientPayloadBuilder
         return [
             'first_name'         => (string) ($wr->couple_first_name ?? ''),
             'phone_e164'         => self::normalizeE164($wr->couple_whatsapp ?? ''),
-            // Commune is optional on the couple form: fall back to the wilaya so the
-            // provider's message never reads "cherche un prestataire à -".
-            'city'               => (string) ($wr->couple_commune ?: (\App\Models\Wilaya::where('code', $wr->couple_wilaya_code)->value('name_fr') ?? '')),
+            // District is optional on the couple form: fall back to the city so the
+            // provider's message always names a place.
+            'city'               => (string) ($wr->couple_district ?: (\App\Models\City::where('code', $wr->couple_city_code)->value('name') ?? '')),
             'preferred_language' => 'fr', // couple form only collects French copy for now
         ];
     }
@@ -69,7 +69,7 @@ class RecipientPayloadBuilder
 
         return [
             'type'             => $sr->service_type?->value ?? (string) $sr->service_type,
-            'budget_hint_dzd'  => self::budgetHintMidpoint($wr->budget_range?->value ?? null),
+            'budget_hint'      => self::budgetHintMidpoint($wr->budget_range?->value ?? null),
             'event_date'       => $wr->wedding_date?->toDateString(),
         ];
     }
@@ -88,12 +88,12 @@ class RecipientPayloadBuilder
     {
         $langs = (array) ($profile?->languages ?? []);
         if (empty($langs)) {
-            return 'ar';
+            return 'en';
         }
 
-        // Prefer ar if available, then fr, then first listed
-        if (in_array('ar', $langs, true)) {
-            return 'ar';
+        // Prefer en if available, then fr, then first listed
+        if (in_array('en', $langs, true)) {
+            return 'en';
         }
         if (in_array('fr', $langs, true)) {
             return 'fr';
@@ -107,13 +107,13 @@ class RecipientPayloadBuilder
         // Keys must follow App\Enums\BudgetRange: a range missing here reaches
         // the provider's WhatsApp message as an empty budget.
         return match ($range) {
-            'under_500k'      => 250_000,
-            'from_500k_to_1m' => 750_000,
-            'from_1m_to_2m'   => 1_500_000,
-            'from_2m_to_3m'   => 2_500_000,
-            'from_3m_to_5m'   => 4_000_000,
-            'over_5m'         => 7_000_000,
-            default           => null,
+            'under_10k'        => 5_000,
+            'from_10k_to_20k'  => 15_000,
+            'from_20k_to_35k'  => 27_500,
+            'from_35k_to_50k'  => 42_500,
+            'from_50k_to_100k' => 75_000,
+            'over_100k'        => 125_000,
+            default            => null,
         };
     }
 }

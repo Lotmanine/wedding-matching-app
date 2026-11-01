@@ -10,7 +10,7 @@ use App\Models\ProviderProfile;
 use App\Models\ProviderService;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
@@ -25,7 +25,7 @@ class RegistrationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
         Storage::fake('public');
     }
@@ -42,23 +42,23 @@ class RegistrationTest extends TestCase
         Event::fake();
 
         Livewire::test(RegistrationForm::class)
-            ->set('email', 'new@provider.dz')
+            ->set('email', 'new@provider.example.com')
             ->set('password', 'secretpassword')
             ->set('password_confirmation', 'secretpassword')
             ->set('full_name', 'Karim Ben')
-            ->set('phone', '+213661234567')
-            ->set('whatsapp', '+213661234567')
+            ->set('phone', '+12125554567')
+            ->set('whatsapp', '+12125554567')
             ->set('accept_terms', true)
-            ->set('accept_anpdp', true)
+            ->set('accept_privacy', true)
             ->set('business_name', 'Studio Karim')
-            ->set('business_type', 'auto-entrepreneur')
-            ->set('business_description', 'Photographe mariage Alger.')
-            ->set('primary_wilaya_code', '16')
+            ->set('business_type', 'sole_proprietor')
+            ->set('business_description', 'Photographe mariage New York.')
+            ->set('primary_city_code', 'NY')
             ->set('price_tier', 'mid')
-            ->set('languages', ['fr', 'ar'])
+            ->set('languages', ['fr', 'en'])
             ->set('services', ['photo', 'video'])
-            ->set('coverage_wilayas', ['16', '09'])
-            ->set('travel_fees', ['09' => 3000, '16' => 0])
+            ->set('coverage_cities', ['NY', 'MI'])
+            ->set('travel_fees', ['MI' => 3000, 'NY' => 0])
             ->set('portfolio_urls', ['https://instagram.com/studio.karim'])
             ->set('logo_upload', UploadedFile::fake()->create('logo.png', 200, 'image/png'))
             ->set('portfolio_images', [
@@ -68,7 +68,7 @@ class RegistrationTest extends TestCase
             ->call('submit')
             ->assertRedirect(route('provider.dashboard'));
 
-        $user = User::where('email', 'new@provider.dz')->first();
+        $user = User::where('email', 'new@provider.example.com')->first();
         $this->assertNotNull($user);
         $this->assertTrue($user->hasRole('provider'));
         $this->assertSame('pending_verification', $user->status);
@@ -81,23 +81,23 @@ class RegistrationTest extends TestCase
 
         $this->assertSame(2, ProviderService::where('user_id', $user->id)->count());
         $this->assertSame(2, ProviderCoverage::where('user_id', $user->id)->count());
-        $primary = ProviderCoverage::where(['user_id' => $user->id, 'wilaya_code' => '16'])->first();
-        $this->assertSame(0, (int) $primary->travel_fee_dzd);
+        $primary = ProviderCoverage::where(['user_id' => $user->id, 'city_code' => 'NY'])->first();
+        $this->assertSame(0, (int) $primary->travel_fee);
     }
 
     public function test_duplicate_email_is_rejected(): void
     {
-        User::factory()->create(['email' => 'dup@provider.dz']);
+        User::factory()->create(['email' => 'dup@provider.example.com']);
 
         Livewire::test(RegistrationForm::class)
-            ->set('email', 'dup@provider.dz')
+            ->set('email', 'dup@provider.example.com')
             ->set('password', 'secretpassword')
             ->set('password_confirmation', 'secretpassword')
             ->set('full_name', 'Test')
-            ->set('phone', '+213661234567')
-            ->set('whatsapp', '+213661234567')
+            ->set('phone', '+12125554567')
+            ->set('whatsapp', '+12125554567')
             ->set('accept_terms', true)
-            ->set('accept_anpdp', true)
+            ->set('accept_privacy', true)
             ->call('nextStep')
             ->assertHasErrors(['email' => 'unique']);
     }
@@ -105,14 +105,14 @@ class RegistrationTest extends TestCase
     public function test_invalid_phone_regex_rejected(): void
     {
         Livewire::test(RegistrationForm::class)
-            ->set('email', 'fresh@provider.dz')
+            ->set('email', 'fresh@provider.example.com')
             ->set('password', 'secretpassword')
             ->set('password_confirmation', 'secretpassword')
             ->set('full_name', 'Test')
-            ->set('phone', '0661234567') // no +213 prefix
-            ->set('whatsapp', '+213661234567')
+            ->set('phone', '0661234567') // no country prefix
+            ->set('whatsapp', '+12125554567')
             ->set('accept_terms', true)
-            ->set('accept_anpdp', true)
+            ->set('accept_privacy', true)
             ->call('nextStep')
             ->assertHasErrors(['phone' => 'regex']);
     }

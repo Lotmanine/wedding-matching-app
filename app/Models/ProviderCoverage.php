@@ -13,14 +13,14 @@ class ProviderCoverage extends Model
 
     protected $fillable = [
         'user_id',
-        'wilaya_code',
-        'travel_fee_dzd',
+        'city_code',
+        'travel_fee',
     ];
 
     protected function casts(): array
     {
         return [
-            'travel_fee_dzd' => 'integer',
+            'travel_fee' => 'integer',
         ];
     }
 

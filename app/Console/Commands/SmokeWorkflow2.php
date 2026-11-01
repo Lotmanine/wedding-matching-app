@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Bus;
 
 class SmokeWorkflow2 extends Command
 {
-    protected $signature = 'zawaj:smoke:workflow-2';
+    protected $signature = 'wedding:smoke:workflow-2';
 
     protected $description = 'Smoke-test Workflow 2 plumbing — fires the 3 events in-process and asserts payload + signed token roundtrip.';
 

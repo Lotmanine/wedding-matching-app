@@ -19,7 +19,7 @@ class WhatsappMessageFactory extends Factory
         return [
             'service_request_uid'  => 'SRV-' . now()->format('Ymd') . '-' . str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT),
             'provider_id'          => null,
-            'recipient_phone_e164' => '+213' . $this->faker->numerify('#########'),
+            'recipient_phone_e164' => '+1212555' . $this->faker->numerify('####'),
             'direction'            => 'outbound',
             'event_type'           => 'round.started',
             'template_intent'      => 'round_teaser',

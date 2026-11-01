@@ -8,8 +8,8 @@ use App\Enums\BudgetRange;
 use App\Enums\GuestCount;
 use App\Enums\RequestStatus;
 use App\Enums\ServiceType;
-use App\Models\Commune;
-use App\Models\Wilaya;
+use App\Models\District;
+use App\Models\City;
 use App\Models\WedRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,10 +20,10 @@ class WedRequestFactory extends Factory
 {
     protected $model = WedRequest::class;
 
-    protected static array $algerianFirstNames = [
-        'Mohamed', 'Ahmed', 'Yacine', 'Karim', 'Ryad', 'Bilal', 'Nassim', 'Anis', 'Adel', 'Walid',
-        'Fatima', 'Amina', 'Nour', 'Sara', 'Imane', 'Lina', 'Yasmine', 'Sonia', 'Meriem', 'Hanane',
-        'Mehdi', 'Sofiane', 'Reda', 'Hamza', 'Islam', 'Abderrahmane', 'Feriel', 'Khadija', 'Rania', 'Salma',
+    protected static array $firstNames = [
+        'James', 'Michael', 'Daniel', 'Lucas', 'Ethan', 'Noah', 'Oliver', 'Hugo', 'Thomas', 'Louis',
+        'Emma', 'Olivia', 'Sophia', 'Grace', 'Chloe', 'Lily', 'Camille', 'Alice', 'Julia', 'Claire',
+        'Nathan', 'Adam', 'Leo', 'Paul', 'Victor', 'Charlotte', 'Amelia', 'Ella', 'Laura', 'Anna',
     ];
 
     public function definition(): array
@@ -34,19 +34,19 @@ class WedRequestFactory extends Factory
 
         $weddingDate = $this->faker->optional(0.85)->dateTimeBetween('+1 month', '+12 months');
 
-        $wilaya = Wilaya::inRandomOrder()->first();
-        $commune = $wilaya
-            ? Commune::forWilaya($wilaya->id)->inRandomOrder()->first()
+        $city = City::inRandomOrder()->first();
+        $district = $city
+            ? District::forCity($city->id)->inRandomOrder()->first()
             : null;
 
         return [
             'status'               => RequestStatus::New->value,
-            'couple_first_name'    => $this->faker->randomElement(self::$algerianFirstNames),
-            'couple_whatsapp'      => '+213' . $this->faker->numerify('#########'),
-            'couple_wilaya_code'   => $wilaya?->code ?? '16',
-            'couple_commune'       => $commune?->name_fr,
+            'couple_first_name'    => $this->faker->randomElement(self::$firstNames),
+            'couple_whatsapp'      => '+1212555' . $this->faker->numerify('####'),
+            'couple_city_code'   => $city?->code ?? 'NY',
+            'couple_district'       => $district?->name,
             'wedding_date'         => $weddingDate,
-            'wedding_season'       => $this->faker->randomElement(['Printemps', 'Été', 'Automne', 'Hiver']),
+            'wedding_season'       => $this->faker->randomElement(WedRequest::SEASONS),
             'guest_count'          => $this->faker->randomElement(GuestCount::cases())->value,
             'budget_range'         => $this->faker->randomElement(BudgetRange::cases())->value,
             'description'          => $this->faker->optional()->sentence(12),

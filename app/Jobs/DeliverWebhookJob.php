@@ -57,9 +57,9 @@ class DeliverWebhookJob implements ShouldQueue
 
         try {
             $response = Http::withHeaders([
-                'X-Zawaj-Event'        => $this->eventType,
-                'X-Zawaj-Signature'    => $signature,
-                'X-Zawaj-Delivery-Id'  => (string) $delivery->id,
+                'X-Wedding-Event'        => $this->eventType,
+                'X-Wedding-Signature'    => $signature,
+                'X-Wedding-Delivery-Id'  => (string) $delivery->id,
                 'Content-Type'         => 'application/json',
             ])
             ->timeout($this->timeout)

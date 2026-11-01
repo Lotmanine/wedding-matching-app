@@ -17,7 +17,7 @@ class SettingsSeeder extends Seeder
             ['key' => 'matching.round_timeout_minutes',  'value' => '120',  'type' => 'int'],
             ['key' => 'matching.providers_per_round',    'value' => '3',    'type' => 'int'],
             ['key' => 'matching.max_rounds',             'value' => '3',    'type' => 'int'],
-            ['key' => 'anpdp.retention_days',            'value' => '14',   'type' => 'int'],
+            ['key' => 'privacy.retention_days',          'value' => '14',   'type' => 'int'],
         ];
 
         foreach ($defaults as $row) {

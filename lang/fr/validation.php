@@ -118,13 +118,13 @@ return [
         ],
         'couple_whatsapp' => [
             'required' => 'Indiquez votre numéro WhatsApp.',
-            'regex'    => 'Utilisez le format +213661234567, sans espaces.',
+            'regex'    => 'Utilisez le format +12125550123 ou +33612345678, sans espaces.',
         ],
-        'couple_wilaya_code' => [
+        'couple_city_code' => [
             'required' => 'Choisissez une wilaya.',
             'in'       => 'Choisissez une wilaya dans la liste.',
         ],
-        'couple_commune' => [
+        'couple_district' => [
             'max' => 'La commune ne peut pas dépasser :max caractères.',
         ],
         'budget_range' => [
@@ -161,8 +161,8 @@ return [
     'attributes' => [
         'couple_first_name'   => 'le prénom',
         'couple_whatsapp'     => 'le numéro WhatsApp',
-        'couple_wilaya_code'  => 'la wilaya',
-        'couple_commune'      => 'la commune',
+        'couple_city_code'  => 'la wilaya',
+        'couple_district'      => 'la commune',
         'wedding_date'        => 'la date du mariage',
         'wedding_season'      => 'la saison du mariage',
         'guest_count'         => 'le nombre d\'invités',
@@ -178,19 +178,19 @@ return [
         'phone'                => 'le téléphone',
         'whatsapp'             => 'le numéro WhatsApp',
         'accept_terms'         => 'les conditions d\'utilisation',
-        'accept_anpdp'         => 'le traitement des données',
+        'accept_privacy'         => 'le traitement des données',
         'business_name'        => 'le nom commercial',
         'business_type'        => 'la forme juridique',
         'business_description' => 'la description de l\'activité',
         'trade_register'       => 'le numéro de registre de commerce',
         'years_experience'     => 'les années d\'expérience',
-        'primary_wilaya_code'  => 'la wilaya principale',
+        'primary_city_code'  => 'la wilaya principale',
         'price_tier'           => 'la gamme de prix',
         'min_price'            => 'le tarif minimum indicatif',
         'max_price'            => 'le tarif maximum indicatif',
         'languages'            => 'les langues',
         'services'             => 'les services',
-        'coverage_wilayas'     => 'les wilayas d\'intervention',
+        'coverage_cities'     => 'les wilayas d\'intervention',
         'travel_fees.*'        => 'les frais de déplacement',
         'portfolio_urls'       => 'les liens',
         'portfolio_urls.*'     => 'le lien',

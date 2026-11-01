@@ -61,7 +61,7 @@
                 </div>
                 <div>
                     <label for="u-phone" class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Téléphone / WhatsApp <span class="text-[#9A958D] font-normal">(facultatif)</span></label>
-                    <input type="tel" id="u-phone" name="phone" value="{{ old('phone') }}" placeholder="+2136XXXXXXXX" class="{{ $inputClass }}" />
+                    <input type="tel" id="u-phone" name="phone" value="{{ old('phone') }}" placeholder="+12125550123" class="{{ $inputClass }}" />
                 </div>
             </div>
 
@@ -72,11 +72,11 @@
                     <input type="text" id="u-business" name="business_name" value="{{ old('business_name') }}" class="{{ $inputClass }}" />
                 </div>
                 <div>
-                    <label for="u-wilaya" class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Wilaya principale <span class="text-[#C8956C]">*</span></label>
-                    <select id="u-wilaya" name="primary_wilaya_code" class="{{ $inputClass }}">
+                    <label for="u-city" class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">Wilaya principale <span class="text-[#C8956C]">*</span></label>
+                    <select id="u-city" name="primary_city_code" class="{{ $inputClass }}">
                         <option value="">Sélectionner…</option>
-                        @foreach ($wilayas as $w)
-                            <option value="{{ $w->code }}" @selected(old('primary_wilaya_code') === $w->code)>{{ $w->code }} · {{ $w->name_fr }}</option>
+                        @foreach ($cities as $w)
+                            <option value="{{ $w->code }}" @selected(old('primary_city_code') === $w->code)>{{ $w->code }} · {{ $w->name }}</option>
                         @endforeach
                     </select>
                 </div>

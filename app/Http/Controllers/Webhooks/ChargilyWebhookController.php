@@ -53,7 +53,7 @@ class ChargilyWebhookController extends Controller
         Log::info('Chargily webhook received', [
             'event'        => $event,
             'purchase_uid' => $purchase->purchase_uid,
-            'mode'         => config('zawaj.chargily.mode'),
+            'mode'         => config('wedding.chargily.mode'),
         ]);
 
         match ($event) {

@@ -10,7 +10,7 @@ use App\Models\ProviderProfile;
 use App\Models\ProviderService;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +24,7 @@ class ProfileTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
         Storage::fake('public');
     }
@@ -32,25 +32,25 @@ class ProfileTest extends TestCase
     private function makeProvider(): User
     {
         $user = User::factory()->create([
-            'email'       => 'pro@zawajpro.dz',
+            'email'       => 'pro@example.com',
             'role'        => 'provider',
-            'wilaya_code' => '16',
-            'phone'       => '+213661234567',
-            'whatsapp'    => '+213661234567',
+            'city_code' => 'NY',
+            'phone'       => '+12125554567',
+            'whatsapp'    => '+12125554567',
         ]);
         $user->assignRole('provider');
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'portfolio_images'    => [],
         ]);
 
         ProviderService::create(['user_id' => $user->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $user;
     }
@@ -74,7 +74,7 @@ class ProfileTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(ProfileEditor::class)
-            ->assertSet('primary_wilaya_code', '16')
+            ->assertSet('primary_city_code', 'NY')
             ->assertSet('services', ['photo']);
     }
 
@@ -85,9 +85,9 @@ class ProfileTest extends TestCase
         Livewire::actingAs($user)
             ->test(ProfileEditor::class)
             ->set('business_name', 'Refreshed Studio')
-            ->set('services', ['photo', 'video', 'traiteur'])
-            ->set('coverage_wilayas', ['16', '09', '31'])
-            ->set('travel_fees', ['16' => 0, '09' => 2000, '31' => 5000])
+            ->set('services', ['photo', 'video', 'catering'])
+            ->set('coverage_cities', ['NY', 'MI', 'LA'])
+            ->set('travel_fees', ['NY' => 0, 'MI' => 2000, 'LA' => 5000])
             ->call('save')
             ->assertHasNoErrors();
 
@@ -95,8 +95,8 @@ class ProfileTest extends TestCase
         $this->assertSame('Refreshed Studio', $user->providerProfile->business_name);
         $this->assertSame(3, $user->providerServices->count());
         $this->assertSame(3, $user->providerCoverage->count());
-        $cov9 = ProviderCoverage::where(['user_id' => $user->id, 'wilaya_code' => '09'])->first();
-        $this->assertSame(2000, (int) $cov9->travel_fee_dzd);
+        $cov9 = ProviderCoverage::where(['user_id' => $user->id, 'city_code' => 'MI'])->first();
+        $this->assertSame(2000, (int) $cov9->travel_fee);
     }
 
     public function test_profile_update_handles_logo_upload(): void

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Wilaya extends Model
+class City extends Model
 {
     public $incrementing = false;
 
@@ -17,8 +17,8 @@ class Wilaya extends Model
     protected $fillable = [
         'id',
         'code',
-        'name_fr',
-        'name_ar',
+        'country',
+        'name',
         'region',
         'active',
     ];
@@ -30,9 +30,9 @@ class Wilaya extends Model
         ];
     }
 
-    public function communes(): HasMany
+    public function districts(): HasMany
     {
-        return $this->hasMany(Commune::class);
+        return $this->hasMany(District::class);
     }
 
     public function scopeActive(Builder $query): Builder
@@ -42,6 +42,6 @@ class Wilaya extends Model
 
     public function label(): string
     {
-        return $this->name_fr;
+        return $this->name;
     }
 }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\Commune;
+use App\Models\District;
 use App\Models\UnlockPack;
 use App\Models\User;
 use App\Models\WebhookEndpoint;
-use App\Models\Wilaya;
+use App\Models\City;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SmokeTest extends Command
 {
-    protected $signature = 'zawaj:smoke-test {--send-email=}';
+    protected $signature = 'wedding:smoke-test {--send-email=}';
 
     protected $description = 'Run critical-path health checks. Exit 0 if all pass, 1 if any fail.';
 
@@ -41,8 +41,8 @@ class SmokeTest extends Command
         });
         $this->check('APP_KEY set (32+ chars)', fn () => strlen((string) config('app.key')) >= 32);
         $this->check('Admin user exists', fn () => User::role('admin')->exists());
-        $this->check('Wilayas seeded (69)', fn () => Wilaya::count() === 69);
-        $this->check('Communes seeded (~1541)', fn () => Commune::count() >= 1540);
+        $this->check('Cities seeded (8)', fn () => City::count() === 8);
+        $this->check('Districts seeded (32)', fn () => District::count() === 32);
         $this->check('Unlock packs seeded (3)', fn () => UnlockPack::count() >= 3);
 
         if (app()->environment('production')) {
@@ -62,7 +62,7 @@ class SmokeTest extends Command
 
         if ($email = (string) $this->option('send-email')) {
             $this->check('SMTP test email', function () use ($email) {
-                \Illuminate\Support\Facades\Mail::raw('Zawaj Pro smoke test — if you got this, SMTP is working.', fn ($m) => $m->to($email)->subject('Zawaj Pro smoke test'));
+                \Illuminate\Support\Facades\Mail::raw('Wedding Matching App smoke test — if you got this, SMTP is working.', fn ($m) => $m->to($email)->subject('Wedding Matching App smoke test'));
 
                 return true;
             });

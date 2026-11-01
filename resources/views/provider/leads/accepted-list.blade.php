@@ -10,7 +10,7 @@
 
         <div class="mb-7">
             <h1 class="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">{{ __('Demandes acceptées') }}</h1>
-            <p class="text-sm text-[#6B665E] mt-1">{{ __("Les coordonnées d'un couple restent affichées :days jours après votre acceptation, puis elles sont masquées.", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
+            <p class="text-sm text-[#6B665E] mt-1">{{ __("Les coordonnées d'un couple restent affichées :days jours après votre acceptation, puis elles sont masquées.", ['days' => (int) config('wedding.privacy.retention_days', 14)]) }}</p>
         </div>
 
         @if ($leads->isEmpty())
@@ -28,7 +28,7 @@
                         $wr = $lead->wedRequest;
                         $anonymized = $lead->isAnonymized();
                         $anonymizeAt = $lead->anonymizeAt();
-                        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr?->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr?->couple_wilaya_code;
+                        $cityLabel = \App\Models\City::where('code', (string) $wr?->couple_city_code)->value('name') ?? $wr?->couple_city_code;
                     @endphp
                     <a href="{{ route('provider.leads.show', $lead->service_uid) }}"
                        class="block bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-5 hover:border-[#C8956C]/50 hover:shadow-md transition-all">
@@ -64,7 +64,7 @@
                                 @endif
                             </p>
                             <p class="flex items-center gap-1.5 text-[#6B665E]">
-                                <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $wilayaLabel }}
+                                <x-z.icon name="location_on" class="text-[#C8956C] text-base" />{{ $cityLabel }}
                             </p>
                             <p class="flex items-center gap-1.5 text-[#6B665E]">
                                 <x-z.icon name="calendar_month" class="text-[#C8956C] text-base" />

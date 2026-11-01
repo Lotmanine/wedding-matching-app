@@ -17,7 +17,7 @@
                 <div class="p-3 rounded-lg bg-[#F7F4F0] border border-[#D4CFC7]/50 text-sm text-[#1A1A1A]">
                     <p>{{ $explanation }}</p>
                     @if (($teamNote ?? '') !== '')
-                        <p class="mt-1 text-[#6B665E]">{{ __('credits.failure_team_note') }} <span dir="auto">{{ $teamNote }}</span></p>
+                        <p class="mt-1 text-[#6B665E]">{{ __('credits.failure_team_note') }} <span>{{ $teamNote }}</span></p>
                     @endif
                 </div>
             @endif

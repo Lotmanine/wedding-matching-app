@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +16,7 @@
         $user = auth()->user();
         $profile = $user?->providerProfile;
         $creditBalance = $profile?->credit_balance ?? 0;
-        $unlockCost = (int) config('zawaj.credits.unlock_cost', 1);
+        $unlockCost = (int) config('wedding.credits.unlock_cost', 1);
         $initials = \Illuminate\Support\Str::of($profile?->business_name ?? $user?->name ?? 'PR')
             ->explode(' ')->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
         $nav = [
@@ -61,7 +61,7 @@
                     <div class="flex items-center gap-3 px-1">
                         <div class="w-9 h-9 rounded-full bg-[#F0D9B5] flex items-center justify-center text-sm font-bold text-[#1A1A1A] shrink-0 uppercase">{{ $initials }}</div>
                         <div class="min-w-0 flex-1">
-                            <p class="text-sm font-semibold text-[#1A1A1A] truncate" dir="auto">{{ $profile?->business_name ?? $user?->name }}</p>
+                            <p class="text-sm font-semibold text-[#1A1A1A] truncate">{{ $profile?->business_name ?? $user?->name }}</p>
                             <button type="submit" class="text-xs text-[#9A958D] hover:text-[#A84936] transition-colors">{{ __('provider.nav.logout') }}</button>
                         </div>
                     </div>

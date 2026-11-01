@@ -42,7 +42,7 @@ class InboundStatusUpdateTest extends TestCase
         return [
             'wa_message_id' => $waMessageId,
             'status'        => $status,
-            'recipient_id'  => '+213555111222',
+            'recipient_id'  => '+12125551222',
             'timestamp'     => '1745596800',
             'error'         => $error,
         ];

@@ -15,7 +15,7 @@ use App\Models\UnlockPack;
 use App\Models\User;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -33,34 +33,34 @@ class JourneyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
     // ─── Helpers ─────────────────────────────────────────────
 
-    private function makeProvider(bool $verified = true, int $credits = 0, string $service = 'photo', string $wilaya = '16'): User
+    private function makeProvider(bool $verified = true, int $credits = 0, string $service = 'photo', string $city = 'NY'): User
     {
         $user = User::factory()->create([
-            'email'    => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@zawajpro.dz',
+            'email'    => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@example.com',
             'role'     => 'provider',
             'status'   => 'active',
-            'phone'    => '+213661234567',
-            'whatsapp' => '+213661234567',
+            'phone'    => '+12125554567',
+            'whatsapp' => '+12125554567',
         ]);
         $user->assignRole('provider');
 
         ProviderProfile::factory()->create([
             'user_id'        => $user->id,
-            'primary_wilaya_code' => $wilaya,
+            'primary_city_code' => $city,
             'verified'       => $verified,
             'verified_at'    => $verified ? now()->subDay() : null,
-            'business_type'  => 'auto-entrepreneur',
+            'business_type'  => 'sole_proprietor',
             'price_tier'     => 'mid',
             'credit_balance' => $credits,
         ]);
         ProviderService::create(['user_id' => $user->id, 'service_type' => $service]);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => $wilaya, 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => $city, 'travel_fee' => 0]);
 
         return $user->fresh(['providerProfile', 'providerServices', 'providerCoverage']);
     }
@@ -80,9 +80,9 @@ class JourneyTest extends TestCase
         // A couple needing only a photographer: guest count is not required.
         Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Yasmine')
-            ->set('couple_whatsapp', '+213770112233')
-            ->set('couple_wilaya_code', '16')
-            ->set('budget_range', 'from_1m_to_2m')
+            ->set('couple_whatsapp', '+12125552233')
+            ->set('couple_city_code', 'NY')
+            ->set('budget_range', 'from_20k_to_35k')
             ->set('services_needed', ['photo'])
             ->set('wedding_date', now()->addMonths(6)->toDateString())
             ->set('acceptTerms', true)
@@ -96,15 +96,15 @@ class JourneyTest extends TestCase
         $this->assertSame(1, ServiceRequest::count());
     }
 
-    public function test_demandeur_traiteur_requires_guest_count(): void
+    public function test_demandeur_catering_requires_guest_count(): void
     {
-        // Selecting traiteur makes guest count required — omitting it fails.
+        // Selecting catering makes guest count required — omitting it fails.
         Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '+213661234567')
-            ->set('couple_wilaya_code', '16')
-            ->set('budget_range', 'from_1m_to_2m')
-            ->set('services_needed', ['traiteur'])
+            ->set('couple_whatsapp', '+12125554567')
+            ->set('couple_city_code', 'NY')
+            ->set('budget_range', 'from_20k_to_35k')
+            ->set('services_needed', ['catering'])
             ->set('wedding_date', now()->addMonths(6)->toDateString())
             ->set('guest_count', '')
             ->set('acceptTerms', true)
@@ -119,9 +119,9 @@ class JourneyTest extends TestCase
     {
         Livewire::test(CoupleRequestForm::class)
             ->set('couple_first_name', 'Amina')
-            ->set('couple_whatsapp', '+213661234567')
-            ->set('couple_wilaya_code', '16')
-            ->set('budget_range', 'from_1m_to_2m')
+            ->set('couple_whatsapp', '+12125554567')
+            ->set('couple_city_code', 'NY')
+            ->set('budget_range', 'from_20k_to_35k')
             ->set('services_needed', ['photo'])
             ->set('wedding_date', null)
             ->set('acceptTerms', true)
@@ -135,7 +135,7 @@ class JourneyTest extends TestCase
     public function test_prestataire_unverified_cannot_buy_credits(): void
     {
         $provider = $this->makeProvider(verified: false);
-        $pack = UnlockPack::factory()->create(['slug' => 'pack-x', 'active' => true, 'unlocks_count' => 6, 'price_dzd' => 7650]);
+        $pack = UnlockPack::factory()->create(['slug' => 'pack-x', 'active' => true, 'unlocks_count' => 6, 'price' => 99]);
         Setting::set('payments.online_enabled', '1', 'bool');
 
         $this->actingAs($provider)
@@ -149,7 +149,7 @@ class JourneyTest extends TestCase
     public function test_prestataire_offline_versement_awaits_admin_then_grants_credits(): void
     {
         $provider = $this->makeProvider(verified: true, credits: 0);
-        $pack = UnlockPack::factory()->create(['slug' => 'pack-ess', 'active' => true, 'unlocks_count' => 6, 'price_dzd' => 7650]);
+        $pack = UnlockPack::factory()->create(['slug' => 'pack-ess', 'active' => true, 'unlocks_count' => 6, 'price' => 99]);
         Setting::set('payments.offline_enabled', '1', 'bool');
 
         // Provider declares an offline versement.
@@ -183,7 +183,7 @@ class JourneyTest extends TestCase
                 'online_enabled'  => '1',
                 'offline_enabled' => '1',
                 'bank_name'       => 'BNA',
-                'account_holder'  => 'Zawaj Pro SARL',
+                'account_holder'  => 'Wedding Matching App SARL',
                 'ccp_number'      => '0012345678',
             ])
             ->assertRedirect();
@@ -195,9 +195,9 @@ class JourneyTest extends TestCase
     public function test_admin_manually_assigns_verified_provider_silently(): void
     {
         $admin = $this->makeAdmin();
-        // Provider covers wilaya 16; request is in wilaya 31 (outside coverage).
-        $provider = $this->makeProvider(verified: true, service: 'photo', wilaya: '16');
-        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '31', 'services_needed' => ['photo']]);
+        // Provider covers city 16; request is in city 31 (outside coverage).
+        $provider = $this->makeProvider(verified: true, service: 'photo', city: 'NY');
+        $wr = WedRequest::factory()->create(['couple_city_code' => 'LA', 'services_needed' => ['photo']]);
         $sr = ServiceRequest::create([
             'wed_request_id' => $wr->id,
             'service_type'   => 'photo',
@@ -223,15 +223,15 @@ class JourneyTest extends TestCase
     public function test_admin_edits_demande_fields(): void
     {
         $admin = $this->makeAdmin();
-        $wr = WedRequest::factory()->create(['couple_first_name' => 'Old', 'couple_wilaya_code' => '16']);
+        $wr = WedRequest::factory()->create(['couple_first_name' => 'Old', 'couple_city_code' => 'NY']);
 
         $this->actingAs($admin)
             ->put(route('admin.requests.update', $wr->wed_uid), [
                 'couple_first_name'  => 'Nouveau',
-                'couple_whatsapp'    => '+213661234567',
-                'couple_wilaya_code' => '16',
+                'couple_whatsapp'    => '+12125554567',
+                'couple_city_code' => 'NY',
                 'wedding_date'       => now()->addMonths(3)->toDateString(),
-                'budget_range'       => 'from_1m_to_2m',
+                'budget_range'       => 'from_20k_to_35k',
                 'status'             => $wr->status?->value ?? 'new',
                 'services_needed'    => (array) $wr->services_needed ?: ['photo'],
             ])

@@ -28,7 +28,7 @@
                             <tr class="hover:bg-[#F7F4F0]/50 transition-colors">
                                 <td class="px-5 py-4"><div class="font-semibold text-[#1A1A1A]">{{ $p->name }}</div><div class="text-xs text-[#9A958D] font-mono">{{ $p->slug }}</div></td>
                                 <td class="px-5 py-4 text-right font-bold text-[#1A1A1A]">{{ $p->unlocks_count }}</td>
-                                <td class="px-5 py-4 text-right text-[#1A1A1A]">{{ number_format($p->price_dzd, 0, ',', ' ') }} DA</td>
+                                <td class="px-5 py-4 text-right text-[#1A1A1A]">{{ \App\Support\Money::format($p->price, \App\Support\Money::currencyForCity(null)) }}</td>
                                 <td class="px-5 py-4 text-center">{{ $p->is_popular ? '⭐' : '' }}</td>
                                 <td class="px-5 py-4 text-center text-[#6B665E]">{{ $p->sort_order }}</td>
                                 <td class="px-5 py-4 text-center">

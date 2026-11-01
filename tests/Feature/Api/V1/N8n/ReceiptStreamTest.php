@@ -40,7 +40,7 @@ class ReceiptStreamTest extends TestCase
         return Purchase::create([
             'user_id'        => $user->id,
             'unlock_pack_id' => $pack->id,
-            'amount_dzd'     => $pack->price_dzd,
+            'amount'     => $pack->price,
             'unlocks_count'  => $pack->unlocks_count,
             'status'         => 'paid',
             'gateway'        => 'chargily',
@@ -79,14 +79,14 @@ class ReceiptStreamTest extends TestCase
 
         $this->patchJson('/api/v1/n8n/receipts/' . $purchase->purchase_uid . '/mark-emailed', [
             'sent_at'         => '2026-04-27T10:00:00+01:00',
-            'smtp_message_id' => '<smtp-msg-id-12345@zawajpro.dz>',
+            'smtp_message_id' => '<smtp-msg-id-12345@example.com>',
         ])
             ->assertOk()
             ->assertJsonPath('data.status', 'marked');
 
         $purchase->refresh();
         $this->assertNotNull($purchase->receipt_emailed_at);
-        $this->assertSame('<smtp-msg-id-12345@zawajpro.dz>', $purchase->smtp_message_id);
+        $this->assertSame('<smtp-msg-id-12345@example.com>', $purchase->smtp_message_id);
     }
 
     public function test_mark_emailed_idempotent(): void

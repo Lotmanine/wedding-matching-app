@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Guest count is now optional on the couple form — it is only asked (and
- * required) when a headcount-dependent service (traiteur / salle) is chosen.
+ * required) when a headcount-dependent service (catering / venue) is chosen.
  * The column must therefore allow NULL. Photographer-only requests, etc.,
  * would otherwise fail the NOT NULL constraint on submit.
  */

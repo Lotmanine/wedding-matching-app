@@ -8,7 +8,7 @@ use App\Models\Setting;
 
 /**
  * Makes the values saved in /admin/settings effective: they override the
- * defaults of config/zawaj.php, so every `config('zawaj.…')` reader follows
+ * defaults of config/wedding.php, so every `config('wedding.…')` reader follows
  * the admin's choice. Applied at boot and before each queued job (workers
  * are long-lived and would otherwise keep the values they started with).
  */
@@ -16,10 +16,10 @@ class SettingsConfig
 {
     /** setting key => config key */
     private const MAP = [
-        'credits.unlock_cost'            => 'zawaj.credits.unlock_cost',
-        'matching.round_timeout_minutes' => 'zawaj.matching.round_timeout_minutes',
-        'matching.providers_per_round'   => 'zawaj.matching.providers_per_round',
-        'anpdp.retention_days'           => 'zawaj.anpdp.retention_days',
+        'credits.unlock_cost'            => 'wedding.credits.unlock_cost',
+        'matching.round_timeout_minutes' => 'wedding.matching.round_timeout_minutes',
+        'matching.providers_per_round'   => 'wedding.matching.providers_per_round',
+        'privacy.retention_days'           => 'wedding.privacy.retention_days',
     ];
 
     public static function apply(): void

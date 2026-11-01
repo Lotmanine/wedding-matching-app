@@ -12,12 +12,12 @@ use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * "Demandes acceptées" tab + ANPDP display anonymization: couple contact
+ * "Demandes acceptées" tab + privacy display anonymization: couple contact
  * details are masked retention_days (14 by default) after acceptance.
  */
 class AcceptedLeadsTest extends TestCase
@@ -27,14 +27,14 @@ class AcceptedLeadsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
     private function makeProvider(): User
     {
         $user = User::factory()->create([
-            'email'  => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@zawajpro.dz',
+            'email'  => 'p' . fake()->unique()->numberBetween(1000, 9999) . '@example.com',
             'role'   => 'provider',
             'status' => 'active',
         ]);
@@ -42,12 +42,12 @@ class AcceptedLeadsTest extends TestCase
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
             'verified_at'         => now()->subDay(),
         ]);
         ProviderService::create(['user_id' => $user->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $user;
     }
@@ -56,8 +56,8 @@ class AcceptedLeadsTest extends TestCase
     {
         $wr = WedRequest::factory()->create([
             'couple_first_name'  => 'Khadidja',
-            'couple_whatsapp'    => '+213661234567',
-            'couple_wilaya_code' => '16',
+            'couple_whatsapp'    => '+12125554567',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ]);
 
@@ -81,7 +81,7 @@ class AcceptedLeadsTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Khadidja')
-            ->assertSee('+213661234567')
+            ->assertSee('+12125554567')
             ->assertSee('Coordonnées affichées jusqu'); // end-of-access notice
     }
 
@@ -96,7 +96,7 @@ class AcceptedLeadsTest extends TestCase
             ->assertSee('Non disponible')
             ->assertSee('Coordonnées masquées')
             ->assertDontSee('Khadidja')
-            ->assertDontSee('+213661234567');
+            ->assertDontSee('+12125554567');
     }
 
     public function test_accepted_tab_lists_only_own_leads_with_masking(): void

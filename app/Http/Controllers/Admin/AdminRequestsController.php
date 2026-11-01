@@ -8,7 +8,8 @@ use App\Enums\RequestStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceRequest;
 use App\Models\WedRequest;
-use App\Models\Wilaya;
+use App\Support\PhoneFormat;
+use App\Models\City;
 use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,22 +26,22 @@ class AdminRequestsController extends Controller
     public function index(Request $request): View
     {
         $status = (string) $request->query('status', 'all');
-        $wilaya = (string) $request->query('wilaya', '');
+        $city = (string) $request->query('city', '');
 
         $query = WedRequest::withTrashed()->with('serviceRequests')->latest('created_at');
 
         if ($status !== 'all') {
             $query->where('status', $status);
         }
-        if ($wilaya !== '') {
-            $query->where('couple_wilaya_code', $wilaya);
+        if ($city !== '') {
+            $query->where('couple_city_code', $city);
         }
 
         $requests = $query->paginate(25)->withQueryString();
-        $wilayas = Wilaya::active()->get();
+        $cities = City::active()->get();
         $statuses = collect(RequestStatus::cases())->map(fn ($c) => $c->value)->all();
 
-        return view('admin.requests.index', compact('requests', 'status', 'wilaya', 'wilayas', 'statuses'));
+        return view('admin.requests.index', compact('requests', 'status', 'city', 'cities', 'statuses'));
     }
 
     public function show(string $wedUid): View
@@ -66,7 +67,7 @@ class AdminRequestsController extends Controller
 
         return view('admin.requests.edit', [
             'wr'            => $wr,
-            'wilayas'      => Wilaya::active()->get(),
+            'cities'      => City::active()->get(),
             'guestCounts'  => \App\Enums\GuestCount::cases(),
             'budgetRanges' => \App\Enums\BudgetRange::cases(),
             'serviceTypes' => \App\Enums\ServiceType::cases(),
@@ -91,11 +92,11 @@ class AdminRequestsController extends Controller
 
         $validated = $request->validate([
             'couple_first_name'  => ['required', 'string', 'min:2', 'max:50'],
-            'couple_whatsapp'    => ['required', 'string', 'regex:/^\+213[567]\d{8}$/'],
-            'couple_wilaya_code' => ['required', 'string', 'in:' . Wilaya::pluck('code')->implode(',')],
-            'couple_commune'     => ['nullable', 'string', 'max:120'],
+            'couple_whatsapp'    => ['required', 'string', 'regex:' . PhoneFormat::REGEX],
+            'couple_city_code' => ['required', 'string', 'in:' . City::pluck('code')->implode(',')],
+            'couple_district'     => ['nullable', 'string', 'max:120'],
             'wedding_date'       => ['nullable', 'date'],
-            'wedding_season'     => ['nullable', 'in:Printemps,Été,Automne,Hiver'],
+            'wedding_season'     => ['nullable', 'in:' . implode(',', WedRequest::SEASONS)],
             'guest_count'        => ['nullable', 'in:' . implode(',', $gcValues)],
             'budget_range'       => ['nullable', 'in:' . implode(',', $brValues)],
             'description'        => ['nullable', 'string', 'max:500'],

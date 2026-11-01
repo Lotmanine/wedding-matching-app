@@ -3,15 +3,15 @@
 @section('content')
     @php
         $wr = $wedRequest;
-        $wilayaLabel = \App\Models\Wilaya::where('code', (string) $wr->couple_wilaya_code)->value(app()->getLocale() === 'ar' ? 'name_ar' : 'name_fr') ?? $wr->couple_wilaya_code;
+        $cityLabel = \App\Models\City::where('code', (string) $wr->couple_city_code)->value('name') ?? $wr->couple_city_code;
         $whatsappDigits = preg_replace('/\D+/', '', (string) $wr->couple_whatsapp);
-        $whatsappLink = config('zawaj.whatsapp.link_prefix') . $whatsappDigits;
+        $whatsappLink = config('wedding.whatsapp.link_prefix') . $whatsappDigits;
         $phoneLink = 'tel:' . preg_replace('/\s+/', '', (string) $wr->couple_whatsapp);
         $anonymized = $lead->isAnonymized();
         $anonymizeAt = $lead->anonymizeAt();
         $serviceIcon = match ($lead->service_type?->value) {
-            'photo' => 'camera_alt', 'video' => 'videocam', 'traiteur' => 'restaurant', 'decoration' => 'local_florist',
-            'patisserie' => 'cake', 'salle' => 'villa', 'musique' => 'music_note', 'machta' => 'face_retouching_natural',
+            'photo' => 'camera_alt', 'video' => 'videocam', 'catering' => 'restaurant', 'decoration' => 'local_florist',
+            'pastry' => 'cake', 'venue' => 'villa', 'music' => 'music_note', 'beauty' => 'face_retouching_natural',
             default => 'category',
         };
     @endphp
@@ -19,7 +19,7 @@
     <div class="max-w-5xl mx-auto">
         <div class="flex items-center gap-3 mb-6">
             <a href="{{ route('provider.leads.index') }}" class="flex items-center gap-2 text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors font-medium">
-                <x-z.icon name="arrow_back" class="text-lg rtl:-scale-x-100" /> {{ __('provider.unlocked.back_to_leads') }}
+                <x-z.icon name="arrow_back" class="text-lg" /> {{ __('provider.unlocked.back_to_leads') }}
             </a>
         </div>
 
@@ -45,7 +45,7 @@
                 <x-z.icon name="visibility_off" class="text-[#9A958D] text-2xl shrink-0" />
                 <div>
                     <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Coordonnées masquées') }}</p>
-                    <p class="text-xs text-[#6B665E]">{{ __("La période d'accès (:days jours après l'acceptation) est terminée. Les coordonnées du couple ne sont plus affichées.", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
+                    <p class="text-xs text-[#6B665E]">{{ __("La période d'accès (:days jours après l'acceptation) est terminée. Les coordonnées du couple ne sont plus affichées.", ['days' => (int) config('wedding.privacy.retention_days', 14)]) }}</p>
                 </div>
             </div>
         @elseif ($anonymizeAt)
@@ -71,7 +71,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                        <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />{{ $wilayaLabel }}{{ $wr->couple_commune ? ' · ' . $wr->communeLabel() : '' }}
+                        <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />{{ $cityLabel }}{{ $wr->couple_district ? ' · ' . $wr->couple_district : '' }}
                     </div>
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
                         <x-z.icon name="calendar_month" class="text-[#C8956C] text-base shrink-0" />{{ $wr->wedding_date ? $wr->wedding_date->isoFormat('LL') : ($wr->seasonLabel() ?? __('Non renseigné')) }}
@@ -80,7 +80,7 @@
                         <x-z.icon name="group" class="text-[#C8956C] text-base shrink-0" />{{ $wr->guest_count?->label() ?? __('Non renseigné') }}
                     </div>
                     <div class="flex items-center gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm text-[#6B665E] font-medium">
-                        <x-z.icon name="payments" class="text-[#C8956C] text-base shrink-0" />{{ $wr->budget_range?->label() ?? __('Non renseigné') }}
+                        <x-z.icon name="payments" class="text-[#C8956C] text-base shrink-0" />{{ $wr->budget_range?->label($wr->currency()) ?? __('Non renseigné') }}
                     </div>
                 </div>
 
@@ -113,22 +113,22 @@
                         <div class="flex items-start gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm">
                             <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />
                             <div>
-                                <span class="text-xs text-[#9A958D] block">{{ __('provider.unlocked.couple_wilaya') }}</span>
-                                <span class="font-medium text-[#1A1A1A]">{{ $wilayaLabel }}</span>
+                                <span class="text-xs text-[#9A958D] block">{{ __('provider.unlocked.couple_city') }}</span>
+                                <span class="font-medium text-[#1A1A1A]">{{ $cityLabel }}</span>
                             </div>
                         </div>
-                        @if ($wr->couple_commune)
+                        @if ($wr->couple_district)
                             <div class="flex items-start gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm">
                                 <x-z.icon name="pin_drop" class="text-[#C8956C] text-base shrink-0" />
                                 <div>
-                                    <span class="text-xs text-[#9A958D] block">{{ __('provider.unlocked.couple_commune') }}</span>
-                                    <span class="font-medium text-[#1A1A1A]">{{ $wr->communeLabel() }}</span>
+                                    <span class="text-xs text-[#9A958D] block">{{ __('provider.unlocked.couple_district') }}</span>
+                                    <span class="font-medium text-[#1A1A1A]">{{ $wr->couple_district }}</span>
                                 </div>
                             </div>
                         @endif
                         <div class="p-4 bg-[#25D366]/10 rounded-xl border border-[#25D366]/30">
                             <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.unlocked.couple_whatsapp') }}</p>
-                            <p class="font-mono font-bold text-[#1A1A1A] select-all"><span dir="ltr">{{ $anonymized ? __('Non disponible') : $wr->couple_whatsapp }}</span></p>
+                            <p class="font-mono font-bold text-[#1A1A1A] select-all"><span>{{ $anonymized ? __('Non disponible') : $wr->couple_whatsapp }}</span></p>
                         </div>
                     </div>
 
@@ -163,7 +163,7 @@
                                 <p class="text-xs mt-0.5">{{ $dispute->decided_at?->diffForHumans() }}</p>
                             @else
                                 <p class="font-semibold">{{ __('Signalement refusé') }}</p>
-                                @if ($dispute->admin_note)<p class="text-xs mt-0.5" dir="auto">{{ $dispute->admin_note }}</p>@endif
+                                @if ($dispute->admin_note)<p class="text-xs mt-0.5">{{ $dispute->admin_note }}</p>@endif
                             @endif
                         </div>
                     @else

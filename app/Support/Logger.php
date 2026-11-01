@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Structured application logger. Writes to the `zawaj_structured` channel if defined,
+ * Structured application logger. Writes to the `app_structured` channel if defined,
  * otherwise falls back to the default log channel. Every entry carries an event name,
  * user_id (if authenticated), environment, and a correlation id when available.
  */
@@ -38,7 +38,7 @@ class Logger
             'request_id'  => request()?->header('X-Request-Id') ?? request()?->header('X-Correlation-Id'),
         ], self::redact($context));
 
-        $channel = config('logging.channels.zawaj_structured') ? Log::channel('zawaj_structured') : Log::channel(config('logging.default'));
+        $channel = config('logging.channels.app_structured') ? Log::channel('app_structured') : Log::channel(config('logging.default'));
         $channel->log($level, $event, $context);
     }
 

@@ -68,16 +68,16 @@
             </nav>
 
             {{-- Récapitulatif live --}}
-            @if ($couple_first_name || $couple_wilaya_code || count($services_needed))
-                @php $wilayaSummary = $couple_wilaya_code ? \App\Models\Wilaya::where('code', $couple_wilaya_code)->first() : null; @endphp
+            @if ($couple_first_name || $couple_city_code || count($services_needed))
+                @php $citySummary = $couple_city_code ? \App\Models\City::where('code', $couple_city_code)->first() : null; @endphp
                 <div class="mt-8 p-4 bg-white rounded-xl border border-[#D4CFC7]/50 shadow-sm">
                     <p class="text-[11px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('form.review_title') }}</p>
                     <div class="space-y-1.5 text-sm">
                         @if ($couple_first_name)
                             <p class="text-[#1A1A1A] font-medium">{{ $couple_first_name }}</p>
                         @endif
-                        @if ($wilayaSummary)
-                            <p class="text-[#6B665E] flex items-center gap-1"><x-z.icon name="location_on" class="text-sm text-[#C8956C]" />{{ app()->getLocale() === 'ar' ? $wilayaSummary->name_ar : $wilayaSummary->name_fr }}</p>
+                        @if ($citySummary)
+                            <p class="text-[#6B665E] flex items-center gap-1"><x-z.icon name="location_on" class="text-sm text-[#C8956C]" />{{ $citySummary->name }}</p>
                         @endif
                         @if (count($services_needed))
                             <p class="text-[#6B665E] flex items-center gap-1"><x-z.icon name="checklist" class="text-sm text-[#C8956C]" />{{ trans_choice('form.services_count', count($services_needed), ['count' => count($services_needed)]) }}</p>
@@ -183,8 +183,8 @@
                                 wire:model="couple_whatsapp"
                                 placeholder="{{ __('form.placeholder_whatsapp') }}"
                                 autocomplete="tel"
-                                dir="ltr"
-                                class="{{ $inputClass }} rtl:text-right"
+                               
+                                class="{{ $inputClass }}"
                                 required
                             />
                             <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_whatsapp') }}</p>
@@ -198,42 +198,42 @@
                 @if ($step === 2)
                     <div class="space-y-6">
                         <div>
-                            <label for="couple_wilaya_code" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_wilaya') }} <span class="text-[#C8956C]">*</span>
+                            <label for="couple_city_code" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
+                                {{ __('form.label_city') }} <span class="text-[#C8956C]">*</span>
                             </label>
                             <select
-                                id="couple_wilaya_code"
-                                wire:model.live="couple_wilaya_code"
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11"
+                                id="couple_city_code"
+                                wire:model.live="couple_city_code"
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] bg-no-repeat pe-11"
                                 required
                             >
-                                <option value="">{{ __('form.placeholder_wilaya') }}</option>
-                                @foreach ($this->wilayas as $w)
-                                    <option value="{{ $w->code }}">{{ $w->code }} · {{ app()->getLocale() === 'ar' ? $w->name_ar : $w->name_fr }}</option>
+                                <option value="">{{ __('form.placeholder_city') }}</option>
+                                @foreach ($this->cities as $w)
+                                    <option value="{{ $w->code }}">{{ $w->code }} · {{ $w->name }}</option>
                                 @endforeach
                             </select>
-                            @error('couple_wilaya_code') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
+                            @error('couple_city_code') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="couple_commune" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_commune') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif)') }}</span>
+                            <label for="couple_district" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
+                                {{ __('form.label_district') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif)') }}</span>
                             </label>
                             <select
-                                id="couple_commune"
-                                wire:model="couple_commune"
-                                @disabled($couple_wilaya_code === '')
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11 disabled:bg-[#F7F4F0] disabled:text-[#9A958D] disabled:cursor-not-allowed"
+                                id="couple_district"
+                                wire:model="couple_district"
+                                @disabled($couple_city_code === '')
+                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] bg-no-repeat pe-11 disabled:bg-[#F7F4F0] disabled:text-[#9A958D] disabled:cursor-not-allowed"
                             >
-                                <option value="">{{ __('form.placeholder_commune') }}</option>
-                                @foreach ($this->availableCommunes as $c)
-                                    <option value="{{ $c->name_fr }}">{{ app()->getLocale() === 'ar' ? $c->name_ar : $c->name_fr }}</option>
+                                <option value="">{{ __('form.placeholder_district') }}</option>
+                                @foreach ($this->availableDistricts as $c)
+                                    <option value="{{ $c->name }}">{{ $c->name }}</option>
                                 @endforeach
                             </select>
-                            @if ($couple_wilaya_code === '')
-                                <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_commune') }}</p>
+                            @if ($couple_city_code === '')
+                                <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_district') }}</p>
                             @endif
-                            @error('couple_commune') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
+                            @error('couple_district') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
                     </div>
                 @endif
@@ -257,7 +257,7 @@
                             @error('wedding_date') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
 
-                        {{-- Guest count only when a headcount-dependent service (traiteur / salle) is chosen --}}
+                        {{-- Guest count only when a headcount-dependent service (catering / venue) is chosen --}}
                         @if ($this->needsGuestCount())
                             <div>
                                 <label for="guest_count" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
@@ -266,7 +266,7 @@
                                 <select
                                     id="guest_count"
                                     wire:model="guest_count"
-                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11"
+                                    class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] bg-no-repeat pe-11"
                                     required
                                 >
                                     <option value="">{{ __('form.placeholder_guest_count') }}</option>
@@ -297,7 +297,7 @@
                                     <label class="group/budget relative block text-start p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 active:scale-[0.98] border-[#D4CFC7] bg-white hover:border-[#C8956C]/50 has-[:checked]:border-[#C8956C] has-[:checked]:bg-[#F0D9B5]/40 has-[:checked]:shadow-sm">
                                         <input type="radio" name="budget_range" wire:model.live="budget_range" value="{{ $b->value }}" class="sr-only" />
                                         <div class="flex items-start justify-between gap-2">
-                                            <p class="font-semibold text-sm text-[#6B665E] group-has-[:checked]/budget:text-[#1A1A1A]">{{ $b->label() }}</p>
+                                            <p class="font-semibold text-sm text-[#6B665E] group-has-[:checked]/budget:text-[#1A1A1A]">{{ $b->label(\App\Support\Money::currencyForCity($couple_city_code ?: null)) }}</p>
                                             <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all border-[#D4CFC7] group-has-[:checked]/budget:border-[#C8956C] group-has-[:checked]/budget:bg-[#C8956C]">
                                                 <x-z.icon name="check" class="text-white text-xs opacity-0 group-has-[:checked]/budget:opacity-100" />
                                             </span>
@@ -360,26 +360,22 @@
                         {{-- Review card --}}
                         @php
                             $guestLabel = $guest_count ? \App\Enums\GuestCount::from($guest_count)->label() : __('form.review_none');
-                            $budgetLabel = $budget_range ? \App\Enums\BudgetRange::from($budget_range)->label() : __('form.review_none');
+                            $budgetLabel = $budget_range ? \App\Enums\BudgetRange::from($budget_range)->label(\App\Support\Money::currencyForCity($couple_city_code ?: null)) : __('form.review_none');
                             $serviceLabels = collect($services_needed)->map(fn ($v) => \App\Enums\ServiceType::from($v)->label())->all();
-                            $wilayaRow = \App\Models\Wilaya::where('code', $couple_wilaya_code)->first();
-                            $isAr = app()->getLocale() === 'ar';
-                            $communeLabel = $isAr && $couple_commune
-                                ? ($this->availableCommunes->firstWhere('name_fr', $couple_commune)?->name_ar ?: $couple_commune)
-                                : $couple_commune;
+                            $cityRow = \App\Models\City::where('code', $couple_city_code)->first();
                         @endphp
                         <section class="rounded-xl bg-[#F7F4F0] border border-[#D4CFC7]/50 p-5 space-y-3 text-sm">
                             <h2 class="font-serif text-lg font-semibold text-[#7A5530]">{{ __('form.review_title') }}</h2>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]" dir="ltr">({{ $couple_whatsapp ?: __('form.review_none') }})</span></div>
-                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ ($isAr ? $wilayaRow?->name_ar : $wilayaRow?->name_fr) ?? __('form.review_none') }}</strong>{{ $couple_commune ? __(', ') . $communeLabel : '' }}</div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]">({{ $couple_whatsapp ?: __('form.review_none') }})</span></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_location') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $cityRow?->name ?? __('form.review_none') }}</strong>{{ $couple_district ? __(', ') . $couple_district : '' }}</div>
                                 <div>
-                                    <span class="text-[#9A958D]">{{ $guest_count ? __('form.review_date_guests') : __('form.review_date') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span>
+                                    <span class="text-[#9A958D]">{{ $guest_count ? __('form.review_date_guests') : __('form.review_date') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span>
                                     @if ($wedding_date)
                                         <strong class="text-[#1A1A1A]">{{ \Illuminate\Support\Carbon::parse($wedding_date)->isoFormat('LL') }}</strong>
                                     @elseif ($wedding_season)
-                                        <strong class="text-[#1A1A1A]">{{ __($wedding_season) }}</strong>
+                                        <strong class="text-[#1A1A1A]">{{ \App\Models\WedRequest::labelForSeason($wedding_season) }}</strong>
                                     @else
                                         <strong class="text-[#1A1A1A]">{{ __('form.review_none') }}</strong>
                                     @endif
@@ -387,10 +383,10 @@
                                         <span class="text-[#6B665E]">· {{ $guestLabel }}</span>
                                     @endif
                                 </div>
-                                <div><span class="text-[#9A958D]">{{ __('form.review_budget') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
-                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_budget') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
+                                <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
                                 @if ($description)
-                                    <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <em class="text-[#6B665E]">« {{ $description }} »</em></div>
+                                    <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_notes') }}{{ app()->getLocale() === 'fr' ? ' :' : ':' }}</span> <em class="text-[#6B665E]">« {{ $description }} »</em></div>
                                 @endif
                             </div>
                         </section>
@@ -431,7 +427,7 @@
                         <x-z.btn type="button" variant="primary" size="lg" wire:click="nextStep" wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="nextStep">{{ __('form.btn_next') }}</span>
                             <span wire:loading wire:target="nextStep">…</span>
-                            <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" wire:loading.remove wire:target="nextStep" />
+                            <x-z.icon name="arrow_forward" class="text-lg" wire:loading.remove wire:target="nextStep" />
                         </x-z.btn>
                     @else
                         <x-z.btn type="submit" variant="accent" size="lg" wire:loading.attr="disabled">

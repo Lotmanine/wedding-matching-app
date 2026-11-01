@@ -17,7 +17,7 @@ use Illuminate\View\View;
  *  - phone number ID, access token, verify token, app secret.
  *
  * The values live in the generic settings table (whatsapp.* keys) via
- * WhatsappSettings and are fetched by the n8n `zawaj-whatsapp` workflow.
+ * WhatsappSettings and are fetched by the n8n `wedding-whatsapp` workflow.
  */
 class AdminWhatsappController extends Controller
 {

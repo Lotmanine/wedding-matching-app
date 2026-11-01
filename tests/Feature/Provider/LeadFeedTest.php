@@ -12,7 +12,7 @@ use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WedRequest;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,34 +23,34 @@ class LeadFeedTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
     private function makeProvider(array $overrides = []): User
     {
         $user = User::factory()->create(array_merge([
-            'email'    => 'pro' . fake()->unique()->numberBetween(1000, 9999) . '@zawajpro.dz',
+            'email'    => 'pro' . fake()->unique()->numberBetween(1000, 9999) . '@example.com',
             'role'     => 'provider',
             'status'   => 'active',
-            'phone'    => '+213661234567',
-            'whatsapp' => '+213661234567',
+            'phone'    => '+12125554567',
+            'whatsapp' => '+12125554567',
         ], $overrides));
         $user->assignRole('provider');
 
         ProviderProfile::factory()->create([
             'user_id'             => $user->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
             'verified_at'         => now()->subDays(10),
             'languages'           => ['fr'],
-            'business_type'       => 'auto-entrepreneur',
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
             'portfolio_images'    => [],
         ]);
 
         ProviderService::create(['user_id' => $user->id, 'service_type' => 'photo']);
-        ProviderCoverage::create(['user_id' => $user->id, 'wilaya_code' => '16', 'travel_fee_dzd' => 0]);
+        ProviderCoverage::create(['user_id' => $user->id, 'city_code' => 'NY', 'travel_fee' => 0]);
 
         return $user->fresh(['providerProfile', 'providerServices', 'providerCoverage']);
     }
@@ -58,7 +58,7 @@ class LeadFeedTest extends TestCase
     private function makeLead(array $wrOverrides = [], array $srOverrides = []): ServiceRequest
     {
         $wr = WedRequest::factory()->create(array_merge([
-            'couple_wilaya_code' => '16',
+            'couple_city_code' => 'NY',
             'services_needed'    => ['photo'],
         ], $wrOverrides));
 
@@ -96,8 +96,8 @@ class LeadFeedTest extends TestCase
     {
         $user = $this->makeProvider(); // offers photo
         $this->makeLead(
-            ['services_needed' => ['traiteur']],
-            ['service_type' => 'traiteur', 'round_1_provider_ids' => [$user->id]]
+            ['services_needed' => ['catering']],
+            ['service_type' => 'catering', 'round_1_provider_ids' => [$user->id]]
         );
 
         $this->actingAs($user)->get('/provider/leads')
@@ -109,7 +109,7 @@ class LeadFeedTest extends TestCase
     {
         $user = $this->makeProvider(); // covers 16 only
         $this->makeLead(
-            ['couple_wilaya_code' => '31'], // Oran
+            ['couple_city_code' => 'LA'], // Los Angeles
             ['round_1_provider_ids' => [$user->id]]
         );
 
@@ -215,7 +215,7 @@ class LeadFeedTest extends TestCase
         $lead = $this->makeLead(
             [
                 'couple_first_name' => 'Fatima',
-                'couple_whatsapp'   => '+213555123456',
+                'couple_whatsapp'   => '+12125553456',
             ],
             ['round_1_provider_ids' => [$user->id]]
         );
@@ -225,7 +225,7 @@ class LeadFeedTest extends TestCase
 
         $body = $response->getContent();
         $this->assertStringNotContainsString('Fatima', $body, 'Full first name must not leak');
-        $this->assertStringNotContainsString('+213555123456', $body, 'WhatsApp must not leak');
+        $this->assertStringNotContainsString('+12125553456', $body, 'WhatsApp must not leak');
         $response->assertSee('F.');
     }
 
@@ -233,7 +233,7 @@ class LeadFeedTest extends TestCase
     {
         $user = $this->makeProvider();
         $lead = $this->makeLead(
-            ['couple_wilaya_code' => '31'], // outside coverage
+            ['couple_city_code' => 'LA'], // outside coverage
             ['round_1_provider_ids' => [999]]
         );
 

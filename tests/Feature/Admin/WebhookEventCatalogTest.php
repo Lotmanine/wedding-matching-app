@@ -35,7 +35,7 @@ class WebhookEventCatalogTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Les événements enrichis consommés par le workflow n8n `zawaj-whatsapp`. */
+    /** Les événements enrichis consommés par le workflow n8n `wedding-whatsapp`. */
     private const WHATSAPP_EVENTS = [
         'round.started',
         'lead.accepted',
@@ -72,7 +72,7 @@ class WebhookEventCatalogTest extends TestCase
         $this->actingAs($this->makeAdmin())
             ->post(route('admin.webhooks.store'), [
                 'name'   => 'n8n WhatsApp',
-                'url'    => 'https://n8n.example.com/webhook/zawaj-whatsapp-outbound',
+                'url'    => 'https://n8n.example.com/webhook/wedding-whatsapp-outbound',
                 'secret' => str_repeat('a', 32),
                 'events' => self::WHATSAPP_EVENTS,
                 'active' => true,
@@ -93,7 +93,7 @@ class WebhookEventCatalogTest extends TestCase
 
         WebhookEndpoint::create([
             'name'   => 'n8n WhatsApp',
-            'url'    => 'https://n8n.example.com/webhook/zawaj-whatsapp-outbound',
+            'url'    => 'https://n8n.example.com/webhook/wedding-whatsapp-outbound',
             'secret' => 'secret',
             'events' => self::WHATSAPP_EVENTS,
             'active' => true,

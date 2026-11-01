@@ -10,16 +10,16 @@ use Illuminate\Support\Facades\Schema;
 
 class AuditIndexes extends Command
 {
-    protected $signature = 'zawaj:audit-indexes';
+    protected $signature = 'wedding:audit-indexes';
 
     protected $description = 'Compare current DB indexes against expected ones; print missing ones.';
 
     /** @var array<string, array<string>> */
     private array $expected = [
-        'users'              => ['email', 'role', 'status', 'wilaya_code'],
-        'wed_requests'       => ['wed_uid', 'status', 'couple_wilaya_code', 'wedding_date', 'expires_at'],
+        'users'              => ['email', 'role', 'status', 'city_code'],
+        'wed_requests'       => ['wed_uid', 'status', 'couple_city_code', 'wedding_date', 'expires_at'],
         'service_requests'   => ['service_uid', 'status', 'service_type', 'current_round', 'round_started_at'],
-        'provider_profiles'  => ['user_id', 'primary_wilaya_code', 'price_tier', 'verified', 'rating_avg'],
+        'provider_profiles'  => ['user_id', 'primary_city_code', 'price_tier', 'verified', 'rating_avg'],
         'credit_ledger'      => ['user_id', 'type'],
         'purchases'          => ['purchase_uid', 'status'],
         'webhook_deliveries' => ['event_type'],

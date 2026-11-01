@@ -15,7 +15,7 @@ use App\Services\Matching\Results\AcceptResult;
 use App\Services\Matching\Results\RefuseResult;
 use App\Support\Whatsapp\SignedButtonPayload;
 use Database\Seeders\RolesSeeder;
-use Database\Seeders\WilayaSeeder;
+use Database\Seeders\CitySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Mockery;
@@ -28,7 +28,7 @@ class InboundButtonTapTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(WilayaSeeder::class);
+        $this->seed(CitySeeder::class);
         $this->seed(RolesSeeder::class);
     }
 
@@ -47,7 +47,7 @@ class InboundButtonTapTest extends TestCase
         return $u;
     }
 
-    private function makeProvider(string $whatsapp = '+213555111222'): User
+    private function makeProvider(string $whatsapp = '+12125551222'): User
     {
         $u = User::factory()->create([
             'role'     => 'provider',
@@ -58,10 +58,10 @@ class InboundButtonTapTest extends TestCase
         $u->assignRole('provider');
         ProviderProfile::factory()->create([
             'user_id'             => $u->id,
-            'primary_wilaya_code' => '16',
+            'primary_city_code' => 'NY',
             'verified'            => true,
-            'languages'           => ['ar'],
-            'business_type'       => 'auto-entrepreneur',
+            'languages'           => ['en'],
+            'business_type'       => 'sole_proprietor',
             'price_tier'          => 'mid',
         ]);
 
@@ -70,7 +70,7 @@ class InboundButtonTapTest extends TestCase
 
     private function makeSr(string $status = 'round1', ?int $unlockedBy = null): ServiceRequest
     {
-        $wr = WedRequest::factory()->create(['couple_wilaya_code' => '16', 'services_needed' => ['photo']]);
+        $wr = WedRequest::factory()->create(['couple_city_code' => 'NY', 'services_needed' => ['photo']]);
 
         return ServiceRequest::create([
             'wed_request_id'      => $wr->id,
@@ -82,13 +82,13 @@ class InboundButtonTapTest extends TestCase
         ]);
     }
 
-    private function payload(string $token, string $waMessageId = 'wamid.HBgM_TEST_001', string $fromPhone = '+213555111222'): array
+    private function payload(string $token, string $waMessageId = 'wamid.HBgM_TEST_001', string $fromPhone = '+12125551222'): array
     {
         return [
             'wa_message_id'  => $waMessageId,
             'from_phone'     => $fromPhone,
             'button_payload' => $token,
-            'button_text'    => 'قبول',
+            'button_text'    => 'Accept',
             'in_reply_to'    => 'wamid.OUTBOUND_001',
             'timestamp'      => '1745596800',
         ];
@@ -201,7 +201,7 @@ class InboundButtonTapTest extends TestCase
     {
         $this->asN8n();
         $sr = $this->makeSr();
-        $p  = $this->makeProvider('+213555111222');
+        $p  = $this->makeProvider('+12125551222');
 
         $token = SignedButtonPayload::encode($sr->service_uid, $p->id, 'accept');
 
@@ -209,7 +209,7 @@ class InboundButtonTapTest extends TestCase
         $mock->shouldNotReceive('accept');
         $this->app->instance(LeadAcceptanceService::class, $mock);
 
-        $this->postJson('/api/v1/whatsapp/inbound/button-tap', $this->payload($token, fromPhone: '+213999000000'))
+        $this->postJson('/api/v1/whatsapp/inbound/button-tap', $this->payload($token, fromPhone: '+12125550000'))
             ->assertOk()
             ->assertJsonPath('data.status', 'rejected')
             ->assertJsonPath('data.reason', 'mismatched_phone');

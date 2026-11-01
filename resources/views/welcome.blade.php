@@ -4,13 +4,13 @@
 @php
     // Figures shown on this page come from the real configuration, never from
     // marketing estimates: what we print here is what the platform does.
-    $roundHours   = max(1, intdiv((int) config('zawaj.matching.round_timeout_minutes', 120), 60));
-    $perRound     = (int) config('zawaj.matching.providers_per_round', 3);
-    $maxRounds    = (int) config('zawaj.matching.max_rounds', 3);
-    $validityDays = (int) config('zawaj.anpdp.retention_days', 14);
-    $isArabic     = app()->getLocale() === 'ar';
-    $openWilayas  = \App\Models\Wilaya::active()->pluck($isArabic ? 'name_ar' : 'name_fr');
-    $openWilayasText = $isArabic ? $openWilayas->join(' و') : $openWilayas->join(', ', ' et ');
+    $roundHours   = max(1, intdiv((int) config('wedding.matching.round_timeout_minutes', 120), 60));
+    $perRound     = (int) config('wedding.matching.providers_per_round', 3);
+    $maxRounds    = (int) config('wedding.matching.max_rounds', 3);
+    $validityDays = (int) config('wedding.privacy.retention_days', 14);
+    $openCities   = \App\Models\City::active()->pluck('name');
+    $openCitiesText = $openCities->join(', ', ' et ');
+    $freeLabel    = \App\Support\Money::format(0, \App\Support\Money::currencyForCity(null));
 
     // ─── Catégories (bento) — adaptées de claude-design/Landing.jsx ───
     // The list follows the active catalog (admin can disable a service): the home
@@ -19,12 +19,12 @@
     $categoryStyles = [
         'photo'      => ['icon' => 'camera_alt',              'gradient' => 'linear-gradient(135deg,#8B6914,#C8956C)', 'image' => asset('images/categories/photographe.jpg'), 'span' => false],
         'video'      => ['icon' => 'videocam',                'gradient' => 'linear-gradient(135deg,#2D3142,#4F5D75)', 'image' => asset('images/categories/videaste.jpg'), 'span' => false],
-        'traiteur'   => ['icon' => 'restaurant',              'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => asset('images/categories/traiteur.jpg'), 'span' => false],
-        'salle'      => ['icon' => 'villa',                   'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => asset('images/categories/salle.jpg'), 'span' => true],
+        'catering'   => ['icon' => 'restaurant',              'gradient' => 'linear-gradient(135deg,#6B3A2A,#A0522D)', 'image' => asset('images/categories/catering.jpg'), 'span' => false],
+        'venue'      => ['icon' => 'villa',                   'gradient' => 'linear-gradient(135deg,#1A2A4A,#2E4070)', 'image' => asset('images/categories/venue.jpg'), 'span' => true],
         'decoration' => ['icon' => 'local_florist',           'gradient' => 'linear-gradient(135deg,#B5707A,#D4919A)', 'image' => asset('images/categories/decoration.jpg'), 'span' => false],
-        'patisserie' => ['icon' => 'cake',                    'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => asset('images/categories/patisserie.jpg'), 'span' => false],
-        'machta'     => ['icon' => 'face_retouching_natural', 'gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => asset('images/categories/machta.jpg'), 'span' => false],
-        'musique'    => ['icon' => 'music_note',              'gradient' => 'linear-gradient(135deg,#3A2A4A,#6A4F85)', 'image' => null, 'span' => false],
+        'pastry' => ['icon' => 'cake',                    'gradient' => 'linear-gradient(135deg,#C49A82,#E8C8B5)', 'image' => asset('images/categories/pastry.jpg'), 'span' => false],
+        'beauty'     => ['icon' => 'face_retouching_natural', 'gradient' => 'linear-gradient(135deg,#5A7A4A,#8AAB6A)', 'image' => asset('images/categories/beauty.jpg'), 'span' => false],
+        'music'    => ['icon' => 'music_note',              'gradient' => 'linear-gradient(135deg,#3A2A4A,#6A4F85)', 'image' => null, 'span' => false],
     ];
     $activeServices = collect(\App\Enums\ServiceType::activeCases())->keyBy(fn ($c) => $c->value);
     $categories = [];
@@ -44,8 +44,8 @@
     $faqs = [
         ['q' => __("L'envoi de la demande est-il gratuit ?"), 'a' => __("Oui. Les prestataires paient pour accéder à vos coordonnées. Vous convenez du prix des services directement avec eux.")],
         ['q' => __("Comment vérifiez-vous les prestataires ?"), 'a' => __("Notre équipe vérifie chaque prestataire avant l'accès aux demandes. Votre demande est envoyée selon le service recherché et la wilaya.")],
-        ['q' => __("Quand un prestataire me contactera-t-il ?"), 'a' => __("Le délai dépend de l'acceptation d'un prestataire. Pour chaque service, nous prévenons jusqu'à :per_round prestataires vérifiés à la fois. Chacun a :hours heures pour répondre. Sans acceptation, nous en prévenons d'autres, :max_rounds tours au maximum. La demande devient ensuite visible par tous les prestataires éligibles de votre wilaya. Elle reste active :days jours : sans acceptation d'ici là, elle expire. Vous suivez l'avancement sur votre page de confirmation.", ['per_round' => $perRound, 'hours' => \App\Support\LocaleCount::hours($roundHours), 'max_rounds' => \App\Support\LocaleCount::rounds($maxRounds), 'days' => \App\Support\LocaleCount::days($validityDays)])],
-        ['q' => __("Qui reçoit mon numéro WhatsApp ?"), 'html' => true, 'a' => __("Pour chaque service, seul le prestataire qui accepte votre demande reçoit votre numéro WhatsApp. Votre demande expire :days jours après son envoi. Un prestataire qui l'accepte garde l'accès à vos coordonnées pendant :days jours après son acceptation. Vos données personnelles sont effacées une fois la demande expirée et cette période terminée. Les durées de conservation sont détaillées dans la :link.", ['days' => \App\Support\LocaleCount::days($validityDays), 'link' => $privacyLink])],
+        ['q' => __("Quand un prestataire me contactera-t-il ?"), 'a' => __("Le délai dépend de l'acceptation d'un prestataire. Pour chaque service, nous prévenons jusqu'à :per_round prestataires vérifiés à la fois. Chacun a :hours heures pour répondre. Sans acceptation, nous en prévenons d'autres, :max_rounds tours au maximum. La demande devient ensuite visible par tous les prestataires éligibles de votre wilaya. Elle reste active :days jours : sans acceptation d'ici là, elle expire. Vous suivez l'avancement sur votre page de confirmation.", ['per_round' => $perRound, 'hours' => $roundHours, 'max_rounds' => $maxRounds, 'days' => $validityDays])],
+        ['q' => __("Qui reçoit mon numéro WhatsApp ?"), 'html' => true, 'a' => __("Pour chaque service, seul le prestataire qui accepte votre demande reçoit votre numéro WhatsApp. Votre demande expire :days jours après son envoi. Un prestataire qui l'accepte garde l'accès à vos coordonnées pendant :days jours après son acceptation. Vos données personnelles sont effacées une fois la demande expirée et cette période terminée. Les durées de conservation sont détaillées dans la :link.", ['days' => $validityDays, 'link' => $privacyLink])],
         ['q' => __("Et si le prestataire ne me convient pas ?"), 'a' => __("Vous êtes libres de refuser et d'envoyer une nouvelle demande gratuitement.")],
     ];
 
@@ -76,7 +76,7 @@
                     <div class="flex flex-col gap-2">
                         <x-z.btn :href="route('couple.request.create')" size="lg" class="shadow-xl shadow-black/10">
                             {{ __('form.nav_cta') }}
-                            <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" />
+                            <x-z.icon name="arrow_forward" class="text-lg" />
                         </x-z.btn>
                         <p class="text-xs text-[#9A958D] text-center">{{ __('form.cta_free_note') }}</p>
                     </div>
@@ -130,7 +130,7 @@
                             <div class="bg-white px-3 py-2.5 flex items-center gap-2 border-t border-[#D4CFC7]/30">
                                 <div class="flex-1 bg-[#F7F4F0] rounded-full h-8"></div>
                                 <div class="w-8 h-8 rounded-full bg-[#1A1A1A] flex items-center justify-center shrink-0">
-                                    <x-z.icon name="send" class="text-white text-sm rtl:-scale-x-100" />
+                                    <x-z.icon name="send" class="text-white text-sm" />
                                 </div>
                             </div>
                         </div>
@@ -147,7 +147,7 @@
     <section class="py-8 bg-white border-y border-[#D4CFC7]/30">
         <div class="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-6 md:gap-10">
             {{-- The two durations are process facts (provider response window, request validity), not a response promise. --}}
-            @foreach ([['0 ' . __('DA'), __('pour les futurs mariés')], [null, __('Disponible à :wilayas', ['wilayas' => $openWilayasText])], [__(':hours h', ['hours' => \App\Support\LocaleCount::hours($roundHours, standalone: true)]), __('Délai de réponse par prestataire')], [__(':days jours', ['days' => \App\Support\LocaleCount::days($validityDays, standalone: true)]), __('Validité de la demande')]] as $stat)
+            @foreach ([[$freeLabel, __('pour les futurs mariés')], [null, __('Disponible à :cities', ['cities' => $openCitiesText])], [__(':hours h', ['hours' => $roundHours]), __('Délai de réponse par prestataire')], [__(':days jours', ['days' => $validityDays]), __('Validité de la demande')]] as $stat)
                 <div class="flex items-center gap-3">
                     @if ($stat[0] === null)
                         <x-z.icon name="location_on" :filled="true" class="text-2xl text-[#C8956C]" />
@@ -222,7 +222,7 @@
                         <h3 class="font-serif text-xl font-bold text-[#1A1A1A]">{{ __('Avec Zawaj Pro') }}</h3>
                     </div>
                     <ul class="space-y-5">
-                        @foreach ([__('Une seule demande, transmise aux prestataires de votre wilaya'), __('Chaque prestataire est vérifié par notre équipe'), __('Chaque prestataire sollicité a :hours heures pour répondre', ['hours' => \App\Support\LocaleCount::hours($roundHours)]), __('Contact direct sur WhatsApp avec le prestataire qui accepte')] as $t)
+                        @foreach ([__('Une seule demande, transmise aux prestataires de votre wilaya'), __('Chaque prestataire est vérifié par notre équipe'), __('Chaque prestataire sollicité a :hours heures pour répondre', ['hours' => $roundHours]), __('Contact direct sur WhatsApp avec le prestataire qui accepte')] as $t)
                             <li class="flex items-start gap-3 text-sm font-semibold text-[#1A1A1A]">
                                 <x-z.icon name="check_circle" :filled="true" class="text-[#C8956C] text-lg shrink-0 mt-0.5" />
                                 {{ $t }}
@@ -301,7 +301,7 @@
                             <x-z.icon name="favorite" :filled="true" class="text-[#C8956C] text-xl" />
                         </div>
                         <div>
-                            <p class="font-serif text-2xl font-bold text-[#1A1A1A] leading-none">0 {{ __('DA') }}</p>
+                            <p class="font-serif text-2xl font-bold text-[#1A1A1A] leading-none">{{ $freeLabel }}</p>
                             <p class="text-xs text-[#9A958D] mt-0.5">{{ __('pour les futurs mariés') }}</p>
                         </div>
                     </div>
@@ -333,7 +333,7 @@
                                 <p class="font-semibold text-[#1A1A1A] mb-0.5">{{ $item['title'] }}</p>
                                 <p class="text-sm text-[#6B665E] leading-relaxed">{{ $item['body'] }}
                                     @if ($item['email'])
-                                        <a href="mailto:{{ $item['email'] }}" dir="ltr" class="font-semibold text-[#1A1A1A] underline">{{ $item['email'] }}</a>
+                                        <a href="mailto:{{ $item['email'] }}" class="font-semibold text-[#1A1A1A] underline">{{ $item['email'] }}</a>
                                     @endif
                                 </p>
                             </div>
@@ -383,7 +383,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-start justify-center gap-4">
                         <div class="flex flex-col gap-2">
                             <x-z.btn :href="route('couple.request.create')" size="lg" variant="accent">
-                                {{ __('form.nav_cta') }} <x-z.icon name="arrow_forward" class="text-lg rtl:-scale-x-100" />
+                                {{ __('form.nav_cta') }} <x-z.icon name="arrow_forward" class="text-lg" />
                             </x-z.btn>
                             <p class="text-xs text-white/50 text-center">{{ __('form.cta_free_note') }}</p>
                         </div>

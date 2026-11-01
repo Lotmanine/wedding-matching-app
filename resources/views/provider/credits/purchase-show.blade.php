@@ -4,7 +4,7 @@
     <div class="max-w-3xl mx-auto">
         <div class="flex items-center gap-3 mb-6">
             <a href="{{ route('provider.credits.history') }}" class="flex items-center gap-2 text-sm text-[#6B665E] hover:text-[#1A1A1A] transition-colors font-medium">
-                <x-z.icon name="arrow_back" class="text-lg rtl:-scale-x-100" /> {{ __('credits.history_title') }}
+                <x-z.icon name="arrow_back" class="text-lg" /> {{ __('credits.history_title') }}
             </a>
         </div>
 
@@ -47,10 +47,10 @@
                     {{-- A versement has no Chargily reference: show the reference the provider declared --}}
                     @if ($purchase->payment_method === \App\Services\Payments\PaymentSettings::METHOD_OFFLINE)
                         <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.transfer_ref') }}</dt>
-                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span dir="ltr">{{ $purchase->payment_reference ?? __('Non renseigné') }}</span></dd>
+                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span>{{ $purchase->payment_reference ?? __('Non renseigné') }}</span></dd>
                     @else
                         <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __('credits.receipt.gateway_ref') }}</dt>
-                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span dir="ltr">{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Non renseigné') }}</span></dd>
+                        <dd class="mt-1 font-mono text-[#6B665E] text-xs"><span>{{ $purchase->gateway_payment_id ?? $purchase->gateway_checkout_id ?? __('Non renseigné') }}</span></dd>
                     @endif
                 </div>
                 @if ($purchase->status === 'pending_verification')
@@ -62,7 +62,7 @@
                     <dt class="text-[10px] font-bold uppercase tracking-widest text-[#9A958D]">{{ __((string) $purchase->unlockPack?->name) }}</dt>
                     <dd class="mt-2 flex items-baseline justify-between">
                         <span class="font-serif text-lg font-semibold text-[#1A1A1A]">{{ trans_choice('credits.count', (int) $purchase->unlocks_count, ['count' => (int) $purchase->unlocks_count]) }}</span>
-                        <span class="font-serif text-2xl font-bold text-[#1A1A1A]"><bdi>{{ number_format($purchase->amount_dzd, 0, ',', "\u{00A0}") }}</bdi> {{ __('DA') }}</span>
+                        <span class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ \App\Support\Money::format($purchase->amount, $purchase->currency) }}</span>
                     </dd>
                 </div>
             </dl>

@@ -21,12 +21,12 @@ class ChargilyClient
         $purchase->loadMissing(['user', 'unlockPack']);
 
         $payload = [
-            'amount'            => (int) $purchase->amount_dzd,
+            'amount'            => (int) $purchase->amount,
             'currency'          => 'dzd',
-            'success_url'       => config('zawaj.chargily.success_url') . '?purchase=' . $purchase->purchase_uid,
-            'failure_url'       => config('zawaj.chargily.failure_url') . '?purchase=' . $purchase->purchase_uid,
-            'webhook_endpoint'  => config('zawaj.chargily.webhook_url'),
-            'description'       => 'Zawaj Pro — ' . ($purchase->unlockPack?->name ?? 'Pack de crédits'),
+            'success_url'       => config('wedding.chargily.success_url') . '?purchase=' . $purchase->purchase_uid,
+            'failure_url'       => config('wedding.chargily.failure_url') . '?purchase=' . $purchase->purchase_uid,
+            'webhook_endpoint'  => config('wedding.chargily.webhook_url'),
+            'description'       => 'Wedding Matching App — ' . ($purchase->unlockPack?->name ?? 'Pack de crédits'),
             'metadata'          => [
                 'purchase_uid' => $purchase->purchase_uid,
                 'user_id'      => $purchase->user_id,

@@ -34,12 +34,12 @@
 
 @if ($href)
     <a href="{{ $href }}" {{ $attributes->class($classes) }}>
-        @if ($icon)<span class="material-symbols-outlined text-[1.1em] leading-none {{ in_array($icon, ['arrow_forward', 'arrow_back', 'chevron_right', 'chevron_left', 'login', 'logout'], true) ? 'rtl:-scale-x-100' : '' }}" aria-hidden="true">{{ $icon }}</span>@endif
+        @if ($icon)<span class="material-symbols-outlined text-[1.1em] leading-none" aria-hidden="true">{{ $icon }}</span>@endif
         {{ $slot }}
     </a>
 @else
     <button type="{{ $type }}" {{ $attributes->class($classes) }}>
-        @if ($icon)<span class="material-symbols-outlined text-[1.1em] leading-none {{ in_array($icon, ['arrow_forward', 'arrow_back', 'chevron_right', 'chevron_left', 'login', 'logout'], true) ? 'rtl:-scale-x-100' : '' }}" aria-hidden="true">{{ $icon }}</span>@endif
+        @if ($icon)<span class="material-symbols-outlined text-[1.1em] leading-none" aria-hidden="true">{{ $icon }}</span>@endif
         {{ $slot }}
     </button>
 @endif

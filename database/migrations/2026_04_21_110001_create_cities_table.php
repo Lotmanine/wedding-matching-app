@@ -9,21 +9,21 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('wilayas', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->unsignedTinyInteger('id')->primary();
             $table->string('code', 2)->unique();
-            $table->string('name_fr', 100);
-            $table->string('name_ar', 100);
+            $table->string('country', 2);
+            $table->string('name', 100);
             $table->string('region', 30)->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
 
-            $table->index('name_fr');
+            $table->index('name');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('wilayas');
+        Schema::dropIfExists('cities');
     }
 };
