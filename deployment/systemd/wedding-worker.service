@@ -1,5 +1,5 @@
 [Unit]
-Description=Zawaj Pro Queue Worker
+Description=Wedding Matching App Queue Worker
 After=network.target mysql.service
 
 [Service]

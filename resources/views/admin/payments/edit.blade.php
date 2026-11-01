@@ -76,9 +76,9 @@
                     $fields = [
                         'bank_name'      => [__('Bank'), 'text', __('E.g. Example Bank')],
                         'account_holder' => [__('Account holder'), 'text', __('E.g. Example Weddings LLC')],
-                        'rib'            => [__('Account number'), 'text', __('Account number')],
-                        'ccp_number'     => [__('Second account number'), 'text', __('Second account number')],
-                        'ccp_key'        => [__('Second account key'), 'text', __('Key')],
+                        'account_number'            => [__('Account number'), 'text', __('Account number')],
+                        'secondary_account_number'     => [__('Second account number'), 'text', __('Second account number')],
+                        'secondary_account_key'        => [__('Second account key'), 'text', __('Key')],
                     ];
                 @endphp
 

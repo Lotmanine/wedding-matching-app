@@ -15,12 +15,12 @@
         // [label, value] pairs: two rows can share a label. The second account
         // number comes from the older number + key fields; its row stays hidden
         // when they are empty.
-        $legacyAccount = trim((string) ($offlineDetails['ccp_number'] ?? ''));
+        $legacyAccount = trim((string) ($offlineDetails['secondary_account_number'] ?? ''));
         $paymentRows = array_filter([
             [__('Bank'), $offlineDetails['bank_name'] ?? ''],
             [__('Account holder'), $offlineDetails['account_holder'] ?? ''],
-            [__('Account number'), $offlineDetails['rib'] ?? ''],
-            [__('Account number'), $legacyAccount === '' ? '' : trim($legacyAccount . ' ' . ($offlineDetails['ccp_key'] ?? ''))],
+            [__('Account number'), $offlineDetails['account_number'] ?? ''],
+            [__('Account number'), $legacyAccount === '' ? '' : trim($legacyAccount . ' ' . ($offlineDetails['secondary_account_key'] ?? ''))],
         ], fn (array $row) => $row[1] !== '');
     @endphp
 

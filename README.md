@@ -1,59 +1,79 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Wedding Matching App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A two-sided wedding-services marketplace: a couple submits one request, and the platform finds local providers for each service through timed matching rounds. Providers pay with credits to unlock a couple's contact details.
 
-## About Laravel
+This is a **portfolio project and a public demo**. The cities (USA and France), businesses, couples and phone numbers are fictional, and the demo checkout takes no real payment.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Live demo:** <https://wedding-app.oldev.site>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The app is available in English and French. Demo data is restored every day.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Demo logins
 
-## Learning Laravel
+The demo accounts are shown on the login pages (`/provider/login` and `/admin/login`), with a button that fills in the form.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Account | E-mail | Password |
+|---------|--------|----------|
+| Provider (New York) | `demo.provider@example.com` | `demo1234` |
+| Provider (Paris) | `demo.prestataire@example.com` | `demo1234` |
+| Administrator | `demo.admin@example.com` | `demo1234` |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## How the matching works
 
-## Laravel Sponsors
+A wedding request is split into one service request per service (photo, catering, venue...). For each one, Laravel exposes the eligible providers, and an n8n workflow asks Claude to rank them. The top providers (3 by default) are notified on WhatsApp and have 120 minutes to respond. The first to accept pays one credit and gets the couple's contact details. If nobody accepts, the next round starts with different providers. After 3 rounds, the request opens to every eligible provider on the marketplace.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```mermaid
+flowchart LR
+    A[Couple submits a request] --> B[One service request per service]
+    B --> C[n8n and Claude rank eligible providers]
+    C --> D[Round: providers notified on WhatsApp]
+    D -->|First accept, 1 credit| E[Contact details unlocked]
+    D -->|Round times out| F{Round 3 done?}
+    F -->|No| C
+    F -->|Yes| G[Open marketplace]
+    G --> E
+```
 
-### Premium Partners
+## Stack
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- PHP 8.2+, Laravel 12, Livewire 4, Tailwind CSS, Vite
+- MySQL or MariaDB, with Redis for cache and sessions in production
+- Laravel Sanctum for API tokens, Spatie Permission for roles
+- n8n for the automations, the Claude API for ranking, the WhatsApp Cloud API for messages
+- Chargily Pay for online payments outside demo mode
+- Docker image and Coolify deployment files in `deployment/`
 
-## Contributing
+## Notable engineering
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Round state machine.** `RoundStateMachine` drives each service request through `new`, `round1` to `round3`, `matching` between rounds, and `open_marketplace`, ending in `accepted`, `expired` or `deleted`. The scheduled `wedding:advance-rounds` command closes timed-out rounds every 5 minutes, independently of n8n.
+- **Credits ledger with transactions.** `CreditsService` locks the provider's row inside a database transaction and writes each movement to `credit_ledger` with the resulting balance. Accepting a lead locks the service request too, so only one provider can win it.
+- **Signed webhooks with queued retries.** Domain events reach n8n through queued jobs, signed with HMAC-SHA256. A delivery gets up to 6 tries with exponential backoff, is logged in `webhook_deliveries`, and can be replayed from the admin area or the command line.
+- **Sanctum API for n8n.** n8n reads candidates and drives rounds through a versioned `/api/v1` API, protected by a token ability and rate limits.
+- **EN/FR.** The language switch covers the public site, provider area and back office. Prices follow the city: EUR in France, USD in the USA.
+- **Structured logging.** `App\Support\Logger` writes JSON events to a dedicated channel and redacts common personal fields.
+- **Tests.** 299+ PHPUnit tests cover matching, credits, webhooks, the API, the admin area and demo mode.
 
-## Code of Conduct
+## Run locally
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+You need PHP 8.2+, Composer, Node.js and a MySQL or MariaDB database named `wedding_app` (see `.env.example`).
 
-## Security Vulnerabilities
+```bash
+composer setup   # installs dependencies, creates .env and the app key, migrates, builds assets
+composer dev     # server, queue listener, log viewer and Vite
+composer test    # full test suite (in-memory SQLite)
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+To load the demo data, set `WEDDING_DEMO_MODE=true` in `.env`, then rebuild the database. This erases its current content.
 
-## License
+```bash
+php artisan migrate:fresh --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Demo mode loads the sample accounts and requests, shows the logins on the login pages, and replaces the payment gateway with a test checkout that grants credits immediately. Without it, the seeders load local development data and an `admin@example.com` / `password` administrator.
+
+## More documentation
+
+- [`docs/API.md`](docs/API.md) and [`docs/API_WEBHOOK_PAYLOADS.md`](docs/API_WEBHOOK_PAYLOADS.md): API and webhook contracts
+- [`docs/OPERATIONS.md`](docs/OPERATIONS.md), [`docs/SECURITY.md`](docs/SECURITY.md), [`docs/SCALING.md`](docs/SCALING.md): running the app
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) and [`deployment/RUNBOOK.md`](deployment/RUNBOOK.md): deployment
+- [`n8n/README.md`](n8n/README.md): the n8n workflows

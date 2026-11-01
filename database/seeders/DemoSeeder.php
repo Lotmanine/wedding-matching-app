@@ -25,7 +25,8 @@ use Illuminate\Support\Facades\Hash;
 /**
  * Sample data for the public demo: the accounts shown on the login pages, three
  * fictional providers per city, and requests in every state of the lifecycle.
- * All names, numbers and businesses are invented.
+ * All names, numbers and businesses are invented. Runs in production, where the
+ * dev dependencies are absent: no factories or Faker here.
  */
 class DemoSeeder extends Seeder
 {
@@ -134,19 +135,24 @@ class DemoSeeder extends Seeder
         ]);
         $user->syncRoles(['provider']);
 
-        ProviderProfile::factory()->create([
+        ProviderProfile::create([
             'user_id'              => $user->id,
             'business_name'        => $name,
             'business_description' => 'Fictional business created for the demo.',
+            'business_type'        => 'llc',
             'primary_city_code'    => $city,
+            'price_tier'           => 'mid',
+            'min_price'            => 1500,
+            'max_price'            => 6000,
+            'years_experience'     => 6,
+            'rating_avg'           => 4.6,
+            'rating_count'         => 12,
             'languages'            => $languages,
             'verified'             => true,
             'verified_at'          => now()->subDays(30),
             'portfolio_url'        => 'https://example.com/portfolio',
-            'portfolio_images'     => null,
             'onboarding_completed' => true,
             'credit_balance'       => $credits,
-            'suspended_at'         => null,
         ]);
 
         foreach ($services as $service) {
@@ -172,7 +178,9 @@ class DemoSeeder extends Seeder
     private function seedRequests(User $provider, string $city, array $rows): void
     {
         foreach ($rows as $index => [$firstName, $district, $service, $budget, $guests, $description, $days]) {
-            $wr = WedRequest::factory()->create([
+            $wr = WedRequest::create([
+                'status'            => RequestStatus::New->value,
+                'source'            => 'form',
                 'couple_first_name' => $firstName,
                 'couple_whatsapp'   => $city === 'PA' ? '+3361234' . (2000 + $index) : '+1212555' . (2000 + $index),
                 'couple_city_code'  => $city,
@@ -183,8 +191,6 @@ class DemoSeeder extends Seeder
                 'budget_range'      => $budget->value,
                 'description'       => $description,
                 'services_needed'   => [$service],
-                'ip_address'        => null,
-                'user_agent'        => null,
             ]);
 
             $attributes = ['wed_request_id' => $wr->id, 'service_type' => $service];

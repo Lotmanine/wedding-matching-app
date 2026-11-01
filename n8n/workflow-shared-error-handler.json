@@ -1,0 +1,80 @@
+{
+    "name": "wedding-error-handler",
+    "nodes": [
+        {
+            "parameters": [],
+            "id": "a9b1c234-5678-4e01-9abc-000000000001",
+            "name": "Error Trigger",
+            "type": "n8n-nodes-base.errorTrigger",
+            "typeVersion": 1,
+            "position": [
+                260,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/webhooks/n8n/error",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-Wedding-Token",
+                            "value": "={{ $env.WEDDING_WEBHOOK_SECRET }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ workflow: $json.workflow.name, execution_id: String($json.execution.id), error_message: ($json.execution.error && $json.execution.error.message) || 'unknown', failed_node: $json.execution.lastNodeExecuted || 'unknown', stack: String(($json.execution.error && $json.execution.error.stack) || '').slice(0, 4000), timestamp: $now.toISO() }) }}",
+                "options": {
+                    "timeout": 10000
+                }
+            },
+            "id": "a9b1c234-5678-4e01-9abc-000000000002",
+            "name": "Report to Laravel",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                560,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Error Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Report to Laravel",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1",
+        "timezone": "UTC"
+    },
+    "tags": [
+        {
+            "name": "wedding"
+        },
+        {
+            "name": "ops"
+        }
+    ],
+    "versionId": "1"
+}

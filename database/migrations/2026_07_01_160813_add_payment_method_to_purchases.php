@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
  * Adds offline-payment support to purchases.
  *
  * - payment_method: 'online_chargily' (default, existing flow) or
- *   'offline_versement' (bank transfer / CCP the provider declares).
+ *   'offline_transfer' (bank transfer / CCP the provider declares).
  * - payment_reference: the transfer reference the provider enters so an
  *   admin can reconcile the versement against their bank/CCP statement.
  * - proof_path: optional uploaded proof (receipt photo/PDF).

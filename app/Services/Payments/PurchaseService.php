@@ -48,7 +48,7 @@ class PurchaseService
             'unlocks_count'     => (int) $pack->unlocks_count,
             'status'            => 'pending_verification',
             'gateway'           => 'offline',
-            'payment_method'    => 'offline_versement',
+            'payment_method'    => 'offline_transfer',
             'payment_reference' => $reference,
             'proof_path'        => $proofPath,
         ]);

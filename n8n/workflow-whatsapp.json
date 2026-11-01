@@ -1,0 +1,1083 @@
+{
+    "name": "wedding-whatsapp",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "wedding-whatsapp-outbound",
+                "responseMode": "onReceived",
+                "responseCode": 200,
+                "options": {
+                    "rawBody": true
+                }
+            },
+            "id": "0711661c-0000-4000-8000-b3c09c4ea939",
+            "name": "Webhook Outbound",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -1100,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "action": "hmac",
+                "binaryData": true,
+                "binaryPropertyName": "data",
+                "type": "SHA256",
+                "dataPropertyName": "expected_signature",
+                "secret": "={{ $env.WEDDING_WEBHOOK_SECRET }}",
+                "encoding": "hex"
+            },
+            "id": "d47a1e58-0000-4000-8000-92c6b03f7a14",
+            "name": "Compute HMAC",
+            "type": "n8n-nodes-base.crypto",
+            "typeVersion": 1,
+            "position": [
+                -1040,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// The expected signature comes from the Compute HMAC node (Crypto) over the RAW\n// request body: the crypto module is not allowed in Code nodes (n8n 2.x task\n// runners), and re-serialising the JSON would not give back the signed bytes.\nconst req = $input.first().json;\nconst headers = req.headers || {};\nconst received = String(headers['x-wedding-signature'] || '').trim().toLowerCase();\nconst expected = String(req.expected_signature || '').toLowerCase();\n\n// Constant-time comparison, no dependency.\nlet diff = received.length ^ expected.length;\nfor (let i = 0; i < expected.length; i++) {\n  diff |= (received.charCodeAt(i) || 0) ^ expected.charCodeAt(i);\n}\nif (!expected || diff !== 0) { throw new Error('Invalid X-Wedding-Signature'); }\n\nreturn [{ json: typeof req.body === 'string' ? JSON.parse(req.body) : req.body }];"
+            },
+            "id": "3cb26cec-0000-4000-8000-21766d193a50",
+            "name": "Verify HMAC",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -880,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/n8n/whatsapp-config",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "id": "8e4b2f61-0000-4000-8000-a17c5d903b62",
+            "name": "Get WA Config (Outbound)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -880,
+                80
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// The Meta configuration is served by Laravel (/admin/whatsapp). While WhatsApp\n// is disabled or keys are missing, stop here without error: nothing is sent.\nconst cfg = ($input.first().json || {}).data || {};\nif (!cfg.enabled) { return []; }\n\n// The HTTP node replaced the item: restart from the verified webhook.\nreturn $('Verify HMAC').all();"
+            },
+            "id": "5d1c7a20-0000-4000-8000-3f9a61c2e7b4",
+            "name": "Gate WhatsApp Enabled",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -660,
+                80
+            ]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.event }}",
+                                        "rightValue": "round.started",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "round_started"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.event }}",
+                                        "rightValue": "lead.accepted",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "lead_accepted"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.event }}",
+                                        "rightValue": "lead.opened_to_marketplace",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "marketplace"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "fd92d0b4-0000-4000-8000-f57261ba00bb",
+            "name": "Event Router",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3.2,
+            "position": [
+                -660,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const out = [];\nfor (const it of $input.all()) {\n  const p = it.json.data || {};\n  for (const r of (p.recipients || [])) {\n    if (!r.phone_e164) continue;\n    out.push({ json: {\n      event: it.json.event,\n      service_request_uid: p.service_request_id,\n      template_intent: p.template_intent || 'round_teaser',\n      role: 'provider',\n      provider_id: r.provider_id,\n      to_phone: r.phone_e164,\n      lang: r.preferred_language || 'en',\n      vars: {\n        couple_first_name: (p.couple || {}).first_name,\n        city:              (p.couple || {}).city,\n        service_type:      (p.service || {}).type,\n        budget_hint:       (p.service || {}).budget_hint,\n        event_date:        (p.service || {}).event_date,\n        expires_at:        p.expires_at,\n      },\n      buttons: r.buttons || [],\n    } });\n  }\n}\nreturn out;"
+            },
+            "id": "a4b14967-0000-4000-8000-580d5c69d9a9",
+            "name": "Fan Round Recipients",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -440,
+                60
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const out = [];\nfor (const it of $input.all()) {\n  const p = it.json.data || {};\n  const w = p.winner || {};\n  const c = p.couple || {};\n  const s = p.service || {};\n\n  if (w.phone_e164) {\n    out.push({ json: {\n      event: it.json.event,\n      service_request_uid: p.service_request_id,\n      template_intent: 'winner_confirmation_provider',\n      role: 'provider',\n      provider_id: w.provider_id,\n      to_phone: w.phone_e164,\n      lang: w.preferred_language || 'ar',\n      vars: {\n        couple_first_name: c.first_name,\n        couple_phone:      c.phone_e164,\n        service_type:      s.type,\n        event_date:        s.event_date,\n      },\n      buttons: [],\n    } });\n  }\n\n  if (c.phone_e164) {\n    out.push({ json: {\n      event: it.json.event,\n      service_request_uid: p.service_request_id,\n      template_intent: 'winner_confirmation_couple',\n      role: 'couple',\n      provider_id: null,\n      to_phone: c.phone_e164,\n      lang: c.preferred_language || 'fr',\n      vars: {\n        provider_business_name: w.business_name,\n        provider_phone:         w.phone_e164,\n        service_type:           s.type,\n      },\n      buttons: [],\n    } });\n  }\n}\nreturn out;"
+            },
+            "id": "88a69035-0000-4000-8000-82c2f11e1038",
+            "name": "Fan Winner + Couple",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -440,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const out = [];\nfor (const it of $input.all()) {\n  const p = it.json.data || {};\n  for (const r of (p.recipients || [])) {\n    if (!r.phone_e164) continue;\n    out.push({ json: {\n      event: it.json.event,\n      service_request_uid: p.service_request_id,\n      template_intent: p.template_intent || 'marketplace_broadcast',\n      role: 'provider',\n      provider_id: r.provider_id,\n      to_phone: r.phone_e164,\n      lang: r.preferred_language || 'en',\n      vars: {\n        couple_first_name: (p.couple || {}).first_name,\n        city:              (p.couple || {}).city,\n        service_type:      (p.service || {}).type,\n        budget_hint:       (p.service || {}).budget_hint,\n      },\n      buttons: r.buttons || [],\n    } });\n  }\n}\nreturn out;"
+            },
+            "id": "0987c59b-0000-4000-8000-26fdb3510a6c",
+            "name": "Fan Marketplace Recipients",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -440,
+                460
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const TEMPLATES = {\n  round_teaser:                 { name: 'round_teaser_v1',                 has_buttons: true  },\n  winner_confirmation_provider: { name: 'winner_confirmation_provider_v1', has_buttons: false },\n  winner_confirmation_couple:   { name: 'winner_confirmation_couple_v1',   has_buttons: false },\n  marketplace_broadcast:        { name: 'marketplace_broadcast_v1',        has_buttons: true  },\n};\n\n// The ORDER must match the {{1}}, {{2}}… of the Meta-approved template.\nconst BODY_PARAMS = {\n  round_teaser:                 ['couple_first_name', 'city', 'service_type', 'budget_hint', 'expires_at'],\n  winner_confirmation_provider: ['couple_first_name', 'couple_phone', 'service_type', 'event_date'],\n  winner_confirmation_couple:   ['provider_business_name', 'provider_phone', 'service_type'],\n  marketplace_broadcast:        ['couple_first_name', 'city', 'service_type', 'budget_hint'],\n};\n\n// Laravel sends raw values. They are formatted here, in the recipient's language.\nconst SERVICE_LABELS = {\n  photo:      { en: 'Photographer',     fr: 'Photographe' },\n  video:      { en: 'Videographer',     fr: 'Vidéaste' },\n  catering:   { en: 'Catering',         fr: 'Traiteur' },\n  decoration: { en: 'Decoration',       fr: 'Décoration' },\n  pastry:     { en: 'Cakes & pastries', fr: 'Gâteaux et pâtisseries' },\n  venue:      { en: 'Wedding venue',    fr: 'Salle de réception' },\n  music:      { en: 'Musicians & DJ',   fr: 'Musiciens et DJ' },\n  beauty:     { en: 'Hair & makeup',    fr: 'Coiffure et maquillage' },\n};\n\nconst lang = $json.lang === 'fr' ? 'fr' : 'en';\n\nconst FORMAT = {\n  service_type: v => (SERVICE_LABELS[v] || {})[lang] || v,\n  // 15000 → 15,000 / 15 000 (the template adds the currency).\n  budget_hint: v => Number(v).toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-US'),\n  // 2027-06-15 → 06/15/2027 or 15/06/2027\n  event_date: v => {\n    const m = /^(\\d{4})-(\\d{2})-(\\d{2})/.exec(String(v));\n    if (!m) return String(v);\n    return lang === 'fr' ? `${m[3]}/${m[2]}/${m[1]}` : `${m[2]}/${m[3]}/${m[1]}`;\n  },\n  // The time is read as sent by Laravel, without conversion.\n  expires_at: v => {\n    const m = /^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})/.exec(String(v));\n    if (!m) return String(v);\n    return lang === 'fr' ? `${m[3]}/${m[2]} à ${m[4]}:${m[5]}` : `${m[2]}/${m[3]} at ${m[4]}:${m[5]}`;\n  },\n};\n\nconst i = $json;\nconst tpl = TEMPLATES[i.template_intent];\nif (!tpl) { throw new Error('Unknown template_intent: ' + i.template_intent); }\n\n// Meta rejects empty parameters: send a dash rather than lose the message.\nconst components = [{\n  type: 'body',\n  parameters: BODY_PARAMS[i.template_intent].map(k => {\n    const v = (i.vars || {})[k];\n    if (v === null || v === undefined || v === '') { return { type: 'text', text: '-' }; }\n    return { type: 'text', text: FORMAT[k] ? FORMAT[k](v) : String(v) };\n  }),\n}];\n\nif (tpl.has_buttons && Array.isArray(i.buttons)) {\n  i.buttons.forEach((b, idx) => {\n    components.push({\n      type: 'button',\n      sub_type: 'quick_reply',\n      index: String(idx),\n      // b.id is a token encrypted by Laravel: n8n passes it through unchanged.\n      parameters: [{ type: 'payload', payload: b.id }],\n    });\n  });\n}\n\nreturn {\n  json: {\n    ...i,\n    meta_body: {\n      messaging_product: 'whatsapp',\n      recipient_type: 'individual',\n      to: String(i.to_phone || '').replace(/^\\+/, ''),\n      type: 'template',\n      template: {\n        name: tpl.name,\n        language: { code: lang },\n        components,\n      },\n    },\n  },\n};",
+                "mode": "runOnceForEachItem"
+            },
+            "id": "b3c923de-0000-4000-8000-52e7d508d951",
+            "name": "Map to Meta Template",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -220,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v21.0/{{ $('Get WA Config (Outbound)').first().json.data.phone_number_id }}/messages",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $('Get WA Config (Outbound)').first().json.data.access_token }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json.meta_body) }}",
+                "options": {
+                    "timeout": 30000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "b4f0fb5c-0000-4000-8000-92477d595daf",
+            "name": "WhatsApp Send (Meta)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                0,
+                260
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// The HTTP node REPLACES the item: read the source from Map to Meta Template\n// and take only the wamid or the error from the response.\nconst src  = $('Map to Meta Template').item.json;\nconst resp = $json || {};\n\nconst wamid = (resp.messages && resp.messages[0] && resp.messages[0].id) || null;\nconst err = resp.error\n  ? `${resp.error.code || 'error'}: ${String(resp.error.message || '').slice(0, 400)}`\n  : null;\n\nreturn {\n  json: {\n    event:                src.event,\n    service_request_id:   src.service_request_uid,\n    template_intent:      src.template_intent,\n    role:                 src.role,\n    provider_id:          src.provider_id,\n    recipient_phone_e164: src.to_phone,\n    wa_message_id:        wamid,\n    status:               wamid ? 'sent' : 'failed',\n    error:                wamid ? null : (err || 'unknown Meta error'),\n  },\n};",
+                "mode": "runOnceForEachItem"
+            },
+            "id": "0576969e-0000-4000-8000-86a700357047",
+            "name": "Normalize Result",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                220,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// Groups results in batches of 100 at most: the Laravel endpoint validates\n// `results` at 200 and a marketplace broadcast can exceed that.\nconst CHUNK = 100;\nconst rows = $input.all().map(i => i.json);\nif (!rows.length) { return []; }\n\nconst out = [];\nfor (let i = 0; i < rows.length; i += CHUNK) {\n  const slice = rows.slice(i, i + CHUNK);\n  out.push({ json: {\n    event: slice[0].event,\n    service_request_id: slice[0].service_request_id,\n    results: slice.map(r => ({\n      role:                 r.role,\n      recipient_phone_e164: r.recipient_phone_e164,\n      template_intent:      r.template_intent,\n      provider_id:          r.provider_id,\n      wa_message_id:        r.wa_message_id,\n      status:               r.status,\n      error:                r.error,\n    })),\n  } });\n}\nreturn out;"
+            },
+            "id": "476aa3f4-0000-4000-8000-0eb594ac0e80",
+            "name": "Collect Results",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                440,
+                260
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/webhooks/whatsapp/delivery-status",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json) }}",
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "1e52c120-0000-4000-8000-162047028161",
+            "name": "POST Delivery Status",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                660,
+                260
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "wedding-whatsapp-inbound",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "f6f53cfe-0000-4000-8000-25260a4f3e97",
+            "name": "Meta Verify (GET)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -1100,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/n8n/whatsapp-config",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "id": "c9a03d17-0000-4000-8000-6be2f4418d05",
+            "name": "Get WA Config (Verify)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -990,
+                860
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $('Meta Verify (GET)').first().json.query[\"hub.mode\"] }}",
+                            "rightValue": "subscribe",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        },
+                        {
+                            "leftValue": "={{ $('Meta Verify (GET)').first().json.query[\"hub.verify_token\"] }}",
+                            "rightValue": "={{ $json.data.verify_token }}",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        },
+                        {
+                            "leftValue": "={{ $json.data.verify_token }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "string",
+                                "operation": "notEmpty",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "b6516e12-0000-4000-8000-08e172a76e74",
+            "name": "Check Verify Token",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                -880,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "={{ $('Meta Verify (GET)').first().json.query[\"hub.challenge\"] }}",
+                "options": {
+                    "responseCode": 200,
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Content-Type",
+                                "value": "text/plain"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "85ec927b-0000-4000-8000-b4e611600d30",
+            "name": "Respond Challenge",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                -660,
+                640
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "forbidden",
+                "options": {
+                    "responseCode": 403
+                }
+            },
+            "id": "c2f2bcef-0000-4000-8000-b179a161e294",
+            "name": "Reject Verify",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                -660,
+                780
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "wedding-whatsapp-inbound",
+                "responseMode": "onReceived",
+                "responseCode": 200,
+                "options": {
+                    "rawBody": true
+                }
+            },
+            "id": "0224207f-0000-4000-8000-1a447797efd1",
+            "name": "Meta Events (POST)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -1100,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/n8n/whatsapp-config",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "id": "2f7d9b84-0000-4000-8000-e05a3c6617f9",
+            "name": "Get WA Config (Inbound)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -990,
+                1140
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "action": "hmac",
+                "binaryData": false,
+                "type": "SHA256",
+                "value": "={{ $('Meta Events (POST)').first().binary.data.data.base64Decode() }}",
+                "dataPropertyName": "expected_signature",
+                "secret": "={{ $json.data.app_secret }}",
+                "encoding": "hex"
+            },
+            "id": "a93f6b07-0000-4000-8000-5d18e2c4096b",
+            "name": "Compute Meta HMAC",
+            "type": "n8n-nodes-base.crypto",
+            "typeVersion": 1,
+            "position": [
+                -770,
+                1140
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// Meta signs the RAW body (X-Hub-Signature-256: sha256=<hex>) with the App secret\n// from /admin/whatsapp. The expected HMAC comes from Compute Meta HMAC (Crypto node).\nconst req = $('Meta Events (POST)').first().json;\nconst cfg = $input.first().json || {};\n\nif (!((cfg.data || {}).app_secret)) {\n  throw new Error('WhatsApp app secret is not configured in /admin/whatsapp');\n}\n\nconst headers = req.headers || {};\nconst received = String(headers['x-hub-signature-256'] || '').replace(/^sha256=/i, '').trim().toLowerCase();\nconst expected = String(cfg.expected_signature || '').toLowerCase();\n\n// Constant-time comparison, no dependency.\nlet diff = received.length ^ expected.length;\nfor (let i = 0; i < expected.length; i++) {\n  diff |= (received.charCodeAt(i) || 0) ^ expected.charCodeAt(i);\n}\nif (!expected || !received || diff !== 0) { throw new Error('Invalid Meta signature'); }\n\nreturn [{ json: typeof req.body === 'string' ? JSON.parse(req.body) : req.body }];"
+            },
+            "id": "5b74df44-0000-4000-8000-451c9ea71d3a",
+            "name": "Verify Meta Signature",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -880,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const out = [];\nfor (const it of $input.all()) {\n  const body = it.json;\n  for (const entry of (body.entry || [])) {\n    for (const change of (entry.changes || [])) {\n      if (change.field !== 'messages') continue;\n      const v = change.value || {};\n\n      for (const msg of (v.messages || [])) {\n        const isButton      = msg.type === 'button'      && msg.button && msg.button.payload;\n        const isInteractive = msg.type === 'interactive' && msg.interactive && msg.interactive.button_reply;\n\n        if (isButton || isInteractive) {\n          out.push({ json: {\n            kind: 'button_message',\n            wa_message_id: msg.id,\n            from_phone: '+' + msg.from,\n            timestamp: String(msg.timestamp),\n            button_payload: isButton ? msg.button.payload : msg.interactive.button_reply.id,\n            button_text:    isButton ? (msg.button.text || '') : (msg.interactive.button_reply.title || ''),\n            in_reply_to: (msg.context && msg.context.id) || null,\n          } });\n        } else {\n          out.push({ json: { kind: 'other', wa_message_id: msg.id, type: msg.type } });\n        }\n      }\n\n      for (const st of (v.statuses || [])) {\n        out.push({ json: {\n          kind: 'status',\n          wa_message_id: st.id,\n          status: st.status,\n          timestamp: String(st.timestamp),\n          recipient_id: '+' + st.recipient_id,\n          error: (st.errors && st.errors[0])\n            ? `${st.errors[0].code}: ${st.errors[0].title || ''}`.slice(0, 500)\n            : null,\n        } });\n      }\n    }\n  }\n}\nreturn out;"
+            },
+            "id": "7ab2e9ea-0000-4000-8000-dfaba5172ae1",
+            "name": "Extract & Split",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -660,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.kind }}",
+                                        "rightValue": "button_message",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "button"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.kind }}",
+                                        "rightValue": "status",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "status"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.kind }}",
+                                        "rightValue": "other",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "other"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "928edc03-0000-4000-8000-b09f2ea2e0ac",
+            "name": "Switch by Kind",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3.2,
+            "position": [
+                -440,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/whatsapp/inbound/button-tap",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ wa_message_id: $json.wa_message_id, from_phone: $json.from_phone, button_payload: $json.button_payload, button_text: $json.button_text, in_reply_to: $json.in_reply_to, timestamp: $json.timestamp }) }}",
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "a4afa293-0000-4000-8000-586b9ce0c44c",
+            "name": "POST Button Tap",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -220,
+                880
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/whatsapp/inbound/status-update",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ wa_message_id: $json.wa_message_id, status: $json.status, recipient_id: $json.recipient_id, timestamp: $json.timestamp, error: $json.error }) }}",
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "e2674a08-0000-4000-8000-34ebc28833ad",
+            "name": "POST Status Update",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -220,
+                1020
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {},
+            "id": "beb9e507-0000-4000-8000-94156620ec38",
+            "name": "Ignore Other",
+            "type": "n8n-nodes-base.noOp",
+            "typeVersion": 1,
+            "position": [
+                -220,
+                1160
+            ]
+        },
+        {
+            "parameters": {
+                "width": 470,
+                "height": 420,
+                "content": "## wedding-whatsapp\n\nOutbound notifications and Meta inbound events.\n\n**Laravel webhooks** on `/webhook/wedding-whatsapp-outbound`: `round.started`, `lead.accepted`, `lead.opened_to_marketplace`.\n\n**Meta webhook** → `/webhook/wedding-whatsapp-inbound` (GET verification + POST events).\n\n**Meta configuration** is entered in Laravel (`/admin/whatsapp`) and read at each run through `GET /api/v1/n8n/whatsapp-config`. While WhatsApp is disabled there, sending stops at the Gate WhatsApp Enabled node without error.\n\n**After import**: Settings → Error Workflow → `wedding-error-handler`.\n\nVariables: `LARAVEL_API_URL`, `LARAVEL_API_TOKEN`, `WEDDING_WEBHOOK_SECRET`."
+            },
+            "id": "c47c7c73-0000-4000-8000-ba5b9ccc58ba",
+            "name": "README",
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -1100,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Outbound": {
+            "main": [
+                [
+                    {
+                        "node": "Compute HMAC",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Compute HMAC": {
+            "main": [
+                [
+                    {
+                        "node": "Verify HMAC",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Verify HMAC": {
+            "main": [
+                [
+                    {
+                        "node": "Get WA Config (Outbound)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get WA Config (Outbound)": {
+            "main": [
+                [
+                    {
+                        "node": "Gate WhatsApp Enabled",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gate WhatsApp Enabled": {
+            "main": [
+                [
+                    {
+                        "node": "Event Router",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Event Router": {
+            "main": [
+                [
+                    {
+                        "node": "Fan Round Recipients",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Fan Winner + Couple",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Fan Marketplace Recipients",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fan Round Recipients": {
+            "main": [
+                [
+                    {
+                        "node": "Map to Meta Template",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fan Winner + Couple": {
+            "main": [
+                [
+                    {
+                        "node": "Map to Meta Template",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fan Marketplace Recipients": {
+            "main": [
+                [
+                    {
+                        "node": "Map to Meta Template",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Map to Meta Template": {
+            "main": [
+                [
+                    {
+                        "node": "WhatsApp Send (Meta)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "WhatsApp Send (Meta)": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize Result",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Normalize Result": {
+            "main": [
+                [
+                    {
+                        "node": "Collect Results",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Collect Results": {
+            "main": [
+                [
+                    {
+                        "node": "POST Delivery Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Meta Verify (GET)": {
+            "main": [
+                [
+                    {
+                        "node": "Get WA Config (Verify)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get WA Config (Verify)": {
+            "main": [
+                [
+                    {
+                        "node": "Check Verify Token",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Verify Token": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Challenge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Reject Verify",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Meta Events (POST)": {
+            "main": [
+                [
+                    {
+                        "node": "Get WA Config (Inbound)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get WA Config (Inbound)": {
+            "main": [
+                [
+                    {
+                        "node": "Compute Meta HMAC",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Compute Meta HMAC": {
+            "main": [
+                [
+                    {
+                        "node": "Verify Meta Signature",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Verify Meta Signature": {
+            "main": [
+                [
+                    {
+                        "node": "Extract & Split",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract & Split": {
+            "main": [
+                [
+                    {
+                        "node": "Switch by Kind",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Switch by Kind": {
+            "main": [
+                [
+                    {
+                        "node": "POST Button Tap",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "POST Status Update",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Ignore Other",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1",
+        "errorWorkflow": "wedding-error-handler",
+        "timezone": "UTC"
+    },
+    "tags": [
+        {
+            "name": "wedding"
+        }
+    ]
+}

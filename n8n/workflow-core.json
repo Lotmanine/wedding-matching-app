@@ -1,0 +1,1142 @@
+{
+    "name": "wedding-core",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "wedding-core",
+                "responseMode": "onReceived",
+                "responseCode": 200,
+                "options": {
+                    "rawBody": true
+                }
+            },
+            "id": "e5396818-0000-4000-8000-bc9f9266c0c3",
+            "name": "Webhook Wedding Core",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                -1120,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "action": "hmac",
+                "binaryData": true,
+                "binaryPropertyName": "data",
+                "type": "SHA256",
+                "dataPropertyName": "expected_signature",
+                "secret": "={{ $env.WEDDING_WEBHOOK_SECRET }}",
+                "encoding": "hex"
+            },
+            "id": "6c0e4d92-0000-4000-8000-1b7a9f35c8e1",
+            "name": "Compute HMAC",
+            "type": "n8n-nodes-base.crypto",
+            "typeVersion": 1,
+            "position": [
+                -1010,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// The expected signature comes from the Compute HMAC node (Crypto) over the RAW\n// request body: the crypto module is not allowed in Code nodes (n8n 2.x task\n// runners), and re-serialising the JSON would not give back the signed bytes.\nconst req = $input.first().json;\nconst headers = req.headers || {};\nconst received = String(headers['x-wedding-signature'] || '').trim().toLowerCase();\nconst expected = String(req.expected_signature || '').toLowerCase();\n\n// Constant-time comparison, no dependency.\nlet diff = received.length ^ expected.length;\nfor (let i = 0; i < expected.length; i++) {\n  diff |= (received.charCodeAt(i) || 0) ^ expected.charCodeAt(i);\n}\nif (!expected || diff !== 0) { throw new Error('Invalid X-Wedding-Signature'); }\n\nreturn [{ json: typeof req.body === 'string' ? JSON.parse(req.body) : req.body }];"
+            },
+            "id": "3cb26cec-0000-4000-8000-f43dc83c0ea7",
+            "name": "Verify HMAC",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -900,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.event }}",
+                                        "rightValue": "wed_request.submitted",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "wed_submitted"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.event }}",
+                                        "rightValue": "service_request.round_timed_out",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "round_timed_out"
+                        },
+                        {
+                            "conditions": {
+                                "options": {
+                                    "caseSensitive": true,
+                                    "leftValue": "",
+                                    "typeValidation": "strict"
+                                },
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.event }}",
+                                        "rightValue": "purchase.completed",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ],
+                                "combinator": "and"
+                            },
+                            "renameOutput": true,
+                            "outputKey": "purchase_completed"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "fd92d0b4-0000-4000-8000-bf9589a2fd92",
+            "name": "Event Router",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3.2,
+            "position": [
+                -680,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// wed_request.submitted → one matching job per requested service.\nconst out = [];\nfor (const it of $input.all()) {\n  const d = it.json.data || {};\n  for (const sr of (d.service_requests || [])) {\n    if (sr.service_uid) out.push({ json: { service_uid: sr.service_uid, trigger: 'wed_submitted' } });\n  }\n}\nreturn out;"
+            },
+            "id": "a86fc342-0000-4000-8000-408d66de21c3",
+            "name": "Fan Service Requests",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -460,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// service_request.round_timed_out only carries identifiers:\n// { service_uid, previous_round, current_status }. Keep the uid and read the\n// real state from the API right after.\nreturn $input.all()\n  .map(i => (i.json.data || {}).service_uid)\n  .filter(Boolean)\n  .map(uid => ({ json: { service_uid: uid, trigger: 'round_timed_out' } }));"
+            },
+            "id": "0721eea1-0000-4000-8000-8d48165d0655",
+            "name": "Emit Service Uid",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -460,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/service-requests/{{ $json.service_uid }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "3bb093df-0000-4000-8000-0785caebedba",
+            "name": "Fetch Service Request",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -240,
+                320
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// Pivot node: reads the FRESH state from the API (not the webhook snapshot,\n// which can be replayed or late) and decides the mode. Same logic for a new\n// request (current_round = 0 → round 1) and a timed-out round (current_round =\n// N → round N+1, or opening to the marketplace).\nconst sr = ($json && $json.data) ? $json.data : null;\nif (!sr || !sr.service_uid) { return null; }   // 404 / unexpected response → drop the item\n\n// Terminal statuses: nothing left to do.\nconst TERMINAL = ['accepted', 'expired', 'deleted', 'open_marketplace'];\nif (TERMINAL.includes(String(sr.status))) { return null; }\n\nconst wed = sr.wed_request || {};\nconst currentRound = Number(sr.current_round || 0);\nconst maxRounds = Number($env.WEDDING_MAX_ROUNDS || 3);\n\nconst base = {\n  service_uid:  sr.service_uid,\n  service_type: sr.service_type,\n  city_code:    (wed.couple || {}).city_code,\n  status:       sr.status,\n  couple:       wed.couple  || {},\n  wedding:      wed.wedding || {},\n};\n\n// Every round used → open to the marketplace.\nif (currentRound >= maxRounds) {\n  return { json: { ...base, mode: 'force_open', target_round: currentRound, excluded_provider_ids: [] } };\n}\n\n// Never notify the same provider twice.\nconst excluded = Array.from(new Set([\n  ...(sr.all_notified_provider_ids || []),\n  ...(sr.refused_by_provider_ids   || []),\n  ...(sr.unlocked_by_user_id ? [sr.unlocked_by_user_id] : []),\n].map(Number)));\n\nreturn { json: { ...base, mode: 'next_round', target_round: currentRound + 1, excluded_provider_ids: excluded } };",
+                "mode": "runOnceForEachItem"
+            },
+            "id": "8135a075-0000-4000-8000-94d4d59286e3",
+            "name": "Prepare Matching Job",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -20,
+                320
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.mode }}",
+                            "rightValue": "force_open",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "0ef46125-0000-4000-8000-8652330972ac",
+            "name": "Is Force Open?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                200,
+                320
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/service-requests/{{ $json.service_uid }}/force-open",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 20000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "085d9747-0000-4000-8000-849aac050445",
+            "name": "Force Open",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                420,
+                180
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/providers/ranking-candidates",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "service_type",
+                            "value": "={{ $json.service_type }}"
+                        },
+                        {
+                            "name": "city_code",
+                            "value": "={{ $json.city_code }}"
+                        },
+                        {
+                            "name": "exclude_ids",
+                            "value": "={{ ($json.excluded_provider_ids || []).join(\",\") }}"
+                        },
+                        {
+                            "name": "limit",
+                            "value": "20"
+                        },
+                        {
+                            "name": "service_request_uid",
+                            "value": "={{ $json.service_uid }}"
+                        }
+                    ]
+                },
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "id": "bd0e7bdc-0000-4000-8000-be61e8c1465c",
+            "name": "Fetch Ranking Candidates",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                420,
+                400
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "// $input here is the HTTP response of Fetch Ranking Candidates: the job metadata\n// is read from the pivot node, paired automatically by n8n.\nconst meta = $('Prepare Matching Job').item.json;\nconst ctx  = $json.data || $json;\nconst candidates = ctx.candidates || [];\n// Providers per round: set in /admin/settings, sent by Laravel.\nconst perRound = Number(ctx.providers_per_round || 3);\n\nif (!candidates.length) { return null; }   // no eligible provider → stop\n\nconst system = [\n  'You are the matching expert of Wedding Matching App, a wedding-services marketplace (demo project with example cities in the USA and France).',\n  'You rank candidate providers for one specific request and return the BEST ones first.',\n  '',\n  'Criteria, by order of importance:',\n  '1. Location (same_city > adjacent > far).',\n  \"2. Budget fit: min_price / max_price against the couple's budget.\",\n  '3. Reliability: acceptance_rate, then rating_avg weighted by rating_count.',\n  '4. Experience: years_experience and leads_accepted.',\n  '5. A language shared with the couple, when known.',\n  '',\n  'Only return ids present in the candidate list.',\n  `Return at most ${perRound} ids.`,\n].join('\\n');\n\nconst user = [\n  `Requested service: ${meta.service_type}`,\n  `Couple's city: ${meta.city_code}`,\n  `District: ${(meta.couple || {}).district || 'not specified'}`,\n  `Wedding date: ${(meta.wedding || {}).date || 'not specified'}`,\n  `Total budget: ${(meta.wedding || {}).budget_range || 'not specified'}`,\n  `Guest count: ${(meta.wedding || {}).guest_count || 'not specified'}`,\n  `Round: ${meta.target_round}`,\n  '',\n  'Candidates (JSON):',\n  JSON.stringify(candidates, null, 2),\n].join('\\n');\n\nreturn {\n  json: {\n    service_uid:  meta.service_uid,\n    target_round: meta.target_round,\n    anthropic_body: {\n      model: 'claude-sonnet-5',\n      max_tokens: 1024,\n      system,\n      messages: [{ role: 'user', content: user }],\n      // Structured output: the response is guaranteed to match the schema.\n      output_config: {\n        format: {\n          type: 'json_schema',\n          schema: {\n            type: 'object',\n            properties: {\n              ranked_provider_ids: { type: 'array', items: { type: 'integer' } },\n              reasoning:           { type: 'string' },\n            },\n            required: ['ranked_provider_ids', 'reasoning'],\n            additionalProperties: false,\n          },\n        },\n      },\n    },\n  },\n};",
+                "mode": "runOnceForEachItem"
+            },
+            "id": "e49e50e8-0000-4000-8000-4af1c22440f0",
+            "name": "Build Claude Prompt",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                640,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.anthropic.com/v1/messages",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.ANTHROPIC_API_KEY }}"
+                        },
+                        {
+                            "name": "anthropic-version",
+                            "value": "2023-06-01"
+                        },
+                        {
+                            "name": "content-type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json.anthropic_body) }}",
+                "options": {
+                    "timeout": 60000
+                }
+            },
+            "id": "d71894c7-0000-4000-8000-c517c72bebfd",
+            "name": "Claude Rank",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                860,
+                400
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 5000
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const meta = $('Prepare Matching Job').item.json;\nconst resp = $json;\n\nif (resp && resp.type === 'error') {\n  throw new Error('Anthropic API error: ' + JSON.stringify(resp.error || {}));\n}\n\nconst block = (resp.content || []).find(b => b && b.type === 'text');\nif (!block || !block.text) { throw new Error('Empty Claude response'); }\n\n// Thanks to output_config.format, the API guarantees valid JSON.\nlet parsed;\ntry {\n  parsed = JSON.parse(block.text);\n} catch (e) {\n  throw new Error('Claude returned invalid JSON: ' + String(block.text).slice(0, 200));\n}\n\nconst ids = (parsed.ranked_provider_ids || []).map(Number).filter(Number.isInteger);\nif (!ids.length) { throw new Error('Claude returned no ranked provider ids'); }\n\n// Safety net: never send a provider already notified or refused, even if the model proposes one.\nconst banned = new Set((meta.excluded_provider_ids || []).map(Number));\nconst clean = ids.filter(id => !banned.has(id));\nif (!clean.length) { throw new Error('All ranked providers were already notified'); }\n\n// Set in /admin/settings, sent by Laravel with the candidates.\nconst cand = $('Fetch Ranking Candidates').item.json;\nconst perRound = Number((cand.data || cand).providers_per_round || 3);\n\nreturn {\n  json: {\n    service_uid:  meta.service_uid,\n    target_round: meta.target_round,\n    provider_ids: clean.slice(0, perRound),\n    reasoning:    String(parsed.reasoning || ''),\n  },\n};",
+                "mode": "runOnceForEachItem"
+            },
+            "id": "b25cfef3-0000-4000-8000-dc0b939a3ab3",
+            "name": "Parse AI Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1080,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/service-requests/{{ $json.service_uid }}/start-round",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ round: $json.target_round, provider_ids: $json.provider_ids, ranking_reasoning: $json.reasoning }) }}",
+                "options": {
+                    "timeout": 20000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "ef278d19-0000-4000-8000-f61e7f5970c8",
+            "name": "Start Round",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1300,
+                400
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "loose"
+                    },
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.data.receipt_pdf_url }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "string",
+                                "operation": "notEmpty",
+                                "singleValue": true
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "e9b6ff14-0000-4000-8000-d4b0fed4569f",
+            "name": "Has Receipt URL?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                -460,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "={{ $json.data.receipt_pdf_url }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/pdf"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 20000,
+                    "response": {
+                        "response": {
+                            "responseFormat": "file"
+                        }
+                    }
+                }
+            },
+            "id": "c08f9d71-0000-4000-8000-295cd04fa367",
+            "name": "GET Receipt PDF",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -240,
+                700
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const data = $('Verify HMAC').item.json.data;\nconst lang = String(data.preferred_language || 'en').toLowerCase() === 'fr' ? 'fr' : 'en';\n\nconst credits = Number(data.credits_granted ?? data.unlocks ?? 0);\nconst currency = data.currency || 'USD';\nconst amount = new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Number(data.amount ?? 0));\nconst packName = data.pack_name || '';\nconst uid = data.purchase_uid;\n\nconst t = lang === 'fr' ? {\n  subject: `Reçu de paiement \\u2014 ${uid}`,\n  greeting: data.provider_name ? `Bonjour ${data.provider_name},` : 'Bonjour,',\n  intro: 'Merci pour votre achat de crédits sur Wedding Matching App (projet de démonstration).',\n  summary: `${credits} crédit${credits > 1 ? 's' : ''} ajouté${credits > 1 ? 's' : ''} à votre solde pour ${amount}.`,\n  pack: packName ? `Pack : ${packName}` : '',\n  attachment: 'Le reçu au format PDF est en pièce jointe.',\n  closing: 'Wedding Matching App',\n} : {\n  subject: `Payment receipt \\u2014 ${uid}`,\n  greeting: data.provider_name ? `Hello ${data.provider_name},` : 'Hello,',\n  intro: 'Thank you for buying credits on Wedding Matching App (demo project).',\n  summary: `${credits} credit${credits === 1 ? '' : 's'} added to your balance for ${amount}.`,\n  pack: packName ? `Pack: ${packName}` : '',\n  attachment: 'The PDF receipt is attached.',\n  closing: 'Wedding Matching App',\n};\n\nconst html = `<!doctype html>\n<html><body style=\"font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;padding:24px\">\n  <p>${t.greeting}</p>\n  <p>${t.intro}</p>\n  <p style=\"font-weight:600\">${t.summary}</p>\n  ${t.pack ? `<p>${t.pack}</p>` : ''}\n  <p>${t.attachment}</p>\n  <p style=\"margin-top:24px\">${t.closing}</p>\n</body></html>`;\n\nreturn [{\n  json: { to: data.provider_email, subject: t.subject, html, purchase_uid: uid },\n  binary: $input.first().binary,\n}];"
+            },
+            "id": "14f5d37a-0000-4000-8000-87b417fffbf2",
+            "name": "Build Receipt Email",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -20,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "={{ $env.WEDDING_FROM_EMAIL }}",
+                "toEmail": "={{ $json.to }}",
+                "subject": "={{ $json.subject }}",
+                "emailFormat": "html",
+                "html": "={{ $json.html }}",
+                "options": {
+                    "attachments": "data",
+                    "appendAttribution": false
+                }
+            },
+            "id": "d21d4190-0000-4000-8000-065c2596405e",
+            "name": "Send Receipt Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 2.1,
+            "position": [
+                200,
+                700
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "method": "PATCH",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/n8n/receipts/{{ $('Build Receipt Email').item.json.purchase_uid }}/mark-emailed",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ sent_at: new Date().toISOString(), smtp_message_id: ($json.messageId || null) }) }}",
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "f66f4c93-0000-4000-8000-969934ffd029",
+            "name": "PATCH Mark Emailed",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                420,
+                700
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 30
+                        }
+                    ]
+                }
+            },
+            "id": "5a792a2f-0000-4000-8000-7612be126bb7",
+            "name": "Schedule (30 min)",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
+            "position": [
+                -1120,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/admin/ops/health-snapshot",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "id": "ae094806-0000-4000-8000-96366d9aa359",
+            "name": "GET Health Snapshot",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -900,
+                1000
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.data.severity }}",
+                            "rightValue": "none",
+                            "operator": {
+                                "type": "string",
+                                "operation": "notEquals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "7b17ed43-0000-4000-8000-a328bbd776dc",
+            "name": "Is Alertable?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                -680,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "language": "javaScript",
+                "jsCode": "const snap = $json.data;\nconst sev = snap.severity;\nconst icon  = sev === 'critical' ? '\\u{1F6A8}' : '\\u26A0\\uFE0F';\nconst label = sev === 'critical' ? 'CRITICAL' : 'WARN';\n\nconst rows = [\n  ['Stuck matching',         (snap.stuck_matching      || []).length],\n  ['Failed webhooks (24h)',  (snap.failed_webhooks_24h || []).length],\n  ['Failed WhatsApp (24h)',  (snap.failed_whatsapp_24h || []).length],\n  ['n8n errors (24h)',       (snap.n8n_errors_24h      || []).length],\n];\n\nconst tr = rows.map(([k, v]) =>\n  `<tr><td style=\"padding:6px 12px;border-bottom:1px solid #e5e7eb\">${k}</td>` +\n  `<td style=\"padding:6px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:600\">${v}</td></tr>`\n).join('');\n\nconst html = `<!doctype html>\n<html><body style=\"font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;padding:24px\">\n  <h2 style=\"margin:0 0 12px 0\">${icon} Wedding Matching App \\u2014 ${label} (${snap.run_at})</h2>\n  <table style=\"border-collapse:collapse;min-width:360px\">${tr}</table>\n  <p style=\"margin-top:16px\"><a href=\"${$env.LARAVEL_APP_URL || $env.LARAVEL_API_URL}/admin\">Open the admin dashboard</a></p>\n</body></html>`;\n\nreturn [{ json: {\n  to: $env.ADMIN_ALERT_EMAIL,\n  subject: `${icon} Wedding Matching App \\u2014 ${label}`,\n  html,\n  snapshot: snap,\n} }];"
+            },
+            "id": "960bffea-0000-4000-8000-7a268ee84b2b",
+            "name": "Build Alert Email",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -460,
+                940
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "={{ $env.WEDDING_FROM_EMAIL }}",
+                "toEmail": "={{ $json.to }}",
+                "subject": "={{ $json.subject }}",
+                "emailFormat": "html",
+                "html": "={{ $json.html }}",
+                "options": {
+                    "appendAttribution": false
+                }
+            },
+            "id": "2bee8852-0000-4000-8000-a142d0c68430",
+            "name": "Send Alert Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 2.1,
+            "position": [
+                -240,
+                940
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/webhooks/n8n/heartbeat",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ run_at: $('Build Alert Email').item.json.snapshot.run_at, severity: $('Build Alert Email').item.json.snapshot.severity, snapshot_summary: { stuck_matching: ($('Build Alert Email').item.json.snapshot.stuck_matching||[]).length, failed_webhooks_24h: ($('Build Alert Email').item.json.snapshot.failed_webhooks_24h||[]).length, failed_whatsapp_24h: ($('Build Alert Email').item.json.snapshot.failed_whatsapp_24h||[]).length, n8n_errors_24h: ($('Build Alert Email').item.json.snapshot.n8n_errors_24h||[]).length }, alerts_sent: { email: true } }) }}",
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "d69eec4b-0000-4000-8000-cd3760b70eb9",
+            "name": "Heartbeat (alerted)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -20,
+                940
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.LARAVEL_API_URL }}/api/v1/webhooks/n8n/heartbeat",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "=Bearer {{ $env.LARAVEL_API_TOKEN }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Accept",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ run_at: $json.data.run_at, severity: $json.data.severity, snapshot_summary: { stuck_matching: ($json.data.stuck_matching||[]).length, failed_webhooks_24h: ($json.data.failed_webhooks_24h||[]).length, failed_whatsapp_24h: ($json.data.failed_whatsapp_24h||[]).length, n8n_errors_24h: ($json.data.n8n_errors_24h||[]).length }, alerts_sent: { email: false } }) }}",
+                "options": {
+                    "timeout": 15000,
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                }
+            },
+            "id": "baec8bf8-0000-4000-8000-6fdaeec386aa",
+            "name": "Heartbeat (silent)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                -460,
+                1080
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+        },
+        {
+            "parameters": {
+                "width": 460,
+                "height": 300,
+                "content": "## wedding-core\n\nMatching (AI ranking of providers, rounds), purchase receipts and ops alerts.\n\n**Laravel webhooks** on `/webhook/wedding-core`: `wed_request.submitted`, `service_request.round_timed_out`, `purchase.completed`.\n\n**After import**: Settings → Error Workflow → `wedding-error-handler`.\n\nVariables: `LARAVEL_API_URL`, `LARAVEL_API_TOKEN`, `WEDDING_WEBHOOK_SECRET`, `ANTHROPIC_API_KEY`, `ADMIN_ALERT_EMAIL`, `WEDDING_FROM_EMAIL`."
+            },
+            "id": "c47c7c73-0000-4000-8000-5ee61d6043e4",
+            "name": "README",
+            "type": "n8n-nodes-base.stickyNote",
+            "typeVersion": 1,
+            "position": [
+                -1120,
+                600
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Wedding Core": {
+            "main": [
+                [
+                    {
+                        "node": "Compute HMAC",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Compute HMAC": {
+            "main": [
+                [
+                    {
+                        "node": "Verify HMAC",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Verify HMAC": {
+            "main": [
+                [
+                    {
+                        "node": "Event Router",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Event Router": {
+            "main": [
+                [
+                    {
+                        "node": "Fan Service Requests",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Emit Service Uid",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Has Receipt URL?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fan Service Requests": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Service Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Emit Service Uid": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Service Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Service Request": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Matching Job",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Matching Job": {
+            "main": [
+                [
+                    {
+                        "node": "Is Force Open?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Force Open?": {
+            "main": [
+                [
+                    {
+                        "node": "Force Open",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Fetch Ranking Candidates",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Ranking Candidates": {
+            "main": [
+                [
+                    {
+                        "node": "Build Claude Prompt",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Claude Prompt": {
+            "main": [
+                [
+                    {
+                        "node": "Claude Rank",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Claude Rank": {
+            "main": [
+                [
+                    {
+                        "node": "Parse AI Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse AI Response": {
+            "main": [
+                [
+                    {
+                        "node": "Start Round",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Receipt URL?": {
+            "main": [
+                [
+                    {
+                        "node": "GET Receipt PDF",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                []
+            ]
+        },
+        "GET Receipt PDF": {
+            "main": [
+                [
+                    {
+                        "node": "Build Receipt Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Receipt Email": {
+            "main": [
+                [
+                    {
+                        "node": "Send Receipt Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Receipt Email": {
+            "main": [
+                [
+                    {
+                        "node": "PATCH Mark Emailed",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Schedule (30 min)": {
+            "main": [
+                [
+                    {
+                        "node": "GET Health Snapshot",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "GET Health Snapshot": {
+            "main": [
+                [
+                    {
+                        "node": "Is Alertable?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Alertable?": {
+            "main": [
+                [
+                    {
+                        "node": "Build Alert Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Heartbeat (silent)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Alert Email": {
+            "main": [
+                [
+                    {
+                        "node": "Send Alert Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Alert Email": {
+            "main": [
+                [
+                    {
+                        "node": "Heartbeat (alerted)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1",
+        "errorWorkflow": "wedding-error-handler",
+        "timezone": "UTC"
+    },
+    "tags": [
+        {
+            "name": "wedding"
+        }
+    ]
+}

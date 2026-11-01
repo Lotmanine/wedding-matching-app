@@ -18,8 +18,8 @@
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Payment ID') }}</dt><dd class="font-mono text-xs text-[#6B665E] mt-0.5">{{ $purchase->gateway_payment_id ?? __('Not specified') }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Paid on') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->paid_at?->isoFormat('LL, HH:mm') ?? __('Not specified') }}</dd></div>
                     <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Failure') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->failure_reason ?? __('Not specified') }}</dd></div>
-                    <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Method') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->payment_method === 'offline_versement' ? __('Bank transfer') : __('Online (Chargily)') }}</dd></div>
-                    @if ($purchase->payment_method === 'offline_versement')
+                    <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Method') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->payment_method === 'offline_transfer' ? __('Bank transfer') : __('Online (Chargily)') }}</dd></div>
+                    @if ($purchase->payment_method === 'offline_transfer')
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Transfer reference') }}</dt><dd class="font-mono text-xs text-[#1A1A1A] mt-0.5">{{ $purchase->payment_reference ?? __('Not specified') }}</dd></div>
                         <div><dt class="text-[10px] font-bold uppercase tracking-wider text-[#9A958D]">{{ __('Proof of payment') }}</dt><dd class="text-[#1A1A1A] mt-0.5">{{ $purchase->proof_path ? __('Provided') : __('None') }}</dd></div>
                     @endif

@@ -184,7 +184,7 @@ class JourneyTest extends TestCase
                 'offline_enabled' => '1',
                 'bank_name'       => 'BNA',
                 'account_holder'  => 'Wedding Matching App SARL',
-                'ccp_number'      => '0012345678',
+                'secondary_account_number'      => '0012345678',
             ])
             ->assertRedirect();
 

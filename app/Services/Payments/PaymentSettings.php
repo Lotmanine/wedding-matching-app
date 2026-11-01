@@ -12,7 +12,7 @@ use App\Models\Setting;
  * supported:
  *
  *  - online_chargily   : the optional Chargily Pay card redirect flow.
- *  - offline_versement  : bank transfer; the provider declares a
+ *  - offline_transfer  : bank transfer; the provider declares a
  *                         reference and an admin confirms receipt manually.
  *
  * Bank details shown on the offline checkout page are also stored
@@ -21,7 +21,7 @@ use App\Models\Setting;
 class PaymentSettings
 {
     public const METHOD_ONLINE = 'online_chargily';
-    public const METHOD_OFFLINE = 'offline_versement';
+    public const METHOD_OFFLINE = 'offline_transfer';
 
     public function onlineEnabled(): bool
     {
@@ -62,9 +62,9 @@ class PaymentSettings
         return [
             'bank_name'        => (string) Setting::get('payments.offline.bank_name', ''),
             'account_holder'   => (string) Setting::get('payments.offline.account_holder', ''),
-            'rib'              => (string) Setting::get('payments.offline.rib', ''),
-            'ccp_number'       => (string) Setting::get('payments.offline.ccp_number', ''),
-            'ccp_key'          => (string) Setting::get('payments.offline.ccp_key', ''),
+            'account_number'              => (string) Setting::get('payments.offline.account_number', ''),
+            'secondary_account_number'       => (string) Setting::get('payments.offline.secondary_account_number', ''),
+            'secondary_account_key'          => (string) Setting::get('payments.offline.secondary_account_key', ''),
             'instructions'     => (string) Setting::get('payments.offline.instructions', ''),
         ];
     }
@@ -80,7 +80,7 @@ class PaymentSettings
         Setting::set('payments.offline_enabled', ! empty($data['offline_enabled']) ? '1' : '0', 'bool');
 
         foreach ([
-            'bank_name', 'account_holder', 'rib', 'ccp_number', 'ccp_key', 'instructions',
+            'bank_name', 'account_holder', 'account_number', 'secondary_account_number', 'secondary_account_key', 'instructions',
         ] as $field) {
             Setting::set('payments.offline.' . $field, (string) ($data[$field] ?? ''), 'string');
         }
