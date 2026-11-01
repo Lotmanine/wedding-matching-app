@@ -21,7 +21,7 @@
             </div>
 
             <a href="{{ route('home') }}" class="mt-6 text-xs text-[#9A958D] hover:text-[#1A1A1A] transition-colors flex items-center gap-1">
-                <x-z.icon name="arrow_back" class="text-sm" /> {{ __('Retour au site') }}
+                <x-z.icon name="arrow_back" class="text-sm rtl:-scale-x-100" /> {{ __('Retour au site') }}
             </a>
         </div>
     </body>

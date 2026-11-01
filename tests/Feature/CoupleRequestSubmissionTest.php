@@ -70,9 +70,9 @@ class CoupleRequestSubmissionTest extends TestCase
 
         $this->get(route('couple.request.confirmation', ['wedUid' => $wr->wed_uid]))
             ->assertOk()
-            ->assertSee('Prestataire trouvé')
-            ->assertSee('En recherche…')
-            ->assertSee('Ouverte à tous les prestataires')
+            ->assertSee('Demande acceptée')
+            ->assertSee('Recherche en cours')
+            ->assertSee('Recherche élargie')
             ->assertSee('Chacun a 2 heures pour répondre', false);
     }
 
@@ -85,7 +85,7 @@ class CoupleRequestSubmissionTest extends TestCase
                 ->assertDontSee('Témoignages');
         }
 
-        $this->get('/')->assertSee('wilayas ouvertes');
+        $this->get('/')->assertSee('Disponible à');
     }
 
     public function test_successful_submission_creates_wed_request_with_service_requests(): void

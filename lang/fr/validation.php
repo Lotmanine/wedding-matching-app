@@ -110,11 +110,51 @@ return [
     'uuid'            => ':attribute doit être un UUID valide.',
 
     'custom' => [
+        // Couple request form (App\Livewire\CoupleRequestForm): one message per field and rule.
+        'couple_first_name' => [
+            'required' => 'Indiquez votre prénom.',
+            'min'      => 'Le prénom doit contenir au moins :min caractères.',
+            'max'      => 'Le prénom ne peut pas dépasser :max caractères.',
+        ],
         'couple_whatsapp' => [
-            'regex' => 'Saisissez un numéro de mobile algérien au format +213, sans le 0 initial et sans espaces (exemple : +213661234567).',
+            'required' => 'Indiquez votre numéro WhatsApp.',
+            'regex'    => 'Utilisez le format +213661234567, sans espaces.',
+        ],
+        'couple_wilaya_code' => [
+            'required' => 'Choisissez une wilaya.',
+            'in'       => 'Choisissez une wilaya dans la liste.',
+        ],
+        'couple_commune' => [
+            'max' => 'La commune ne peut pas dépasser :max caractères.',
+        ],
+        'budget_range' => [
+            'required' => 'Choisissez le budget total du mariage.',
+            'in'       => 'Choisissez un budget dans la liste.',
+        ],
+        'services_needed' => [
+            'required' => 'Choisissez au moins un service.',
+            'array'    => 'Choisissez au moins un service.',
+            'min'      => 'Choisissez au moins un service.',
+            'max'      => 'Choisissez :max services au maximum.',
+        ],
+        'services_needed.*' => [
+            'in' => 'Choisissez les services dans la liste.',
+        ],
+        'wedding_date' => [
+            'required'       => 'Indiquez la date du mariage.',
+            'date'           => 'Indiquez une date valide.',
+            'after_or_equal' => 'Choisissez une date à partir d\'aujourd\'hui.',
+            'before'         => 'Choisissez une date avant le :date.',
+        ],
+        'guest_count' => [
+            'required' => 'Choisissez le nombre d\'invités.',
+            'in'       => 'Choisissez le nombre d\'invités dans la liste.',
+        ],
+        'description' => [
+            'max' => 'Les précisions ne peuvent pas dépasser :max caractères.',
         ],
         'acceptTerms' => [
-            'accepted' => 'Vous devez accepter la transmission de votre demande aux prestataires pour l\'envoyer.',
+            'accepted' => 'Acceptez le partage de votre demande pour continuer.',
         ],
     ],
 
@@ -126,13 +166,13 @@ return [
         'wedding_date'        => 'la date du mariage',
         'wedding_season'      => 'la saison du mariage',
         'guest_count'         => 'le nombre d\'invités',
-        'budget_range'        => 'le budget',
+        'budget_range'        => 'le budget total',
         'services_needed'     => 'les services recherchés',
         'description'         => 'les précisions',
-        'acceptTerms'         => 'les conditions',
+        'acceptTerms'         => 'le partage de la demande',
 
         // Provider area
-        'full_name'            => 'le nom complet',
+        'full_name'            => 'le nom et prénom',
         'email'                => 'l\'adresse e-mail',
         'password'             => 'le mot de passe',
         'phone'                => 'le téléphone',
@@ -145,9 +185,9 @@ return [
         'trade_register'       => 'le numéro de registre de commerce',
         'years_experience'     => 'les années d\'expérience',
         'primary_wilaya_code'  => 'la wilaya principale',
-        'price_tier'           => 'le niveau tarifaire',
-        'min_price'            => 'le tarif indicatif minimum',
-        'max_price'            => 'le tarif indicatif maximum',
+        'price_tier'           => 'la gamme de prix',
+        'min_price'            => 'le tarif minimum indicatif',
+        'max_price'            => 'le tarif maximum indicatif',
         'languages'            => 'les langues',
         'services'             => 'les services',
         'coverage_wilayas'     => 'les wilayas d\'intervention',

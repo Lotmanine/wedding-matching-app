@@ -44,8 +44,8 @@
             <div class="mb-6 bg-[#F7F4F0] border border-[#D4CFC7]/60 rounded-xl p-4 flex items-center gap-3">
                 <x-z.icon name="visibility_off" class="text-[#9A958D] text-2xl shrink-0" />
                 <div>
-                    <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Coordonnées anonymisées') }}</p>
-                    <p class="text-xs text-[#6B665E]">{{ __("Protection des données personnelles : les coordonnées du couple ne sont plus affichées (:days jours après l'acceptation).", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
+                    <p class="text-sm font-bold text-[#1A1A1A]">{{ __('Coordonnées masquées') }}</p>
+                    <p class="text-xs text-[#6B665E]">{{ __("La période d'accès (:days jours après l'acceptation) est terminée. Les coordonnées du couple ne sont plus affichées.", ['days' => \App\Support\LocaleCount::days((int) config('zawaj.anpdp.retention_days', 14))]) }}</p>
                 </div>
             </div>
         @elseif ($anonymizeAt)
@@ -108,7 +108,7 @@
                     <div class="space-y-3">
                         <div class="p-4 bg-[#F0D9B5]/30 rounded-xl border border-[#C8956C]/20">
                             <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.unlocked.couple_name') }}</p>
-                            <p class="font-bold text-[#1A1A1A] text-base">{{ $anonymized ? __('Anonymisé') : $wr->couple_first_name }}</p>
+                            <p class="font-bold text-[#1A1A1A] text-base">{{ $anonymized ? __('Non disponible') : $wr->couple_first_name }}</p>
                         </div>
                         <div class="flex items-start gap-1.5 px-3 py-2 bg-[#F7F4F0] rounded-lg text-sm">
                             <x-z.icon name="location_on" class="text-[#C8956C] text-base shrink-0" />
@@ -128,7 +128,7 @@
                         @endif
                         <div class="p-4 bg-[#25D366]/10 rounded-xl border border-[#25D366]/30">
                             <p class="text-xs text-[#9A958D] mb-1">{{ __('provider.unlocked.couple_whatsapp') }}</p>
-                            <p class="font-mono font-bold text-[#1A1A1A] select-all"><span dir="ltr">{{ $anonymized ? __('Anonymisé') : $wr->couple_whatsapp }}</span></p>
+                            <p class="font-mono font-bold text-[#1A1A1A] select-all"><span dir="ltr">{{ $anonymized ? __('Non disponible') : $wr->couple_whatsapp }}</span></p>
                         </div>
                     </div>
 
@@ -159,7 +159,7 @@
                                 <p class="font-semibold">{{ __("Signalement en cours d'examen") }}</p>
                                 <p class="text-xs mt-0.5">{{ __('Motif : :reason · envoyé :when', ['reason' => $dispute->reasonLabel(), 'when' => $dispute->created_at->diffForHumans()]) }}</p>
                             @elseif ($dispute->status === 'approved')
-                                <p class="font-semibold">{{ __('Signalement accepté : crédits remboursés') }}</p>
+                                <p class="font-semibold">{{ __('Signalement accepté : crédits recrédités') }}</p>
                                 <p class="text-xs mt-0.5">{{ $dispute->decided_at?->diffForHumans() }}</p>
                             @else
                                 <p class="font-semibold">{{ __('Signalement refusé') }}</p>
@@ -169,7 +169,7 @@
                     @else
                         <details class="group">
                             <summary class="cursor-pointer text-sm font-semibold text-[#6B665E] hover:text-[#A84936] transition-colors list-none flex items-center gap-1.5">
-                                <x-z.icon name="flag" class="text-base" /> {{ __('Signaler cette demande') }}
+                                <x-z.icon name="flag" class="text-base" /> {{ __('Signaler un problème') }}
                             </summary>
                             <form method="POST" action="{{ route('provider.leads.dispute', $lead->service_uid) }}" class="mt-3 space-y-2.5">
                                 @csrf
@@ -185,7 +185,7 @@
                                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white border border-[#A84936]/40 text-[#A84936] font-semibold text-sm hover:bg-red-50 transition-colors">
                                     {{ __('Envoyer le signalement') }}
                                 </button>
-                                <p class="text-[11px] text-[#9A958D]">{{ __('Si le problème est confirmé par notre équipe, vos crédits vous sont remboursés.') }}</p>
+                                <p class="text-[11px] text-[#9A958D]">{{ __('Si notre équipe confirme le problème, les crédits utilisés sont recrédités.') }}</p>
                             </form>
                         </details>
                     @endif

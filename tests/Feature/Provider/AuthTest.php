@@ -24,7 +24,7 @@ class AuthTest extends TestCase
 
     public function test_login_page_renders(): void
     {
-        $this->get('/provider/login')->assertOk()->assertSee('Connexion prestataire');
+        $this->get('/provider/login')->assertOk()->assertSee('espace prestataire');
     }
 
     public function test_login_with_valid_provider_credentials_succeeds(): void

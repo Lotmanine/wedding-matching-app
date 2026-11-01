@@ -30,7 +30,7 @@
         <div class="block">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox" class="w-4 h-4 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/30" name="remember">
-                <span class="ms-2 text-sm text-[#6B665E]">{{ __('Se souvenir de moi') }}</span>
+                <span class="ms-2 text-sm text-[#6B665E]">{{ __('Rester connecté') }}</span>
             </label>
         </div>
 

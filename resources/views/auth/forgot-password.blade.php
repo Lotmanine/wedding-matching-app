@@ -2,7 +2,7 @@
     <div class="mb-6">
         <h1 class="font-serif text-2xl font-bold text-[#1A1A1A]">{{ __('Mot de passe oublié') }}</h1>
         <p class="mt-2 text-sm text-[#6B665E] leading-relaxed">
-            {{ __('Pas de souci. Indiquez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.') }}
+            {{ __('Indiquez votre e-mail pour recevoir le lien de réinitialisation.') }}
         </p>
     </div>
 
@@ -20,7 +20,7 @@
             <x-input-error :messages="$errors->get('email')" class="text-xs text-[#A84936]" />
         </div>
 
-        <x-z.btn type="submit" variant="primary" size="lg" class="w-full">{{ __('Envoyer le lien de réinitialisation') }}</x-z.btn>
+        <x-z.btn type="submit" variant="primary" size="lg" class="w-full">{{ __('Envoyer le lien') }}</x-z.btn>
 
         <div class="text-center">
             <a class="text-sm font-semibold text-[#C8956C] hover:text-[#B8845B] hover:underline" href="{{ route('login') }}">

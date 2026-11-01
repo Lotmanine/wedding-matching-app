@@ -260,7 +260,7 @@ class CreditsController extends Controller
 
         return response()->streamDownload(function () use ($entries) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Date', 'Type', 'Delta', 'Solde après', 'Notes']);
+            fputcsv($handle, [__('Date'), __('Type'), __('Mouvement'), __('Solde'), __('Description')]);
             foreach ($entries as $e) {
                 fputcsv($handle, [
                     $e->created_at?->toDateTimeString(),

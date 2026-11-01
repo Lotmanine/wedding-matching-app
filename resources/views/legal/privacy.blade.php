@@ -11,7 +11,7 @@
     <x-legal-section :title="__('2. Données collectées')">
         <div class="mt-2">
             <h3 class="font-semibold text-[#1A1A1A] mb-2">{{ __('2.1 Données des couples') }}</h3>
-            <p>{{ __("Lors de la soumission d'une demande, nous collectons : votre prénom, votre numéro WhatsApp (seul moyen de contact demandé : aucune adresse e-mail n'est collectée), la wilaya et, si vous l'indiquez, la commune, la date du mariage, le budget indicatif, les services recherchés et, selon le cas, le nombre d'invités et une description libre.") }}</p>
+            <p>{{ __("Lors de l'envoi d'une demande, nous collectons : votre prénom, votre numéro WhatsApp (seul moyen de contact demandé : aucune adresse e-mail n'est collectée), la wilaya et, si vous l'indiquez, la commune, la date du mariage, le budget indicatif, les services recherchés et, selon le cas, le nombre d'invités et une description libre.") }}</p>
         </div>
         <div class="mt-4">
             <h3 class="font-semibold text-[#1A1A1A] mb-2">{{ __('2.2 Données des prestataires') }}</h3>

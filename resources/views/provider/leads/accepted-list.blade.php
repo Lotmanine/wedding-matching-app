@@ -1,6 +1,6 @@
 {{--
     "Mes demandes acceptées" — leads this provider unlocked. Couple contact
-    details are masked ("Anonymisé") once the ANPDP window (retention_days,
+    details are masked ("Non disponible") once the ANPDP window (retention_days,
     14 j par défaut) after acceptance has passed.
 --}}
 @extends('layouts.provider')
@@ -19,7 +19,7 @@
                     <x-z.icon name="workspace_premium" class="text-[#C8956C] text-3xl" />
                 </div>
                 <p class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('Aucune demande acceptée pour le moment') }}</p>
-                <p class="text-sm text-[#6B665E] mt-1">{{ __('Les demandes que vous débloquez apparaîtront ici.') }}</p>
+                <p class="text-sm text-[#6B665E] mt-1">{{ __('Les demandes que vous acceptez apparaîtront ici.') }}</p>
             </div>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -44,7 +44,7 @@
                             </div>
                             @if ($anonymized)
                                 <span class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-[#F7F4F0] text-[#9A958D] border border-[#D4CFC7]/60">
-                                    <x-z.icon name="visibility_off" class="text-xs" /> {{ __('Anonymisée') }}
+                                    <x-z.icon name="visibility_off" class="text-xs" /> {{ __('Accès expiré') }}
                                 </span>
                             @else
                                 <span class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-[#F0D9B5]/50 text-[#7A5530] border border-[#C8956C]/30"
@@ -58,7 +58,7 @@
                             <p class="flex items-center gap-1.5 text-[#6B665E]">
                                 <x-z.icon name="person" class="text-[#C8956C] text-base" />
                                 @if ($anonymized)
-                                    <span class="italic text-[#9A958D]">{{ __('Anonymisé') }}</span>
+                                    <span class="italic text-[#9A958D]">{{ __('Non disponible') }}</span>
                                 @else
                                     <span class="font-medium text-[#1A1A1A]">{{ $wr?->couple_first_name }}</span>
                                 @endif

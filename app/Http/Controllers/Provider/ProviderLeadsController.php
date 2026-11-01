@@ -216,6 +216,6 @@ class ProviderLeadsController extends Controller
             'details'            => $validated['details'] ?? null,
         ]);
 
-        return back()->with('status', __('Signalement envoyé. Notre équipe vérifie et vous recrédite si le problème est confirmé.'));
+        return back()->with('status', __("Signalement envoyé. Notre équipe va l'examiner."));
     }
 }

@@ -89,7 +89,7 @@ class PurchaseFlowTest extends TestCase
         $this->actingAs($user)
             ->get(route('provider.credits.success') . '?purchase=' . $purchase->purchase_uid)
             ->assertOk()
-            ->assertSee('cours de traitement');
+            ->assertSee('cours de confirmation');
     }
 
     public function test_success_page_shows_paid_after_markPaid(): void
@@ -103,7 +103,7 @@ class PurchaseFlowTest extends TestCase
         $this->actingAs($user)
             ->get(route('provider.credits.success') . '?purchase=' . $purchase->purchase_uid)
             ->assertOk()
-            ->assertSee('réussi');
+            ->assertSee('Paiement confirmé');
     }
 
     public function test_success_page_403_on_other_users_purchase(): void

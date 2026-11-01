@@ -39,8 +39,8 @@
             <div class="mb-8 flex items-start gap-3 p-5 rounded-2xl bg-[#F0D9B5]/40 border border-[#C8956C]/30 text-[#7A5530]">
                 <x-z.icon name="hourglass_top" :filled="true" class="text-xl shrink-0" />
                 <div>
-                    <p class="font-semibold text-sm text-[#1A1A1A]">{{ __('Compte en attente de vérification') }}</p>
-                    <p class="text-sm mt-0.5">{{ __("L'achat de crédits sera débloqué dès que notre équipe aura vérifié votre profil. Vous recevrez alors les demandes correspondant à votre activité.") }}</p>
+                    <p class="font-semibold text-sm text-[#1A1A1A]">{{ __('Profil en cours de vérification') }}</p>
+                    <p class="text-sm mt-0.5">{{ __("L'achat de crédits sera possible après validation de votre profil.") }}</p>
                 </div>
             </div>
         @endunless

@@ -20,7 +20,7 @@
         @if ($profile && (int) $profile->credit_balance < $unlockCost)
             <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-100 text-amber-800 text-sm flex items-center justify-between gap-3">
                 <span class="flex items-center gap-3"><x-z.icon name="error" class="text-xl shrink-0" />{{ __('credits.low_balance_warning') }}</span>
-                <x-z.btn :href="route('provider.credits.index')" variant="accent" size="sm" class="whitespace-nowrap shrink-0">{{ __('credits.pack_cta') }}</x-z.btn>
+                <x-z.btn :href="route('provider.credits.index')" variant="accent" size="sm" class="whitespace-nowrap shrink-0">{{ __('provider.nav.recharge') }}</x-z.btn>
             </div>
         @endif
 

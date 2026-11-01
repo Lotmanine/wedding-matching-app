@@ -31,9 +31,11 @@
             </div>
         </div>
 
-        {{-- The intro names only the payment methods that are enabled, and says when credits are added for each --}}
-        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-1">{{ $hasOnline && $hasOffline ? __('credits.pay.title_choice') : __('credits.pay.title_single') }}</h1>
-        <p class="text-[#6B665E] text-sm mb-6">{{ $hasOnline && $hasOffline ? __('credits.pay.intro_both') : ($hasOnline ? __('credits.pay.intro_online') : __('credits.pay.intro_offline')) }}</p>
+        {{-- The intro only appears when there is a choice to make; each method explains itself in its own panel --}}
+        <h1 class="font-serif text-2xl font-bold text-[#1A1A1A] {{ $hasOnline && $hasOffline ? 'mb-1' : 'mb-6' }}">{{ $hasOnline && $hasOffline ? __('credits.pay.title_choice') : __('credits.pay.title_single') }}</h1>
+        @if ($hasOnline && $hasOffline)
+            <p class="text-[#6B665E] text-sm mb-6">{{ __('credits.pay.intro_both') }}</p>
+        @endif
 
         {{-- Method tabs (only if both are enabled) --}}
         @if ($hasOnline && $hasOffline)
@@ -59,7 +61,7 @@
                         <x-z.icon name="credit_card" :filled="true" class="text-[#C8956C] text-2xl" />
                     </div>
                     <div class="flex-1">
-                        <h2 class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('Carte Edahabia / CIB') }}</h2>
+                        <h2 class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('Carte Edahabia ou CIB') }}</h2>
                         <p class="text-sm text-[#6B665E] mt-1 mb-5">{{ __('credits.pay.online_body') }}</p>
                         <form method="POST" action="{{ route('provider.credits.checkout', $pack->slug) }}">
                             @csrf
@@ -126,16 +128,16 @@
                     </div>
                     <div>
                         <label for="proof" class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">
-                            {{ __('Justificatif') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif : photo ou PDF, max 5 Mo)') }}</span>
+                            {{ __('Justificatif de paiement (facultatif)') }}
                         </label>
-                        <input type="file" id="proof" name="proof" accept=".jpg,.jpeg,.png,.pdf"
+                        <p id="proof-help" class="text-xs text-[#9A958D] mb-2">{{ __('Photo ou PDF, 5 Mo maximum.') }}</p>
+                        <input type="file" id="proof" name="proof" accept=".jpg,.jpeg,.png,.pdf" aria-describedby="proof-help"
                             class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#F0D9B5]/60 file:text-[#7A5530] hover:file:bg-[#F0D9B5] cursor-pointer" />
                         @error('proof') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                     </div>
                     <x-z.btn type="submit" variant="accent" size="lg" class="w-full sm:w-auto justify-center">
-                        <x-z.icon name="send" class="text-lg" /> {{ __('Déclarer mon versement') }}
+                        <x-z.icon name="send" class="text-lg" /> {{ __('Signaler mon versement') }}
                     </x-z.btn>
-                    <p class="text-xs text-[#9A958D]">{{ __("Votre achat sera en attente de vérification jusqu'à confirmation de la réception des fonds.") }}</p>
                 </form>
             </div>
         @endif

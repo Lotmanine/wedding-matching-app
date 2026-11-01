@@ -9,7 +9,7 @@
                 <x-z.icon name="celebration" :filled="true" class="text-4xl text-[#C8956C]" />
             </div>
             <h1 class="font-serif text-4xl md:text-5xl font-bold text-[#1A1A1A] leading-tight">
-                {{ __('form.confirm_title', ['name' => e($wedRequest->couple_first_name)]) }}
+                {{ __('form.confirm_title') }}
             </h1>
             <p class="text-[#6B665E] text-lg max-w-md mx-auto mt-4">{{ __('form.confirm_subtitle') }}</p>
         </div>
@@ -18,7 +18,7 @@
         <div class="bg-white rounded-2xl border border-[#D4CFC7]/50 shadow-sm p-6" x-data="{ copied: false }">
             <p class="text-[11px] font-bold uppercase tracking-widest text-[#9A958D] mb-3">{{ __('form.confirm_reference') }}</p>
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <code class="font-serif text-2xl font-bold text-[#1A1A1A] tracking-wider select-all">{{ $wedRequest->wed_uid }}</code>
+                <code dir="ltr" class="font-serif text-2xl font-bold text-[#1A1A1A] tracking-wider select-all">{{ $wedRequest->wed_uid }}</code>
                 <button
                     type="button"
                     @click="navigator.clipboard.writeText(@js($wedRequest->wed_uid)); copied = true; setTimeout(() => copied = false, 2000)"
@@ -32,6 +32,10 @@
                     <span x-show="copied" x-cloak>{{ __('form.btn_copied') }}</span>
                 </button>
             </div>
+            <p class="mt-4 text-sm text-[#6B665E] flex items-start gap-2">
+                <x-z.icon name="bookmark" class="text-base text-[#C8956C] shrink-0 mt-0.5" />
+                <span>{{ __('form.confirm_keep_link') }}</span>
+            </p>
         </div>
 
         {{-- Next steps --}}
@@ -67,9 +71,10 @@
             <p class="text-[11px] font-bold uppercase tracking-widest text-[#9A958D] mb-4">{{ __('form.confirm_services') }}</p>
             <div class="space-y-3">
                 @foreach ($wedRequest->serviceRequests as $sr)
-                    <div class="flex items-center justify-between p-3 bg-[#F7F4F0] rounded-xl">
+                    @php $state = $sr->status?->value ?? (string) $sr->status; @endphp
+                    <div class="p-3 bg-[#F7F4F0] rounded-xl">
+                    <div class="flex items-center justify-between gap-3">
                         <span class="text-sm font-semibold text-[#1A1A1A]">{{ $sr->service_type?->label() ?? $sr->service_type }}</span>
-                        @php $state = $sr->status?->value ?? (string) $sr->status; @endphp
                         @if ($state === 'accepted')
                             <span class="text-xs font-bold text-green-700 flex items-center gap-1.5">
                                 <x-z.icon name="check_circle" :filled="true" class="text-sm" /> {{ __('form.confirm_status_found') }}
@@ -82,6 +87,11 @@
                                 <span class="text-xs font-bold text-[#C8956C]">{{ $state === 'open_marketplace' ? __('form.confirm_status_open') : __('form.confirm_status_searching') }}</span>
                             </div>
                         @endif
+                    </div>
+                    {{-- "Recherche élargie" alone is vague: say what the open stage means. --}}
+                    @if ($state === 'open_marketplace')
+                        <p class="mt-2 text-xs text-[#6B665E] leading-relaxed">{{ __('form.confirm_status_open_help') }}</p>
+                    @endif
                     </div>
                 @endforeach
             </div>
@@ -97,7 +107,7 @@
 
         <div class="flex flex-col sm:flex-row gap-4">
             <x-z.btn :href="route('home')" variant="primary" icon="arrow_back" class="flex-1">{{ __('form.btn_home') }}</x-z.btn>
-            <x-z.btn :href="route('couple.request.create')" variant="outline" class="flex-1">{{ __('form.nav_submit_request') }}</x-z.btn>
+            <x-z.btn :href="route('couple.request.create')" variant="outline" class="flex-1">{{ __('form.confirm_new_request') }}</x-z.btn>
         </div>
 
     </div>

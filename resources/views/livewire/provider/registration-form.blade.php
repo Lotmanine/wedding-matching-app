@@ -146,9 +146,11 @@
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.description') }}</label>
                     <textarea wire:model="business_description" rows="3" maxlength="500" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all resize-none"></textarea>
+                    <p class="mt-1 text-xs text-[#9A958D]">{{ __('provider.registration.description_hint') }}</p>
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.languages') }}</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.registration.languages') }}</label>
+                    <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.registration.languages_hint') }}</p>
                     <div class="flex flex-wrap gap-2">
                         @foreach (__('provider.registration.languages_options') as $code => $label)
                             <label class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#D4CFC7]/60 cursor-pointer hover:border-[#C8956C]/40 transition-colors has-[:checked]:bg-[#F0D9B5]/40 has-[:checked]:border-[#C8956C]">
@@ -200,6 +202,8 @@
                             <input type="number" min="0" step="500"
                                    wire:model="travel_fees.{{ $w->code }}"
                                    placeholder="{{ __('DA') }}"
+                                   aria-label="{{ __('provider.registration.coverage_travel_fee') }}"
+                                   title="{{ __('provider.registration.coverage_travel_fee') }}"
                                    class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15"
                             />
                         @endif
@@ -213,7 +217,8 @@
         @if ($step === 5)
             <h2 class="font-serif text-2xl font-bold text-[#1A1A1A] mb-4">{{ $steps[5] }}</h2>
             <div>
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.portfolio_urls_label') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.registration.portfolio_urls_label') }}</label>
+                <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.registration.portfolio_urls_hint') }}</p>
                 <div class="space-y-2">
                     @foreach ($portfolio_urls as $i => $url)
                         <div wire:key="url-{{ $i }}" class="flex gap-2">
@@ -223,7 +228,7 @@
                                        class="w-full pl-10 pr-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                             </div>
                             @if (count($portfolio_urls) > 1)
-                                <button type="button" wire:click="removePortfolioUrl({{ $i }})" class="w-10 h-[46px] rounded-lg flex items-center justify-center shrink-0 text-[#9A958D] hover:text-[#A84936] hover:bg-red-50 transition-colors">
+                                <button type="button" wire:click="removePortfolioUrl({{ $i }})" aria-label="{{ __('provider.registration.remove_url') }}" title="{{ __('provider.registration.remove_url') }}" class="w-10 h-[46px] rounded-lg flex items-center justify-center shrink-0 text-[#9A958D] hover:text-[#A84936] hover:bg-red-50 transition-colors">
                                     <span class="material-symbols-outlined text-xl" aria-hidden="true">remove_circle_outline</span>
                                 </button>
                             @endif
@@ -239,9 +244,10 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.portfolio_images') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.registration.portfolio_images') }}</label>
+                <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.registration.portfolio_images_hint') }}</p>
                 <input type="file" wire:model="portfolio_images" multiple accept="image/*" class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
-                <div wire:loading wire:target="portfolio_images" class="text-xs text-[#C8956C] mt-2">{{ __('Téléversement en cours…') }}</div>
+                <div wire:loading wire:target="portfolio_images" class="text-xs text-[#C8956C] mt-2">{{ __('provider.registration.uploading') }}</div>
                 @error('portfolio_images.*') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
 
                 @if (count($portfolio_images ?? []) > 0)
@@ -256,7 +262,8 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.logo') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.registration.logo') }}</label>
+                <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.registration.logo_hint') }}</p>
                 <input type="file" wire:model="logo_upload" accept="image/*" class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
                 @error('logo_upload') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                 @if ($logo_upload instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile)

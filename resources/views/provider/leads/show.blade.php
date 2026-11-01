@@ -159,6 +159,7 @@
                 <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4" @click.outside="showAccept = false">
                     <h3 class="font-serif text-lg font-bold text-[#1A1A1A]">{{ __('provider.acceptance.confirm_title') }}</h3>
                     <p class="text-sm text-[#6B665E]">{{ trans_choice('provider.acceptance.confirm_body', $cost, ['count' => $cost]) }}</p>
+                    <p class="text-xs text-[#9A958D]">{{ __('provider.acceptance.confirm_no_guarantee') }}</p>
                     <form method="POST" action="{{ route('provider.leads.accept', $lead->service_uid) }}" class="flex gap-2">
                         @csrf
                         <x-z.btn type="button" variant="outline" size="md" @click="showAccept = false" class="flex-1 justify-center">

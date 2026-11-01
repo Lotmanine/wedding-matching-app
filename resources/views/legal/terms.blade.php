@@ -23,7 +23,7 @@
         </div>
         <div class="mt-4">
             <h3 class="font-semibold text-[#1A1A1A] mb-2">{{ __('4.2 Exactitude des informations') }}</h3>
-            <p>{{ __("L'Utilisateur s'engage à fournir des informations exactes et sincères lors de la soumission d'une demande. Toute utilisation frauduleuse entraînera la suppression immédiate de la demande.") }}</p>
+            <p>{{ __("L'Utilisateur s'engage à fournir des informations exactes et sincères lors de l'envoi d'une demande. Toute utilisation frauduleuse entraînera la suppression immédiate de la demande.") }}</p>
         </div>
         <div class="mt-4">
             <h3 class="font-semibold text-[#1A1A1A] mb-2">{{ __('4.3 Usage personnel') }}</h3>

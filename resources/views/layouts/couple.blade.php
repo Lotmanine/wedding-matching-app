@@ -28,11 +28,12 @@
             <div class="max-w-7xl mx-auto px-5 md:px-8 py-3.5 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="font-serif text-[22px] font-bold text-[#1A1A1A] tracking-tight hover:text-[#C8956C] transition-colors">{{ __('form.brand') }}</a>
                 <div class="hidden md:flex items-center gap-7">
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-[#6B665E] hover:text-[#1A1A1A] transition-colors">{{ __('form.nav_for_couples') }}</a>
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-[#6B665E] hover:text-[#1A1A1A] transition-colors">{{ __('form.nav_home') }}</a>
                     <a href="{{ route('couple.request.create') }}" class="text-sm font-medium {{ request()->routeIs('couple.request.*') ? 'text-[#C8956C] font-semibold' : 'text-[#6B665E] hover:text-[#1A1A1A]' }} transition-colors">{{ __('form.nav_submit_request') }}</a>
-                    <a href="{{ route('provider.landing') }}" class="text-sm font-medium {{ request()->routeIs('provider.landing') ? 'text-[#C8956C] font-semibold' : 'text-[#6B665E] hover:text-[#1A1A1A]' }} transition-colors">{{ __('form.nav_become_provider') }}</a>
+                    <a href="{{ route('provider.landing') }}" class="text-sm font-medium {{ request()->routeIs('provider.landing') ? 'text-[#C8956C] font-semibold' : 'text-[#6B665E] hover:text-[#1A1A1A]' }} transition-colors">{{ __('form.nav_for_providers') }}</a>
                 </div>
-                <div class="hidden sm:flex items-center">
+                <div class="hidden sm:flex items-center gap-3">
+                    <span class="hidden lg:inline text-xs text-[#9A958D]">{{ __('form.cta_free_note') }}</span>
                     <x-z.btn :href="route('couple.request.create')" size="sm">{{ __('form.nav_cta') }}</x-z.btn>
                 </div>
                 <button class="md:hidden p-2 -me-2" @click="open = !open" aria-label="{{ __('Menu') }}">
@@ -40,12 +41,13 @@
                 </button>
             </div>
             <div x-show="open" x-cloak class="md:hidden bg-[#FDFAF6] border-t border-[#D4CFC7]/30 px-5 py-5 space-y-3">
-                <a href="{{ route('home') }}" class="block text-sm font-medium text-[#6B665E] py-2">{{ __('form.nav_for_couples') }}</a>
+                <a href="{{ route('home') }}" class="block text-sm font-medium text-[#6B665E] py-2">{{ __('form.nav_home') }}</a>
                 <a href="{{ route('couple.request.create') }}" class="block text-sm font-semibold text-[#1A1A1A] py-2">{{ __('form.nav_submit_request') }}</a>
-                <a href="{{ route('provider.landing') }}" class="block text-sm font-medium text-[#6B665E] py-2">{{ __('form.nav_become_provider') }}</a>
+                <a href="{{ route('provider.landing') }}" class="block text-sm font-medium text-[#6B665E] py-2">{{ __('form.nav_for_providers') }}</a>
                 <a href="{{ route('provider.login') }}" class="block text-sm font-medium text-[#9A958D] py-2 flex items-center gap-2"><x-z.icon name="login" class="text-sm" />{{ __('form.nav_provider_area') }}</a>
                 <div class="pt-2">
                     <x-z.btn :href="route('couple.request.create')" class="w-full justify-center">{{ __('form.nav_cta') }}</x-z.btn>
+                    <p class="mt-2 text-xs text-[#9A958D] text-center">{{ __('form.cta_free_note') }}</p>
                 </div>
             </div>
         </nav>

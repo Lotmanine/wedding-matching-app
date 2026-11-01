@@ -22,7 +22,7 @@ enum ServiceType: string
             self::Video      => __('Vidéaste'),
             self::Traiteur   => __('Traiteur'),
             self::Decoration => __('Décoration'),
-            self::Patisserie => __('Pâtisserie'),
+            self::Patisserie => __('Gâteaux et pâtisseries'),
             self::Salle      => __('Salle des fêtes'),
             self::Musique    => __('Musiciens / DJ'),
             self::Machta     => __('Machta / Coiffure'),

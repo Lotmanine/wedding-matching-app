@@ -99,9 +99,11 @@
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-[#1A1A1A] mb-1.5">{{ __('provider.registration.description') }}</label>
                     <textarea wire:model="business_description" rows="3" maxlength="500" class="w-full px-4 py-3.5 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all resize-none"></textarea>
+                    <p class="mt-1 text-xs text-[#9A958D]">{{ __('provider.registration.description_hint') }}</p>
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.languages') }}</label>
+                    <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.registration.languages') }}</label>
+                    <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.registration.languages_hint') }}</p>
                     <div class="flex flex-wrap gap-2">
                         @foreach (__('provider.registration.languages_options') as $code => $label)
                             <label class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#D4CFC7]/60 cursor-pointer hover:border-[#C8956C]/40 transition-colors has-[:checked]:bg-[#F0D9B5]/40 has-[:checked]:border-[#C8956C]">
@@ -154,7 +156,7 @@
                             @endif
                         </label>
                         @if ($isSelected && ! $isPrimary)
-                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="{{ __('DA') }}" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
+                            <input type="number" min="0" step="500" wire:model="travel_fees.{{ $w->code }}" placeholder="{{ __('DA') }}" aria-label="{{ __('provider.registration.coverage_travel_fee') }}" title="{{ __('provider.registration.coverage_travel_fee') }}" class="w-28 px-2 py-1.5 text-sm bg-white rounded-lg border border-[#D4CFC7] outline-none focus:border-[#C8956C] focus:ring-1 focus:ring-[#C8956C]/15" />
                         @endif
                     </div>
                 @endforeach
@@ -169,7 +171,8 @@
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.profile.portfolio_urls_label') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.profile.portfolio_urls_label') }}</label>
+                <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.profile.portfolio_urls_hint') }}</p>
                 <div class="space-y-2">
                     @foreach ($portfolio_urls as $i => $url)
                         <div wire:key="p-url-{{ $i }}" class="flex gap-2">
@@ -178,7 +181,7 @@
                                 <input type="url" dir="ltr" wire:model="portfolio_urls.{{ $i }}" placeholder="{{ __('provider.registration.portfolio_url_placeholder') }}"
                                        class="w-full pl-10 pr-4 py-3 bg-white border border-[#D4CFC7] rounded-lg text-sm text-[#1A1A1A] placeholder-[#9A958D] outline-none focus:border-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/15 transition-all" />
                             </div>
-                            <button type="button" wire:click="removePortfolioUrl({{ $i }})" class="w-10 h-[46px] rounded-lg flex items-center justify-center shrink-0 text-[#9A958D] hover:text-[#A84936] hover:bg-red-50 transition-colors">
+                            <button type="button" wire:click="removePortfolioUrl({{ $i }})" aria-label="{{ __('provider.registration.remove_url') }}" title="{{ __('provider.registration.remove_url') }}" class="w-10 h-[46px] rounded-lg flex items-center justify-center shrink-0 text-[#9A958D] hover:text-[#A84936] hover:bg-red-50 transition-colors">
                                 <span class="material-symbols-outlined text-xl" aria-hidden="true">remove_circle_outline</span>
                             </button>
                         </div>
@@ -202,7 +205,8 @@
             @endif
 
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.registration.logo') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.registration.logo') }}</label>
+                <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.registration.logo_hint') }}</p>
                 <input type="file" wire:model="logo_new" accept="image/*" class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
                 @error('logo_new') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
             </div>
@@ -214,7 +218,7 @@
                         @foreach ($portfolio_images_existing as $i => $img)
                             <div class="relative group" wire:key="exist-img-{{ $i }}">
                                 <img src="{{ $img }}" class="w-full h-24 object-cover rounded-lg border border-[#D4CFC7]/60" />
-                                <button type="button" wire:click="deleteExistingImage({{ $i }})" class="absolute top-1 end-1 w-6 h-6 rounded-full bg-[#A84936] text-white text-xs opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <button type="button" wire:click="deleteExistingImage({{ $i }})" aria-label="{{ __('provider.profile.delete_image') }}" title="{{ __('provider.profile.delete_image') }}" class="absolute top-1 end-1 w-6 h-6 rounded-full bg-[#A84936] text-white text-xs opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                                     <span class="material-symbols-outlined text-sm" aria-hidden="true">close</span>
                                 </button>
                             </div>
@@ -224,7 +228,8 @@
             @endif
 
             <div>
-                <label class="block text-sm font-semibold text-[#1A1A1A] mb-2">{{ __('provider.profile.new_images') }}</label>
+                <label class="block text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('provider.profile.new_images') }}</label>
+                <p class="mb-2 text-xs text-[#9A958D]">{{ __('provider.profile.new_images_hint') }}</p>
                 <input type="file" wire:model="portfolio_images_new" multiple accept="image/*" class="w-full text-sm text-[#6B665E] file:me-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:bg-[#F0D9B5]/50 file:text-[#7A5530] file:font-semibold hover:file:bg-[#F0D9B5]" />
                 @error('portfolio_images_new.*') <p class="mt-1 text-xs text-[#A84936]">{{ $message }}</p> @enderror
             </div>

@@ -188,6 +188,7 @@
                                 required
                             />
                             <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_whatsapp') }}</p>
+                            <p class="mt-1 text-xs text-[#9A958D]">{{ __('form.help_whatsapp_use') }}</p>
                             @error('couple_whatsapp') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -229,13 +230,15 @@
                                     <option value="{{ $c->name_fr }}">{{ app()->getLocale() === 'ar' ? $c->name_ar : $c->name_fr }}</option>
                                 @endforeach
                             </select>
-                            <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_commune') }}</p>
+                            @if ($couple_wilaya_code === '')
+                                <p class="mt-2 text-xs text-[#9A958D]">{{ __('form.help_commune') }}</p>
+                            @endif
                             @error('couple_commune') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
                     </div>
                 @endif
 
-                {{-- STEP 4 — Date / saison / invités (conditionnel) --}}
+                {{-- STEP 4 — Date / invités (conditionnel). La saison est déduite de la date dans le composant. --}}
                 @if ($step === 4)
                     <div class="space-y-6">
                         <div>
@@ -252,24 +255,6 @@
                                 class="{{ $inputClass }}"
                             />
                             @error('wedding_date') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label for="wedding_season" class="block text-sm font-semibold text-[#1A1A1A] mb-2">
-                                {{ __('form.label_wedding_season') }} <span class="text-[#9A958D] font-normal">{{ __('(facultatif)') }}</span>
-                            </label>
-                            <select
-                                id="wedding_season"
-                                wire:model="wedding_season"
-                                class="{{ $inputClass }} appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20fill=%22none%22%20viewBox=%220%200%2024%2024%22%20stroke=%22%239A958D%22%20stroke-width=%222%22%3E%3Cpath%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20d=%22M19%209l-7%207-7-7%22/%3E%3C/svg%3E')] bg-[length:1.25rem] ltr:bg-[right_0.9rem_center] rtl:bg-[left_0.9rem_center] bg-no-repeat pe-11"
-                            >
-                                <option value="">{{ __('form.season_placeholder') }}</option>
-                                <option value="Printemps">{{ __('form.season_printemps') }}</option>
-                                <option value="Été">{{ __('form.season_ete') }}</option>
-                                <option value="Automne">{{ __('form.season_automne') }}</option>
-                                <option value="Hiver">{{ __('form.season_hiver') }}</option>
-                            </select>
-                            @error('wedding_season') <p class="mt-2 text-xs text-[#A84936]">{{ $message }}</p> @enderror
                         </div>
 
                         {{-- Guest count only when a headcount-dependent service (traiteur / salle) is chosen --}}
@@ -325,7 +310,13 @@
 
                         {{-- Services chips --}}
                         <fieldset>
-                            <legend class="text-sm font-semibold text-[#1A1A1A] mb-3">{{ __('form.label_services') }} <span class="text-[#C8956C]">*</span></legend>
+                            <legend class="text-sm font-semibold text-[#1A1A1A] mb-1">{{ __('form.label_services') }} <span class="text-[#C8956C]">*</span></legend>
+                            {{-- The error for this field says the same thing: never show both. --}}
+                            @error('services_needed')
+                                <div class="mb-2"></div>
+                            @else
+                                <p class="text-xs text-[#9A958D] mb-3">{{ __('form.help_services') }}</p>
+                            @enderror
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 @foreach ($this->serviceTypes as $svc)
                                     {{-- Instant highlight via native :checked (peer). wire:model.live keeps
@@ -381,10 +372,10 @@
                             <h2 class="font-serif text-lg font-semibold text-[#7A5530]">{{ __('form.review_title') }}</h2>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]" dir="ltr">({{ $couple_whatsapp ?: __('Non renseigné') }})</span></div>
+                                <div><span class="text-[#9A958D]">{{ __('form.review_couple') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $couple_first_name ?: __('form.review_none') }}</strong> <span class="text-[#6B665E]" dir="ltr">({{ $couple_whatsapp ?: __('form.review_none') }})</span></div>
                                 <div><span class="text-[#9A958D]">{{ __('form.review_location') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ ($isAr ? $wilayaRow?->name_ar : $wilayaRow?->name_fr) ?? __('form.review_none') }}</strong>{{ $couple_commune ? __(', ') . $communeLabel : '' }}</div>
                                 <div>
-                                    <span class="text-[#9A958D]">{{ __('form.review_wedding') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span>
+                                    <span class="text-[#9A958D]">{{ $guest_count ? __('form.review_date_guests') : __('form.review_date') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span>
                                     @if ($wedding_date)
                                         <strong class="text-[#1A1A1A]">{{ \Illuminate\Support\Carbon::parse($wedding_date)->isoFormat('LL') }}</strong>
                                     @elseif ($wedding_season)
@@ -392,7 +383,9 @@
                                     @else
                                         <strong class="text-[#1A1A1A]">{{ __('form.review_none') }}</strong>
                                     @endif
-                                    <span class="text-[#6B665E]">· {{ $guestLabel }}</span>
+                                    @if ($guest_count)
+                                        <span class="text-[#6B665E]">· {{ $guestLabel }}</span>
+                                    @endif
                                 </div>
                                 <div><span class="text-[#9A958D]">{{ __('form.review_budget') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $budgetLabel }}</strong></div>
                                 <div class="sm:col-span-2"><span class="text-[#9A958D]">{{ __('form.review_services') }}{{ app()->getLocale() === 'ar' ? ':' : ' :' }}</span> <strong class="text-[#1A1A1A]">{{ $serviceLabels ? implode(__(', '), $serviceLabels) : __('form.review_none') }}</strong></div>
@@ -414,8 +407,11 @@
                                 class="mt-0.5 w-4 h-4 rounded border-[#D4CFC7] text-[#C8956C] focus:ring-2 focus:ring-[#C8956C]/30 cursor-pointer"
                                 required
                             />
-                            {{-- The sentence is static copy from lang/; only the link label is escaped here. --}}
-                            <span class="text-xs sm:text-sm text-[#6B665E] leading-relaxed">{!! __('form.label_accept_terms', ['link' => '<a href="' . e(route('legal.privacy')) . '" target="_blank" rel="noopener" class="font-semibold text-[#1A1A1A]" style="text-decoration:underline">' . e(__('form.accept_terms_link')) . '</a>']) !!}</span>
+                            {{-- Both sentences are static copy from lang/; only the link label is escaped here. --}}
+                            <span class="text-xs sm:text-sm text-[#6B665E] leading-relaxed">
+                                <span class="block font-semibold text-[#1A1A1A]">{{ __('form.label_accept_terms') }}</span>
+                                <span class="block mt-1">{!! __('form.help_accept_terms', ['link' => '<a href="' . e(route('legal.privacy')) . '" target="_blank" rel="noopener" class="font-semibold text-[#1A1A1A]" style="text-decoration:underline">' . e(__('form.accept_terms_link')) . '</a>']) !!}</span>
+                            </span>
                         </label>
                         @error('acceptTerms') <p class="text-xs text-[#A84936]">{{ $message }}</p> @enderror
                     </div>
@@ -440,7 +436,7 @@
                     @else
                         <x-z.btn type="submit" variant="accent" size="lg" wire:loading.attr="disabled">
                             <span wire:loading.remove wire:target="submit">{{ __('form.btn_submit') }}</span>
-                            <span wire:loading wire:target="submit">{{ __('Envoi en cours…') }}</span>
+                            <span wire:loading wire:target="submit">{{ __('form.btn_submitting') }}</span>
                             <x-z.icon name="send" class="text-lg" wire:loading.remove wire:target="submit" />
                         </x-z.btn>
                     @endif
