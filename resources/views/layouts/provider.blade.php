@@ -106,5 +106,6 @@
     </div>
 
     @livewireScripts
+@include('partials.portfolio-notice')
 </body>
 </html>

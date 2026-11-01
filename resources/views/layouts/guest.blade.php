@@ -24,5 +24,6 @@
                 <x-z.icon name="arrow_back" class="text-sm" /> {{ __('Back to site') }}
             </a>
         </div>
+    @include('partials.portfolio-notice')
     </body>
 </html>

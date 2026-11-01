@@ -66,5 +66,6 @@
 
         <a href="{{ route('home') }}" class="mt-6 inline-flex items-center gap-1 text-sm text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('Back to the site') }}</a>
     </main>
+@include('partials.portfolio-notice')
 </body>
 </html>

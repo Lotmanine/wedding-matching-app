@@ -45,5 +45,6 @@
     </div>
 
     <a href="{{ route('home') }}" class="mt-8 inline-flex items-center gap-1 text-xs text-white/30 hover:text-white/60 transition-colors"><x-z.icon name="arrow_back" class="text-sm" /> {{ __('Back to site') }}</a>
+@include('partials.portfolio-notice')
 </body>
 </html>

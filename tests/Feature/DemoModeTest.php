@@ -46,6 +46,17 @@ class DemoModeTest extends TestCase
         $this->get('/provider/login')->assertOk()->assertDontSee(config('wedding.demo.accounts.provider.email'));
     }
 
+    public function test_portfolio_notice_is_on_public_pages_in_demo_mode(): void
+    {
+        foreach (['/', '/for-providers', '/provider/login', '/admin/login'] as $url) {
+            $this->get($url)->assertOk()->assertSee('id="portfolio-notice"', false);
+        }
+
+        config(['wedding.demo.enabled' => false]);
+
+        $this->get('/')->assertOk()->assertDontSee('id="portfolio-notice"', false);
+    }
+
     public function test_demo_provider_sees_requests_in_every_state(): void
     {
         $provider = $this->account('provider');

@@ -34,5 +34,6 @@
             <a href="{{ route('provider.login') }}" class="inline-flex items-center gap-1 text-[#9A958D] hover:text-[#6B665E] transition-colors"><x-z.icon name="arrow_back" class="text-base" /> {{ __('provider.auth.btn_login') }}</a>
         </p>
     </div>
+@include('partials.portfolio-notice')
 </body>
 </html>

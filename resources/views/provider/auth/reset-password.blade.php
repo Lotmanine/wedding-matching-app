@@ -41,5 +41,6 @@
             <x-z.btn type="submit" variant="primary" size="lg" class="w-full">{{ __('provider.auth.btn_reset') }}</x-z.btn>
         </form>
     </div>
+@include('partials.portfolio-notice')
 </body>
 </html>
