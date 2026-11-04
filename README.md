@@ -1,5 +1,7 @@
 # Wedding Matching App
 
+[![PHPUnit suite and Pint on changed PHP files](https://github.com/Lotmanine/wedding-matching-app/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Lotmanine/wedding-matching-app/actions/workflows/ci.yml)
+
 A two-sided wedding-services marketplace: a couple submits one request, and the platform finds local providers for each service through timed matching rounds. Providers pay with credits to unlock a couple's contact details.
 
 This is a **portfolio project and a public demo**. The cities (USA and France), businesses, couples and phone numbers are fictional, and the demo checkout takes no real payment.
@@ -77,3 +79,13 @@ Demo mode loads the sample accounts and requests, shows the logins on the login 
 - [`docs/OPERATIONS.md`](docs/OPERATIONS.md), [`docs/SECURITY.md`](docs/SECURITY.md), [`docs/SCALING.md`](docs/SCALING.md): running the app
 - [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) and [`deployment/RUNBOOK.md`](deployment/RUNBOOK.md): deployment
 - [`n8n/README.md`](n8n/README.md): the n8n workflows
+
+## Author
+
+Built by **Lotfi Otmanine**, senior WordPress developer at [OLDEV](https://oldev.site).
+
+- Website: [oldev.site](https://oldev.site)
+- Hire me on Upwork: [upwork.com/freelancers/~01bd748fcb665b90ca](https://www.upwork.com/freelancers/~01bd748fcb665b90ca)
+- LinkedIn: [linkedin.com/in/lotfi-otmanine](https://www.linkedin.com/in/lotfi-otmanine)
+- GitHub: [github.com/Lotmanine](https://github.com/Lotmanine)
+- Case study: [oldev.site/work/27-wedding-matching-app](https://oldev.site/work/27-wedding-matching-app/)
