@@ -1,4 +1,4 @@
-name: CI
+name: PHPUnit and Pint
 
 on:
   push:
@@ -7,11 +7,14 @@ on:
 
 jobs:
   test:
-    name: Tests & lint
+    name: PHPUnit suite, Pint on changed files
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history, so the Pint step can list the files changed by the push.
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -50,11 +53,22 @@ jobs:
           npm ci
           npm run build
 
-      - name: Check code style (Pint)
-        run: ./vendor/bin/pint --test
+      # Full PHPUnit suite on in-memory SQLite (database settings come from phpunit.xml).
+      - name: Run tests (composer test)
+        run: composer test
 
-      - name: Run tests
+      # Pint in test mode on the PHP files added or changed by this push or pull request.
+      - name: Check code style of changed PHP files (Pint)
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
-        run: php artisan test
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE_SHA" ] || ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            BASE_SHA=$(git rev-parse HEAD~1)
+          fi
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE_SHA" HEAD -- '*.php' ':!*.blade.php')
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No PHP file changed since $BASE_SHA."
+            exit 0
+          fi
+          printf 'Checking %s\n' "${files[@]}"
+          ./vendor/bin/pint --test "${files[@]}"
