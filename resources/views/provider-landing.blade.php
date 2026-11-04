@@ -9,6 +9,8 @@
 
 @section('title', __('For providers · :brand', ['brand' => __('form.brand')]))
 
+@section('description', __("How wedding providers receive matched requests and unlock a couple's contact details with credits, in this portfolio demo marketplace."))
+
 @section('content')
 @php
     // Figures shown on this page come from the real configuration, never from

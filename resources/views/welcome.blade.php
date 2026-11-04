@@ -1,5 +1,34 @@
 @extends('layouts.couple')
 
+@section('description', __('Portfolio demo of a wedding-services marketplace built with Laravel and Livewire. Couples send one request and local providers are matched through timed rounds.'))
+
+{{-- Structured data: the site and the developer who built it. The array is
+     built in a PHP block: inside echo tags, Blade would compile the "context"
+     key as its own directive. --}}
+@php
+    $structuredData = [
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => __('form.brand'),
+        'url' => route('home'),
+        'description' => __('Portfolio demo of a wedding-services marketplace built with Laravel and Livewire. Couples send one request and local providers are matched through timed rounds.'),
+        'inLanguage' => app()->getLocale(),
+        'creator' => [
+            '@type' => 'Person',
+            'name' => 'Lotfi Otmanine',
+            'url' => 'https://oldev.site',
+            'sameAs' => [
+                'https://github.com/Lotmanine',
+                'https://www.linkedin.com/in/lotfi-otmanine',
+                'https://www.upwork.com/freelancers/~01bd748fcb665b90ca',
+            ],
+        ],
+    ];
+@endphp
+@push('head')
+    <script type="application/ld+json">{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+@endpush
+
 @section('content')
 @php
     // Figures shown on this page come from the real configuration, never from

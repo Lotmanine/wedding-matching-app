@@ -51,6 +51,7 @@
         </div>
 
         <p class="pt-7 text-xs text-white/55">{{ __('Portfolio demo project. Not a real business: no real providers, payments or bookings.') }}</p>
+        <p class="pt-2 text-xs text-white/55"><a href="https://oldev.site/work/27-wedding-matching-app/" class="underline underline-offset-2 hover:text-white transition-colors">{{ __('Demo built by Lotfi Otmanine (OLDEV)') }}</a></p>
 
         <div class="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p class="text-xs text-white/25">© {{ date('Y') }} {{ __('form.brand') }} · {{ __('All rights reserved') }}</p>

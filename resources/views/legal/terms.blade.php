@@ -1,5 +1,7 @@
 @extends('layouts.couple')
 
+@section('description', __('Terms of use of the Wedding Matching App portfolio demo, a fictional marketplace with no real providers, payments or bookings.'))
+
 @section('content')
 <x-legal-page :title="__('Terms of use')" :subtitle="__('form.brand')" :updated="__('November 1, 2026')">
 

@@ -1,5 +1,7 @@
 @extends('layouts.couple')
 
+@section('description', __('Privacy policy of the Wedding Matching App portfolio demo and how it handles the data entered in it.'))
+
 @section('content')
 <x-legal-page :title="__('Privacy policy')" :subtitle="__('form.brand')" :updated="__('November 1, 2026')">
 
